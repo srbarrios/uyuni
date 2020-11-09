@@ -1,3 +1,4 @@
+- Fix Debian package version comparison
 - Changed to versioned Python2 to SPEC file.
 
 -------------------------------------------------------------------
