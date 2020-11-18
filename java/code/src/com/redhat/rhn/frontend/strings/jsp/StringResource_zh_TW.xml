@@ -9717,13 +9717,6 @@ administrator privileges.</source>
         </context-group>
         <target>RPM 儲存地的掛載點</target>
       </trans-unit>
-      <trans-unit id="general.jsp.defaultTo_ssl" xml:space="preserve">
-        <source>Default To SSL</source>
-        <context-group name="ctx">
-          <context context-type="sourcefile">/rhn/admin/config/GeneralConfig.do</context>
-        </context-group>
-        <target>SSL 的預設值</target>
-      </trans-unit>
       <trans-unit id="general.jsp.solaris" xml:space="preserve">
         <source>Enable Solaris Support</source>
         <context-group name="ctx">

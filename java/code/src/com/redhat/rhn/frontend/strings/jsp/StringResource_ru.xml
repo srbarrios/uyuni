@@ -9330,13 +9330,6 @@ administrator privileges.</source>
         </context-group>
         <target>Точка подключения хранилища RPM</target>
       </trans-unit>
-      <trans-unit id="general.jsp.defaultTo_ssl" xml:space="preserve">
-        <source>Default To SSL</source>
-        <context-group name="ctx">
-          <context context-type="sourcefile">/rhn/admin/config/GeneralConfig.do</context>
-        </context-group>
-        <target>По умолчанию SSL</target>
-      </trans-unit>
       <trans-unit id="general.jsp.solaris" xml:space="preserve">
         <source>Enable Solaris Support</source>
         <context-group name="ctx">

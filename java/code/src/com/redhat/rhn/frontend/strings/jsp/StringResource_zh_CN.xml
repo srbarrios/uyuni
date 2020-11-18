@@ -9849,13 +9849,6 @@ administrator privileges.</source>
         </context-group>
         <target state="translated">RPM 存储库挂载点</target>
       </trans-unit>
-      <trans-unit id="general.jsp.defaultTo_ssl" xml:space="preserve">
-        <source>Default To SSL</source>
-        <context-group name="ctx">
-          <context context-type="sourcefile">/rhn/admin/config/GeneralConfig.do</context>
-        </context-group>
-        <target state="translated">默认到 SSL</target>
-      </trans-unit>
       <trans-unit id="general.jsp.solaris" xml:space="preserve">
         <source>Enable Solaris Support</source>
         <context-group name="ctx">
