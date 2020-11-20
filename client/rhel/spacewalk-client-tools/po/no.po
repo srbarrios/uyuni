@@ -3697,9 +3697,6 @@ msgstr ""
 #~ "Navn                                    Versjon        Utgave   \n"
 #~ "--------------------------------------------------------------"
 
-#~ msgid "Specify a url for a non ssl server"
-#~ msgstr "    --noSSLServerURL=<url>     - oppgi URL for en tjener uten ssl"
-
 #~ msgid "Don't use ssl to download packages"
 #~ msgstr ""
 #~ "    --useNoSSLForPackages      - ikke bruk ssl ved nedlasting av pakker"
