@@ -27,7 +27,7 @@ public class EnvironmentFilterTest extends BaseFilterTst {
 
     public void setUp() throws Exception {
         super.setUp();
-        this.request.setRequestURL("http://rhn.webdev.redhat.com/rhn/manager/login");
+        this.request.setRequestURL("https://rhn.webdev.redhat.com/rhn/manager/login");
     }
 
     public void testNonSSLUrls() throws Exception {
