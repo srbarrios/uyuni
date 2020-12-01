@@ -1,3 +1,4 @@
+- Add validation for custom repository labels
 - Generalize the reactivation key message (bsc#1178483)
 
 -------------------------------------------------------------------
