@@ -1,4 +1,4 @@
-- Use channel label to calculate DEB repo cache path (bsc#1179410)
+- Use sanitized repo label to build reposync repo cache path (bsc#1179410)
 
 -------------------------------------------------------------------
 Thu Dec 03 13:42:23 CET 2020 - jgonzalez@suse.com
