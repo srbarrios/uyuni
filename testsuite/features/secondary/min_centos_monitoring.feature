@@ -2,6 +2,8 @@
 # Licensed under the terms of the MIT license.
 
 @centos_minion
+@monitoring
+@res
 Feature: Monitor SUMA environment with Prometheus on a CentOS minion
   In order to monitore SUSE Manager server
   As an authorized user

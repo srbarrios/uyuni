@@ -1,6 +1,8 @@
 # Copyright (c) 2017-2019 SUSE LLC
 # Licensed under the terms of the MIT license.
 
+@visualization
+@onboarding
 Feature: Custom system info key-value pairs
 
   Background:

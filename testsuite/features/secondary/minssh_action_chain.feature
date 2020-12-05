@@ -2,6 +2,8 @@
 # Licensed under the terms of the MIT license.
 
 @ssh_minion
+@action_chains
+@salt_ssh
 Feature: Salt SSH action chain
 
   Scenario: Pre-requisite: downgrade repositories to lower version on SSH minion

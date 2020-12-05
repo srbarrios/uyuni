@@ -3,6 +3,7 @@
 
 @sle_client
 @sle_minion
+@action_chains
 Feature: Action chains on several systems at once
 
   Scenario: Pre-requisite: downgrade packages before action chain test on several systems

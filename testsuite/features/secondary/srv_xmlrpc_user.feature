@@ -1,6 +1,7 @@
 # Copyright (c) 2015 SUSE LLC
 # Licensed under the terms of the MIT license.
 
+@xmlrpc
 Feature: XML-RPC "user" namespace
 
   Scenario: Basic user operations

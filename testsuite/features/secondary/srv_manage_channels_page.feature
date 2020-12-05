@@ -1,6 +1,7 @@
 # Copyright (c) 2019 SUSE LLC
 # Licensed under the terms of the MIT license.
 
+@visualization
 Feature: Managing channels
   In Order to distribute software to the clients
   As an authorized user

@@ -1,6 +1,7 @@
 # Copyright (c) 2017 SUSE LLC
 # Licensed under the terms of the MIT license.
 
+@visualization
 Feature: Pick dates
   In order to execute actions at a certain date
   As a authorized user

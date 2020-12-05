@@ -1,6 +1,8 @@
 # Copyright (c) 2015-2020 SUSE LLC
 # Licensed under the terms of the MIT license.
 
+@traditional_client
+@openscap
 Feature: OpenSCAP audit of traditional client
   In order to audit a traditional client
   As an authorized user

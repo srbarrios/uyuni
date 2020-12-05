@@ -1,6 +1,7 @@
 # Copyright (c) 2020 SUSE LLC
 # Licensed under the terms of the MIT license.
 
+@salt_ssh
 Feature: Register a salt system to be managed via SSH tunnel
 
   Scenario: Delete the salt minion for SSH tunnel bootstrap

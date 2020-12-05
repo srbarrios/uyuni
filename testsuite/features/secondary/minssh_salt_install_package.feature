@@ -1,6 +1,8 @@
 # Copyright (c) 2019-2020 SUSE LLC
 # Licensed under the terms of the MIT license.
 
+@salt_ssh
+@onboarding
 Feature: Install a package on the SSH minion via Salt through the UI
 
 @ssh_minion
