@@ -4,6 +4,10 @@ create schema if not exists deb;
 --update pg_setting
 update pg_settings set setting = 'deb,' || setting where name = 'search_path';
 
+-- Debian version comparison
+-- See: https://www.debian.org/doc/debian-policy/ch-controlfields.html#version
+-- See: https://salsa.debian.org/dpkg-team/dpkg/blob/master/lib/dpkg/version.c#L140
+
 CREATE OR REPLACE FUNCTION lastIndexOf(needle text, haystack text)
 RETURNS integer AS $$
     DECLARE
