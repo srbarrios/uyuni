@@ -38,6 +38,9 @@ public class DebVersionComparator implements Comparator<String> {
      * = 0   Both versions are equal.
      * < 0   The version *a* is less than version *b*.
      * ===== =============================================
+     *
+     * See: https://www.debian.org/doc/debian-policy/ch-controlfields.html#version
+     * See: https://salsa.debian.org/dpkg-team/dpkg/blob/master/lib/dpkg/version.c#L140
      */
     @Override
     public int compare(String o1, String o2) {
