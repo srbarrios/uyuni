@@ -1,0 +1,38 @@
+name: Java Build
+
+on:
+  pull_request:
+    paths:
+      - 'java/**.java'
+
+jobs:
+  java_build:
+    runs-on: ubuntu-latest
+    container: registry.opensuse.org/systemsmanagement/uyuni/master/docker/containers/uyuni-master-pgsql:latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Cache dependencies
+      id: cache-dependencies
+      uses: actions/cache@v2
+      with:
+        path: java/lib
+        key: ${{ runner.os }}-java-lib-${{ hashFiles('java/buildconf/ivy/*.*') }}
+
+    - name: Resolve dependencies
+      if: steps.cache-dependencies.outputs.cache-hit != 'true'
+      run: |
+        cd java
+        ant -f manager-build.xml ivy
+
+    - name: Compile branding jar
+      run: |
+        cd java
+        ant -f manager-build.xml refresh-branding-jar
+
+    - name: Deploy Java code
+      run: |
+        cd java
+        ant -f manager-build.xml refresh-branding-jar deploy -Ddeploy.host=localhost restart-tomcat restart-taskomatic
+        ant -f manager-build.xml refresh-branding-jar deploy-static-resources -Ddeploy.host=localhost
