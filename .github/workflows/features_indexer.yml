@@ -1,0 +1,34 @@
+name: Features Indexer
+
+on:
+  pull_request:
+    paths:
+      - 'testsuite/**/**.*'
+
+jobs:
+  features_indexed:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-ruby@v1
+      with:
+        ruby-version: '2.5'
+    - uses: actions/checkout@v2
+      with:
+        repository: 'https://codeberg.org/japh/Feature_Indexer.git'
+    - uses: shogo82148/actions-setup-perl@v1
+      with:
+        perl-version: '5.34'
+    - run: cpanm --installdeps .
+    - name: Build Features Indexer
+      run: |
+        perl Makefile.PL
+        make
+        make install
+
+    - name: Indexing
+      run: |
+        cd testsuite
+        gfindex --md --html
