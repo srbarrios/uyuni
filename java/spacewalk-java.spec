@@ -140,7 +140,6 @@ BuildRequires:  quartz
 BuildRequires:  redstone-xmlrpc
 BuildRequires:  salt-netapi-client >= 1.0.0
 BuildRequires:  simple-core
-BuildRequires:  simplexml
 BuildRequires:  sitemesh
 BuildRequires:  snakeyaml >= 1.33
 BuildRequires:  spark-core
@@ -228,7 +227,6 @@ Requires:       redstone-xmlrpc
 Requires:       salt-netapi-client >= 1.0.0
 Requires:       tomcat11-servlet-6_1-api
 Requires:       simple-core
-Requires:       simplexml
 Requires:       sitemesh
 Requires:       snakeyaml >= 1.33
 Requires:       spacewalk-branding
