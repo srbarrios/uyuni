@@ -26,6 +26,8 @@ if ENV['DEBUG']
   $debug_mode = true
   $stdout.puts('DEBUG MODE ENABLED.')
 end
+
+# Only run the code coverage if the redis host is available
 if ENV['REDIS_HOST']
   $code_coverage_mode = true
   $stdout.puts('CODE COVERAGE MODE ENABLED.')
