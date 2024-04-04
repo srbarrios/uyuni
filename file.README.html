@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  File: README
+  
+    &mdash; Documentation by YARD 0.9.36
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "README";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="file_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><div id='filecontents'>
+<h1 id="label-Uyuni+automated+test+suite">Uyuni automated test suite</h1>
+
+<h2 id="label-Introduction">Introduction</h2>
+
+<p>This is the automated test suite for <a
+href="https://www.uyuni-project.org/">Uyuni</a>.</p>
+
+<p>Before you start, make sure you are familiar with the <a
+href="https://cucumber.io/docs/gherkin/reference">basic concepts</a> of
+Cucumber that we are using in our test suite: features, scenarios and
+steps.</p>
+
+<p>Apart from Cucumber, the test suite relies on a number of <a
+href="documentation/software-components.md">software components</a>.</p>
+
+<h2 id="label-Running+the+test+suite">Running the test suite</h2>
+
+<p>You can run the Uyuni test suite with <a
+href="https://github.com/uyuni-project/sumaform/blob/master/README_TESTING.md#running-the-testsuite">sumaform</a>.</p>
+
+<h2 id="label-Core+features-2C+idempotency+and+tests+order">Core features, idempotency and tests order</h2>
+
+<p>The tests (features) mentioned in the YAML files inside the <a
+href="https://github.com/uyuni-project/uyuni/tree/master/testsuite/run_sets">run_sets</a>
+folder will be executed sequentially the <a
+href="https://github.com/SUSE/susemanager-ci/blob/master/jenkins_pipelines/environments/common/pipeline.groovy#L100">following
+way</a>:</p>
+<ul><li>
+<p>sanity_check</p>
+</li><li>
+<p>core</p>
+</li><li>
+<p>reposync</p>
+</li><li>
+<p>init_clients</p>
+</li><li>
+<p>secondary</p>
+</li><li>
+<p>secondary_parallelizable</p>
+</li><li>
+<p>finishing</p>
+</li></ul>
+
+<p><a href="documentation/idempotency.md">Idempotency</a> is the faculty to
+run the same feature any number of times. The basic idea of such a feature
+is that it does not change its environment.</p>
+
+<p>The features are grouped by core and secondary features.</p>
+<ul><li>
+<p><strong>Core features:</strong> the order is relevant and they are by
+design not idempotent, and serve to create a basic testing environment.</p>
+</li><li>
+<p><strong>Secondary features:</strong> the order is not important and they
+can be run any number of times.</p>
+</li></ul>
+
+<h2 id="label-Optional+components">Optional components</h2>
+
+<p>To know how to test with or without optional components like a proxy, a Red
+Hat-like minion or a SSH minion, look at the <a
+href="documentation/optional.md">optional components instructions</a>.</p>
+
+<h2 id="label-Contributing">Contributing</h2>
+
+<h3 id="label-Procedure">Procedure</h3>
+<ol><li>
+<p><strong>Always</strong> create a PR (even for backporting)</p>
+</li><li>
+<p>Your PR always needs at least one reviewer to approve</p>
+</li></ol>
+
+<h3 id="label-Guidelines+for+coding">Guidelines for coding</h3>
+
+<p>To get started, see the documentation about <a
+href="documentation/cucumber-steps.md">Using and writing Cucumber
+steps</a>. It covers most common steps in an ordered manner, as well as the
+way to write new steps.</p>
+
+<p>Please also read the <a href="documentation/guidelines.md">guidelines</a>
+with attention. They cover style issues, idempotency concerns, and naming
+conventions of files, features, scenarios and tests.</p>
+
+<p>There are also hints about <a href="documentation/pitfalls.md">Pitfalls</a>
+when writing code for the test suite.</p>
+
+<h2 id="label-Branches+used">Branches used</h2>
+<ul><li>
+<p>Development (to be run against a HEAD version of SUSE Manager):</p>
+</li><li>
+<p><a href="https://github.com/uyuni-project/uyuni">master</a></p>
+</li><li>
+<p>Release (to be run against a nightly or released <em>tagged</em> version of
+SUSE Manager):</p>
+</li><li>
+<p><a
+href="https://github.com/SUSE/spacewalk/tree/Manager-4.3">Manager-4.3</a></p>
+</li></ul>
+
+<h2 id="label-Dummy+packages+used+by+the+test+suite">Dummy packages used by the test suite</h2>
+
+<p>Some of the scenarios that are tested in this test suite make use of some
+external testing repositories which contain dummy packages. These packages
+are used to test package and patch installation and upgrade.</p>
+
+<p>The Open Build System (OBS) projects are:</p>
+<ul><li>
+<p><a
+href="https://build.opensuse.org/project/show/systemsmanagement:Uyuni:Test-Packages:Pool">build.opensuse.org/project/show/systemsmanagement:Uyuni:Test-Packages:Pool</a>:
+packages which must be installed on the client systems already;</p>
+</li><li>
+<p><a
+href="https://build.opensuse.org/project/show/systemsmanagement:Uyuni:Test-Packages:Updates">build.opensuse.org/project/show/systemsmanagement:Uyuni:Test-Packages:Updates</a>:
+packages for <code>Test-Base-Channel-x86_64</code> and
+<code>Fake-Base-Channel-Debian-like</code> channels.</p>
+</li></ul>
+
+<h2 id="label-Type+of+provided+packages">Type of provided packages</h2>
+<ul><li>
+<p>Normal dummy packages: <code>andromeda-dummy</code>,
+<code>hoag-dummy</code>, <code>orion-dummy</code>,
+<code>milkyway-dummy</code>, etc.</p>
+</li><li>
+<p>Wrong encoding of RPM attributes: <code>blackhole-dummy</code>. This
+package should be successfully imported and you will see it available as
+part of the <code>Test-Base-Channel-x86_64</code> if reposync handled the
+encoding correctly.</p>
+</li></ul>
+</div></div>
+
+      <div id="footer">
+  Generated on Thu Apr  4 14:37:04 2024 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.36 (ruby-2.5.9).
+</div>
+
+    </div>
+  </body>
+</html>

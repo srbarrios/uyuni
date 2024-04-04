@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: CustomFormatter::PrependsFeatureName
+  
+    &mdash; Documentation by YARD 0.9.36
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "CustomFormatter::PrependsFeatureName";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (P)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../CustomFormatter.html" title="CustomFormatter (module)">CustomFormatter</a></span></span>
+     &raquo; 
+    <span class="title">PrependsFeatureName</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: CustomFormatter::PrependsFeatureName
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>features/support/custom_formatter.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>PrependsFeatureName module is included in the custom formatter class. It
+overrides some methods to modify the behavior of the formatter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+
+
+
+  
+    <h2>
+      Class Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#formatter-class_method" title="formatter (class method)">.<strong>formatter</strong>(formatter_class)  &#x21d2; Class </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>A class method that takes a formatter class as an argument and returns a
+new class that includes the PrependsFeatureName module.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#before_feature-instance_method" title="#before_feature (instance method)">#<strong>before_feature</strong>(feature)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>This method is called before each feature is executed.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#prepend_feature_name_to-instance_method" title="#prepend_feature_name_to (instance method)">#<strong>prepend_feature_name_to</strong>(text)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>This method prepends the feature name to the given text.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#step_name-instance_method" title="#step_name (instance method)">#<strong>step_name</strong>(keyword, step_match, status, source_indent, background, file_colon_line)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>This method is called for each step in the feature.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="formatter-class_method">
+  
+    .<strong>formatter</strong>(formatter_class)  &#x21d2; <tt>Class</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>A class method that takes a formatter class as an argument and returns a
+new class that includes the PrependsFeatureName module.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>formatter_class</span>
+      
+      
+        <span class='type'>(<tt>Class</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The formatter class to be extended.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Class</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The new class that includes the PrependsFeatureName module.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+16
+17
+18</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'features/support/custom_formatter.rb', line 16</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_formatter'>formatter</span><span class='lparen'>(</span><span class='id identifier rubyid_formatter_class'>formatter_class</span><span class='rparen'>)</span>
+  <span class='const'>Class</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_formatter_class'>formatter_class</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="" title="CustomFormatter::PrependsFeatureName (module)">PrependsFeatureName</a></span></span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="before_feature-instance_method">
+  
+    #<strong>before_feature</strong>(feature)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>This method is called before each feature is executed. It takes the feature
+object as an argument and stores the feature file name in the
+@current_feature_name instance variable.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>feature</span>
+      
+      
+        <span class='type'>(<tt>Cucumber::Core::Ast::Feature</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The feature object.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+25
+26
+27
+28</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'features/support/custom_formatter.rb', line 25</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_before_feature'>before_feature</span><span class='lparen'>(</span><span class='id identifier rubyid_feature'>feature</span><span class='rparen'>)</span>
+  <span class='ivar'>@current_feature_name</span> <span class='op'>=</span> <span class='id identifier rubyid_feature'>feature</span><span class='period'>.</span><span class='id identifier rubyid_location'>location</span><span class='period'>.</span><span class='id identifier rubyid_file'>file</span>
+  <span class='kw'>super</span><span class='lparen'>(</span><span class='id identifier rubyid_feature'>feature</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="prepend_feature_name_to-instance_method">
+  
+    #<strong>prepend_feature_name_to</strong>(text)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>This method prepends the feature name to the given text.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>text</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The text to be prepended with the feature name.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The modified text with the feature name prepended.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+50
+51
+52</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'features/support/custom_formatter.rb', line 50</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_prepend_feature_name_to'>prepend_feature_name_to</span><span class='lparen'>(</span><span class='id identifier rubyid_text'>text</span><span class='rparen'>)</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[</span><span class='embexpr_beg'>#{</span><span class='ivar'>@current_feature_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>] </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_text'>text</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="step_name-instance_method">
+  
+    #<strong>step_name</strong>(keyword, step_match, status, source_indent, background, file_colon_line)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>This method is called for each step in the feature. It overrides the step
+name value by prepending the feature name.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>keyword</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The keyword of the step (Given, When, Then, etc).</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>step_match</span>
+      
+      
+        <span class='type'>(<tt>Cucumber::Core::Test::StepMatch</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Represents the match found between a Test Step and its activation.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>status</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The status of the step, which can be: passed, failed, undefined, skipped,
+pending, exception.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>source_indent</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The source code of the step definition indented.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>background</span>
+      
+      
+        <span class='type'>(<tt>Cucumber::Core::Ast::Background</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The background object in case this step is part of a background.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>file_colon_line</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The line number where the step is defined.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+40
+41
+42
+43</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'features/support/custom_formatter.rb', line 40</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_step_name'>step_name</span><span class='lparen'>(</span><span class='id identifier rubyid_keyword'>keyword</span><span class='comma'>,</span> <span class='id identifier rubyid_step_match'>step_match</span><span class='comma'>,</span> <span class='id identifier rubyid_status'>status</span><span class='comma'>,</span> <span class='id identifier rubyid_source_indent'>source_indent</span><span class='comma'>,</span> <span class='id identifier rubyid_background'>background</span><span class='comma'>,</span> <span class='id identifier rubyid_file_colon_line'>file_colon_line</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_keyword_changed'>keyword_changed</span> <span class='op'>=</span> <span class='id identifier rubyid_prepend_feature_name_to'>prepend_feature_name_to</span><span class='lparen'>(</span><span class='id identifier rubyid_keyword'>keyword</span><span class='rparen'>)</span>
+  <span class='kw'>super</span><span class='lparen'>(</span><span class='id identifier rubyid_keyword_changed'>keyword_changed</span><span class='comma'>,</span> <span class='id identifier rubyid_step_match'>step_match</span><span class='comma'>,</span> <span class='id identifier rubyid_status'>status</span><span class='comma'>,</span> <span class='id identifier rubyid_source_indent'>source_indent</span><span class='comma'>,</span> <span class='id identifier rubyid_background'>background</span><span class='comma'>,</span> <span class='id identifier rubyid_file_colon_line'>file_colon_line</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Thu Apr  4 14:37:04 2024 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.36 (ruby-2.5.9).
+</div>
+
+    </div>
+  </body>
+</html>
