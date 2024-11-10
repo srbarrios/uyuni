@@ -50,6 +50,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,18 +82,28 @@ public class OvalParser {
     /**
      * Parse the given OVAL file
      *
-     * @param ovalFile the OVAL file to parse
-     * @return the parsed OVAL encapulated in a {@link OvalRootType} object=
+     * @param ovalFileURL the OVAL file to parse
+     * @return the parsed OVAL encapsulated in an {@link OvalRootType} object.
      * */
-    public OvalRootType parse(URL ovalFile) throws OvalParserException {
+    public OvalRootType parse(URL ovalFileURL) throws OvalParserException {
+        File ovalFile;
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(OvalRootType.class);
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            return (OvalRootType) unmarshaller.unmarshal(ovalFile);
+            ovalFile = new File(ovalFileURL.toURI());
         }
-        catch (JAXBException e) {
-            throw new OvalParserException("Failed to parse the given OVAL file at: " + ovalFile, e);
+        catch (URISyntaxException e) {
+            throw new OvalParserException("Bad OVAL file path: " + ovalFileURL, e);
         }
+
+        List<DefinitionType> allDefinitions = parseAllDefinitions(ovalFile);
+        OVALResources ovalResources = parseResources(ovalFile);
+
+        OvalRootType ovalRootType = new OvalRootType();
+        ovalRootType.setDefinitions(allDefinitions);
+        ovalRootType.setObjects(ovalResources.getObjects());
+        ovalRootType.setStates(ovalResources.getStates());
+        ovalRootType.setTests(ovalResources.getTests());
+
+        return ovalRootType;
     }
 
     /**
@@ -105,6 +116,8 @@ public class OvalParser {
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         try {
             XMLEventReader reader = xmlInputFactory.createXMLEventReader(new FileInputStream(ovalFile));
+            // Disable external entities processing as a protection measure against XXE.
+            xmlInputFactory.setProperty("javax.xml.stream.isSupportingExternalEntities", false);
 
             List<DefinitionType> definitions = new ArrayList<>();
 
@@ -128,8 +141,8 @@ public class OvalParser {
                     if (nextEvent.asEndElement().getName().getLocalPart().equals("definitions")) {
                         if (!definitions.isEmpty()) {
                             bulkHandler.handle(definitions);
-                            definitions = new ArrayList<>();
                         }
+                        break;
                     }
                 }
             }
@@ -160,6 +173,9 @@ public class OvalParser {
      * */
     public OVALResources parseResources(File ovalFile) {
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+        // Disable external entities processing as a protection measure against XXE.
+        xmlInputFactory.setProperty("javax.xml.stream.isSupportingExternalEntities", false);
+
         try {
             XMLEventReader reader = xmlInputFactory.createXMLEventReader(new FileInputStream(ovalFile));
 
