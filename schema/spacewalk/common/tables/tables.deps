@@ -253,7 +253,8 @@ suseMinionInfo                     :: rhnServer
 suseInstalledProduct               :: rhnPackageArch
 suseMdData                         :: rhnChannel rhnPackage suseMdKeyword
 suseOVALPlatform                   ::
-suseOVALPlatformVulnerable         :: suseOVALPlatform rhnCVE
+suseOVALOsProduct                  ::
+suseOVALPlatformVulnerable         :: suseOVALOsProduct suseOVALPlatform rhnCVE
 suseOVALVulnerablePackage          :: suseOVALPlatformVulnerable
 susePackageEula                    :: rhnPackage suseEula
 susePackageProductFile             :: suseProductFile rhnPackage
