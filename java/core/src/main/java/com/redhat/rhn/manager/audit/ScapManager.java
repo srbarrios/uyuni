@@ -93,6 +93,7 @@ public class ScapManager extends BaseManager {
 
     private static final JAXBContext JAXB_CONTEXT = initializeJaxbContext();
 
+    private static final String XCCDF_PROFILES_XSL = "/usr/share/susemanager/scap/xccdf-profiles.xslt.in";
     /**
      * Returns the given system is scap enabled.
      * @param server The system for which to seach scap capability
@@ -492,6 +493,66 @@ public class ScapManager extends BaseManager {
             Files.delete(output.toPath());
         }
     }
+    /**
+     * Evaluate the XCCDF results report and store the results in the db.
+     * @param server the server
+     * @param action the action
+     * @param returnCode openscap return code
+     * @param errors openscap errors output
+     * @param resultsXml the XCCDF file
+     * @param resumeXsl the XSL used to generate the intermediary XML
+     * @return the {@link XccdfTestResult} that was saved in the db
+     * @throws IOException if the input files could not be read
+     */
+    public static BenchMark getProfileList(Server server, ScapAction action,
+                                           int returnCode, String errors,
+                                           InputStream resultsXml, File resumeXsl)
+            throws IOException {
+        // Transform XML
+        File xsltFile =   new File(XCCDF_PROFILES_XSL);
+        File output = getFile(action, resultsXml, xsltFile);
+        try (InputStream resumeIn = new FileInputStream(output)) {
+            BenchMark benchmark = createXmlPersister().read(BenchMark.class, resumeIn);
+            List<Profile> profiles = Optional.ofNullable(benchmark.getProfiles()).orElse(Collections.emptyList());
+            if (profiles.isEmpty()) {
+                log.error("Scap data stream misses profiles");
+                throw new RuntimeException("Scap data stream misses profiles");
+            }
+            return benchmark;
+        } catch (Exception e) {
+            log.error("Scap xccdf eval failed", e);
+            throw new RuntimeException("Scap xccdf eval failed", e);
+        } finally {
+            output.delete();
+        }
+    }
+    /**
+     * Evaluate the XCCDF results report and store the results in the db.
+     * @param xccdfXml the XCCDF file
+     * @return the {@link XccdfTestResult} that was saved in the db
+     * @throws IOException if the input files could not be read
+     */
+    public static BenchMark getProfileList(File xccdfXml)
+            throws IOException {
+        // Transform XML
+        File xsltFile =   new File(XCCDF_PROFILES_XSL);
+        InputStream xccdfFileStream = new FileInputStream(xccdfXml);
+        File output = getFile( xccdfFileStream, xsltFile);
+        try (InputStream resumeIn = new FileInputStream(output)) {
+            BenchMark benchmark = createXmlPersister().read(BenchMark.class, resumeIn);
+            List<Profile> profiles = Optional.ofNullable(benchmark.getProfiles()).orElse(Collections.emptyList());
+            if (profiles.isEmpty()) {
+                log.error("Scap data stream misses profiles");
+                throw new RuntimeException("Scap data stream misses profiles");
+            }
+            return benchmark;
+        } catch (Exception e) {
+            log.error("Scap xccdf eval failed", e);
+            throw new RuntimeException("Scap xccdf eval failed", e);
+        } finally {
+            output.delete();
+        }
+    }
 
     /**
      * Evaluate the SCAP results report and store the results in the db.
@@ -507,24 +568,12 @@ public class ScapManager extends BaseManager {
                                                   InputStream resumeXml) {
         ScapFactory.clearTestResult(server.getId(), action.getId());
         try {
-            XMLInputFactory inputFactory = XMLInputFactory.newFactory();
-
-            // Disable external entities to prevent XXE
-            inputFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
-            inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-
-            XMLStreamReader streamReader = inputFactory.createXMLStreamReader(resumeXml);
-            BenchmarkResume resume;
-
-            try {
-                resume = (BenchmarkResume) JAXB_CONTEXT.createUnmarshaller().unmarshal(streamReader);
-            }
-            finally {
-                streamReader.close();
-            }
-
-            Profile profile = Optional.ofNullable(resume.getProfile())
-                .orElse(new Profile("None", "No profile selected. Using defaults.", ""));
+            BenchmarkResume resume = createXmlPersister()
+                    .read(BenchmarkResume.class, resumeXml);
+            Profile profile = Optional.ofNullable(resume.getProfile()).orElse(
+                    new Profile("None",
+                            "No profile selected. Using defaults.",
+                            ""));
             TestResult testResults = resume.getTestResult();
             if (testResults == null) {
                 LOGGER.error("Scap report misses profile or testresult element");
