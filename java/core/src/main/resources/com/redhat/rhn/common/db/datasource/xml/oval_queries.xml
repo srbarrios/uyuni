@@ -64,14 +64,7 @@
 
     <write-mode name="clear_oval_metadata_by_os_product">
         <query params="os_product_family, os_product_version">
-            DELETE
-            FROM suseOVALPlatformVulnerable pv
-            WHERE pv.platform_id = (SELECT id
-                                    FROM suseOVALOsProduct osProduct
-                                    WHERE osProduct.os_family = :os_product_family
-                                      AND osProduct.version = :os_product_version);
-            DELETE
-            FROM suseOVALOsProduct osProduct
+            DELETE FROM suseOVALOsProduct osProduct
             WHERE osProduct.os_family = :os_product_family
               AND osProduct.version = :os_product_version;
         </query>
