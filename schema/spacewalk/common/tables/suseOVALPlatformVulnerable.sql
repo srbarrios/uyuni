@@ -23,7 +23,8 @@ CREATE TABLE suseOVALPlatformVulnerable
                             REFERENCES suseOVALPlatform (id)
                             ON DELETE CASCADE,
     product_os_id        NUMERIC NOT NULL
-                            REFERENCES suseOVALOsProduct (id),
+                            REFERENCES suseOVALOsProduct (id)
+                            ON DELETE CASCADE,
     cve_id               NUMERIC NOT NULL
                             REFERENCES rhnCve (id),
                          CONSTRAINT platform_prod_cve_id_uq UNIQUE (platform_id, product_os_id, cve_id)
