@@ -181,12 +181,12 @@ When(/^I use spacewalk-common-channel to add all "([^"]*)" channels with arch "(
 end
 
 When(/^I use spacewalk-repo-sync to sync channel "([^"]*)"$/) do |channel|
-  $command_output, _code = get_target('server').run_until_ok("spacewalk-repo-sync -c #{channel}")
+  $command_output, _code = get_target('server').run("spacewalk-repo-sync -c #{channel}", check_errors: false, verbose: true)
 end
 
 When(/^I use spacewalk-repo-sync to sync channel "([^"]*)" including "([^"]*)" packages?$/) do |channel, packages|
   append_includes = packages.split.map { |pkg| "--include #{pkg}" }.join(' ')
-  $command_output, _code = get_target('server').run_until_ok("spacewalk-repo-sync -c #{channel} #{append_includes}")
+  $command_output, _code = get_target('server').run("spacewalk-repo-sync -c #{channel} #{append_includes}", check_errors: false, verbose: true)
 end
 
 Then(/^I should get "([^"]*)"$/) do |value|
@@ -362,6 +362,25 @@ When(/^I kill running spacewalk-repo-sync for "([^"]*)"$/) do |os_product_versio
       end
     end
     break if channels_to_kill.empty?
+  end
+end
+
+When(/^I kill running spacewalk-repo-sync for "([^"]*)" channel$/) do |channel|
+  time_spent = 0
+  checking_rate = 5
+  repeat_until_timeout(timeout: 60, message: 'Some reposync processes were not killed properly', dont_raise: true) do
+    command_output, _code = get_target('server').run("ps axo pid,cmd | grep /usr/bin/spacewalk-repo-sync --channel #{channel} | grep -v grep", check_errors: false)
+    process = command_output.split("\n")[0]
+    if process.nil?
+      log "#{time_spent / 60.to_i} minutes waiting for '#{channel}' channel to start its repo-sync processes." if ((time_spent += checking_rate) % 60).zero?
+      sleep checking_rate
+      next
+    else
+      pid = process.split[0]
+      get_target('server').run("kill #{pid}", check_errors: false)
+      log "Reposync of channel #{channel} killed"
+      break
+    end
   end
 end
 
