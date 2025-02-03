@@ -36,7 +36,8 @@ jobs:
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
         run: |
           echo "Running test coverage analysis..."
-          echo "recommended_tests=$(node .github/scripts/test_covering_pr.js ${{ steps.files.outputs.added_modified }})" >> $GITHUB_ENV
+          recommended_tests=$(node .github/scripts/test_covering_pr.js ${{ steps.files.outputs.added_modified }})
+          echo "recommended_tests=$recommended_tests" >> $GITHUB_ENV
 
       - name: Debug Recommended Tests
         run: |
