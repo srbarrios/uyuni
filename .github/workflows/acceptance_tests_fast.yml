@@ -1,71 +1,47 @@
 name: acceptance-tests-fast
+
 on:
   pull_request_target:
-    types: [synchronize, opened, reopened]
+    paths:
+      - '**.java'
 
 jobs:
-  wait-for-suggested-tests:
+  tests-covering-pr:
     runs-on: ubuntu-latest
     steps:
-      - name: Wait for "Suggested tests to cover this Pull Request" to Complete
-        run: |
-          CHECK_NAME="Suggested tests to cover this Pull Request"
-          PR_NUMBER="${{ github.event.pull_request.number }}"
-          REPO="${{ github.repository }}"
+      - name: Checkout PR code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
 
-          echo "Waiting for '$CHECK_NAME' to complete..."
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
 
-          while true; do
-            # Fetch the latest check runs from the PR's HEAD commit
-            CHECK_RUNS=$(gh api "repos/$REPO/actions/runs" --jq ".workflow_runs[] | select(.name == \"$CHECK_NAME\") | .status, .conclusion")
+      - run: npm i ioredis
 
-            if [[ -z "$CHECK_RUNS" ]]; then
-              echo "⚠️  No check run found for '$CHECK_NAME' yet. Retrying..."
-              sleep 10
-              continue
-            fi
+      - id: files
+        uses: Ana06/get-changed-files@v2.3.0
+        with:
+          filter: '*.java'
 
-            STATUS=$(echo "$CHECK_RUNS" | head -n1)
-            CONCLUSION=$(echo "$CHECK_RUNS" | tail -n1)
-
-            echo "Found check run: status=$STATUS, conclusion=$CONCLUSION"
-
-            if [[ "$STATUS" == "completed" ]]; then
-              if [[ "$CONCLUSION" == "success" ]]; then
-                echo "✅ '$CHECK_NAME' completed successfully. Proceeding..."
-                exit 0
-              else
-                echo "❌ '$CHECK_NAME' failed or was cancelled. Exiting..."
-                exit 1
-              fi
-            fi
-
-            echo "⏳ '$CHECK_NAME' is still running... waiting 10s"
-            sleep 10
-          done
+      - id: tests_covering_pr
+        name: Tests covering PR
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  acceptance-tests-fast:
-    needs: wait-for-suggested-tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Fetch Recommended Tests from PR Comment
-        id: fetch-tests
+          REDIS_USER: ${{ secrets.REDIS_USER }}
+          REDIS_PASS: ${{ secrets.REDIS_PASS }}
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PORT: ${{ secrets.REDIS_PORT }}
         run: |
-          PR_NUMBER="${{ github.event.pull_request.number }}"
-          REPO="${{ github.repository }}"
-          
-          TESTS=$(gh pr view $PR_NUMBER --repo $REPO --json comments --jq '.comments[] | select(.body | contains("<!-- suggested_tests -->")) | .body' | tail -n +2)
-          echo "Recommended tests:"
-          echo "$TESTS"
-          echo "RECOMMENDED_TESTS=$TESTS" >> $GITHUB_ENV
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          echo "Running test coverage analysis..."
+          echo "recommended_tests=$(node .github/scripts/test_covering_pr.js ${{ steps.files.outputs.added_modified }})" >> $GITHUB_ENV
 
       - name: Run Acceptance Tests
         uses: "./.github/workflows/acceptance_tests_common.yml"
         with:
           secondary_tests: "19_run_secondary_fast.sh"
           server_id: "secondary_f"
-          recommended_tests: ${{ env.RECOMMENDED_TESTS }}
+          recommended_tests: ${{ env.recommended_tests }}
+
