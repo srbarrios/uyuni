@@ -6,7 +6,7 @@ on:
       - '**.java'
 
 jobs:
-  tests-covering-pr:
+  acceptance-tests-fast:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout PR code
@@ -43,7 +43,7 @@ jobs:
           echo "Recommended tests: ${{ env.recommended_tests }}"
 
       - name: Run Filtered Acceptance Tests
-        uses: "./.github/workflows/acceptance_tests_common.yml"
+        uses: ./.github/workflows/acceptance_tests_common.yml
         with:
           secondary_tests: "19_run_secondary_fast.sh"
           server_id: "secondary_f"
