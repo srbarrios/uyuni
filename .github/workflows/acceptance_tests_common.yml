@@ -73,7 +73,7 @@ jobs:
             ${{ runner.os }}-build-cache-uyuni-nodejs-
       - name: read recommended tests
         if: ${{ inputs.recommended_tests != '' }}
-        run: python .github/scripts/get_tests.py ${{ inputs.recommended_tests }}/${{ inputs.recommended_tests }} > testsuite/run_sets/filter.yml
+        run: python .github/scripts/get_tests.py '${{ inputs.recommended_tests }}' > testsuite/run_sets/filter.yml
       - name: create_tmp
         run: ./testsuite/podman_runner/01_setup_tmp_dirs.sh
       - name: create-podman-network
