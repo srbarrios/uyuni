@@ -40,10 +40,6 @@ jobs:
           echo "recommended_tests=$recommended_tests" >> $GITHUB_ENV
           echo "::set-output name=recommended_tests::$recommended_tests"  # Set output for this step
 
-      - name: Debug Recommended Tests
-        run: |
-          echo "Recommended tests: ${{ env.recommended_tests }}"
-
   run_recommended_tests:
     needs: acceptance-tests-fast
     uses: ./.github/workflows/acceptance_tests_common.yml

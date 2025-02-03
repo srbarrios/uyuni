@@ -43,6 +43,9 @@ jobs:
     needs: paths-filter-1
     if: ${{ needs.paths-filter-1.outputs.require_acceptance_tests == 'true' }}
     steps:
+      - name: Debug Recommended Tests
+        run: |
+          echo "Recommended tests: ${{ inputs.recommended_tests }}"
       - name: fix podman
         run: sudo apt install podman=3.4.4+ds1-1ubuntu1 --allow-downgrades
       - name: install python deps
