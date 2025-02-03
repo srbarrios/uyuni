@@ -38,14 +38,16 @@ jobs:
           echo "Running test coverage analysis..."
           recommended_tests=$(node .github/scripts/test_covering_pr.js ${{ steps.files.outputs.added_modified }})
           echo "recommended_tests=$recommended_tests" >> $GITHUB_ENV
+          echo "::set-output name=recommended_tests::$recommended_tests"  # Set output for this step
 
       - name: Debug Recommended Tests
         run: |
           echo "Recommended tests: ${{ env.recommended_tests }}"
 
   run_recommended_tests:
+    needs: acceptance-tests-fast
     uses: ./.github/workflows/acceptance_tests_common.yml
     with:
       secondary_tests: "19_run_secondary_fast.sh"
       server_id: "secondary_f"
-      recommended_tests: ${{ steps.tests_covering_pr.outputs.recommended_tests }}
+      recommended_tests: ${{ needs.acceptance-tests-fast.outputs.recommended_tests }}
