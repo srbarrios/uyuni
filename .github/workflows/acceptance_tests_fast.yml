@@ -12,38 +12,59 @@ jobs:
           CHECK_NAME="Suggested tests to cover this Pull Request"
           PR_NUMBER="${{ github.event.pull_request.number }}"
           REPO="${{ github.repository }}"
-          
+
           echo "Waiting for '$CHECK_NAME' to complete..."
           
           while true; do
-            STATUS=$(gh api repos/$REPO/commits/${{ github.event.pull_request.head.sha }}/check-runs \
-              --jq ".check_runs[] | select(.name == \"$CHECK_NAME\") | .status")
+            RESPONSE=$(gh api repos/$REPO/commits/${{ github.event.pull_request.head.sha }}/check-runs --jq ".check_runs[] | select(.name == \"$CHECK_NAME\")")
+
+            if [[ -z "$RESPONSE" ]]; then
+              echo "⚠️  No check run found for '$CHECK_NAME' yet. Retrying..."
+              sleep 10
+              continue
+            fi
           
+            STATUS=$(echo "$RESPONSE" | jq -r '.status')
+            CONCLUSION=$(echo "$RESPONSE" | jq -r '.conclusion')
+
+            echo "Found check run: status=$STATUS, conclusion=$CONCLUSION"
+
             if [[ "$STATUS" == "completed" ]]; then
-              echo "'$CHECK_NAME' is completed. Proceeding..."
-              exit 0
+              if [[ "$CONCLUSION" == "success" ]]; then
+                echo "✅ '$CHECK_NAME' completed successfully. Proceeding..."
+                exit 0
+              else
+                echo "❌ '$CHECK_NAME' failed or was cancelled. Exiting..."
+                exit 1
+              fi
             fi
 
-            echo "Still waiting..."
+            echo "⏳ '$CHECK_NAME' is still running... waiting 10s"
             sleep 10
           done
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  download-artifact:
+  acceptance-tests-fast:
     needs: wait-for-suggested-tests
     runs-on: ubuntu-latest
     steps:
-      - name: Download recommended tests artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: recommended-tests.xml
-          path: ./
+      - name: Fetch Recommended Tests from PR Comment
+        id: fetch-tests
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          REPO="${{ github.repository }}"
+          
+          TESTS=$(gh pr view $PR_NUMBER --repo $REPO --json comments --jq '.comments[] | select(.body | contains("<!-- suggested_tests -->")) | .body' | tail -n +2)
+          echo "Recommended tests:"
+          echo "$TESTS"
+          echo "recommended_tests=$TESTS" >> $GITHUB_ENV
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  acceptance-tests-fast:
-    needs: download-artifact
-    uses: "./.github/workflows/acceptance_tests_common.yml"
-    with:
-      secondary_tests: "19_run_secondary_fast.sh"
-      server_id: "secondary_f"
-      recommended_tests: "./recommended-tests.xml"
+      - name: Run Acceptance Tests
+        uses: "./.github/workflows/acceptance_tests_common.yml"
+        with:
+          secondary_tests: "19_run_secondary_fast.sh"
+          server_id: "secondary_f"
+          recommended_tests: "${{ env.recommended_tests }}"

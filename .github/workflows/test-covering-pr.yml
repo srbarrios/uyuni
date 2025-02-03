@@ -9,18 +9,24 @@ jobs:
   tests-covering-pr:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout PR code (supporting forks)
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
       - name: Use Node.js 18
         uses: actions/setup-node@v4
         with:
           node-version: 18
+
       - run: npm i ioredis
+
       - id: files
         uses: Ana06/get-changed-files@v2.3.0
         with:
           filter: '*.java'
+
       - id: tests_covering_pr
         name: Tests covering PR
         env:
@@ -28,15 +34,17 @@ jobs:
           REDIS_PASS: ${{ secrets.REDIS_PASS }}
           REDIS_HOST: ${{ secrets.REDIS_HOST }}
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
-        run: echo "result=$(node .github/scripts/test_covering_pr.js ${{ steps.files.outputs.added_modified }})" | tee recommended-tests.xml >> $GITHUB_OUTPUT
-      - name: Publish recommended tests as artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: recommended-tests.xml
-          path: recommended-tests.xml
-      - name: Write a comment into the Pull Request
+        run: |
+          echo "Running test coverage analysis..."
+          echo "result=$(node .github/scripts/test_covering_pr.js ${{ steps.files.outputs.added_modified }})" >> $GITHUB_ENV
+
+      - name: Write test results to PR comment
         uses: actions-cool/maintain-one-comment@v3
         with:
           body: |
-            ${{ steps.tests_covering_pr.outputs.result }}
+            <!-- suggested_tests -->
+            **Recommended Tests for this PR**  
+            ```
+            ${{ env.result }}
+            ```
           body-include: '<!-- suggested_tests -->'
