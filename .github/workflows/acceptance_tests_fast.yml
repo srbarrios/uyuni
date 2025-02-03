@@ -40,6 +40,10 @@ jobs:
           echo "DEBUG: Recommended tests = $recommended_tests"
           echo "recommended_tests=$recommended_tests" >> $GITHUB_OUTPUT
 
+      - name: Debug Recommended Tests Output
+        run: |
+          echo "DEBUG: Recommended tests output = ${{ steps.tests_covering_pr.outputs.recommended_tests }}"
+
   run_recommended_tests:
     needs: acceptance-tests-fast
     uses: ./.github/workflows/acceptance_tests_common.yml
