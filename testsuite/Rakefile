@@ -89,6 +89,10 @@ namespace :utils do
     input_yaml = args[:input_yaml]
     output_yaml = args[:output_yaml]
 
+    # Log for debugging
+    puts "Filter YAML: #{filter_yaml}"
+    puts "Input YAML: #{input_yaml}"
+
     # Load test lists from the provided YAML files
     filter_tests = YAML.load_file(filter_yaml) || []
     input_tests = YAML.load_file(input_yaml) || []
