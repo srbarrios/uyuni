@@ -1,4 +1,4 @@
-name: acceptance-tests-fast
+name: smart-tests
 
 on:
   pull_request_target:
@@ -6,27 +6,23 @@ on:
       - '**.java'
 
 jobs:
-  acceptance-tests-fast:
+  generate_recommended_tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout PR code
+      - name: Checkout Pull Request code
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
-
       - name: Use Node.js 18
         uses: actions/setup-node@v4
         with:
           node-version: 18
-
       - run: npm i ioredis
-
-      - id: files
+      - id: changed_files
         uses: Ana06/get-changed-files@v2.3.0
         with:
           filter: '*.java'
-
       - id: tests_covering_pr
         name: Tests covering PR
         env:
@@ -35,22 +31,15 @@ jobs:
           REDIS_HOST: ${{ secrets.REDIS_HOST }}
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
         run: |
-          echo "Running test coverage analysis..."
-          recommended_tests=$(node .github/scripts/test_covering_pr.js ${{ steps.files.outputs.added_modified }})
-          echo "DEBUG: Recommended tests = $recommended_tests"
+          recommended_tests=$(node .github/scripts/test_covering_pr.js ${{ steps.changed_files.outputs.added_modified }})
           echo "recommended_tests=$recommended_tests" >> $GITHUB_OUTPUT
-
-      - name: Debug Recommended Tests Output
-        run: |
-          echo "DEBUG: Recommended tests output = ${{ steps.tests_covering_pr.outputs.recommended_tests }}"
-
     outputs:
       recommended_tests: ${{ steps.tests_covering_pr.outputs.recommended_tests }}
 
   run_recommended_tests:
-    needs: acceptance-tests-fast
+    needs: generate_recommended_tests
     uses: ./.github/workflows/acceptance_tests_common.yml
     with:
       secondary_tests: "19_run_secondary_fast.sh"
       server_id: "secondary_f"
-      recommended_tests: ${{ needs.acceptance-tests-fast.outputs.recommended_tests }}
+      recommended_tests: ${{ needs.generate_recommended_tests.outputs.recommended_tests }}

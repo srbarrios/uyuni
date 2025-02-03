@@ -43,9 +43,6 @@ jobs:
     needs: paths-filter-1
     if: ${{ needs.paths-filter-1.outputs.require_acceptance_tests == 'true' }}
     steps:
-      - name: Debug Recommended Tests
-        run: |
-          echo "Recommended tests: ${{ inputs.recommended_tests }}"
       - name: fix podman
         run: sudo apt install podman=3.4.4+ds1-1ubuntu1 --allow-downgrades
       - name: install python deps
@@ -60,7 +57,6 @@ jobs:
           key: ${{ runner.os }}-build-cache-uyuni-jars-${{ hashFiles('**/java/buildconf/ivy/*.xml') }}
           restore-keys: |
             ${{ runner.os }}-build-cache-uyuni-jars-
-
       - name: Cache-obs-to-maven files
         uses: actions/cache@v4
         with:
@@ -75,17 +71,9 @@ jobs:
           key: ${{ runner.os }}-build-cache-uyuni-nodejs-${{ hashFiles('**/web/html/src/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-build-cache-uyuni-nodejs-
-      - name: Download recommended tests
-        if: ${{ inputs.recommended_tests != '' }}   
-        uses: actions/download-artifact@v4
-        with:
-          name: recommended-tests.xml
-          path: recommended-tests.xml
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: read recommended tests
         if: ${{ inputs.recommended_tests != '' }}
-        run: python .github/scripts/get_tests.py ${{ inputs.recommended_tests }}/${{ inputs.recommended_tests }} > testsuite/run_sets/filter.yml && echo "DEBUG" && cat testsuite/run_sets/filter.yml
+        run: python .github/scripts/get_tests.py ${{ inputs.recommended_tests }}/${{ inputs.recommended_tests }} > testsuite/run_sets/filter.yml
       - name: create_tmp
         run: ./testsuite/podman_runner/01_setup_tmp_dirs.sh
       - name: create-podman-network
