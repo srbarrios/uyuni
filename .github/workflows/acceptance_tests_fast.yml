@@ -42,6 +42,10 @@ jobs:
         run: |
           echo "Recommended tests: ${{ env.recommended_tests }}"
 
+      - name: Debug file structure
+        run: |
+          ls -R ./.github/workflows
+
       - name: Run Filtered Acceptance Tests
         uses: ./.github/workflows/acceptance_tests_common.yml
         with:
