@@ -45,6 +45,8 @@ jobs:
       - name: Debug file structure
         run: |
           ls -R ./.github/workflows
+          cd ./.github/workflows
+          pwd
 
       - name: Run Filtered Acceptance Tests
         uses: ./.github/workflows/acceptance_tests_common.yml
