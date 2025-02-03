@@ -14,18 +14,19 @@ jobs:
           REPO="${{ github.repository }}"
 
           echo "Waiting for '$CHECK_NAME' to complete..."
-          
-          while true; do
-            RESPONSE=$(gh api repos/$REPO/commits/${{ github.event.pull_request.head.sha }}/check-runs --jq ".check_runs[] | select(.name == \"$CHECK_NAME\")")
 
-            if [[ -z "$RESPONSE" ]]; then
+          while true; do
+            # Fetch the latest check runs from the PR's HEAD commit
+            CHECK_RUNS=$(gh api "repos/$REPO/actions/runs" --jq ".workflow_runs[] | select(.name == \"$CHECK_NAME\") | .status, .conclusion")
+
+            if [[ -z "$CHECK_RUNS" ]]; then
               echo "⚠️  No check run found for '$CHECK_NAME' yet. Retrying..."
               sleep 10
               continue
             fi
-          
-            STATUS=$(echo "$RESPONSE" | jq -r '.status')
-            CONCLUSION=$(echo "$RESPONSE" | jq -r '.conclusion')
+
+            STATUS=$(echo "$CHECK_RUNS" | head -n1)
+            CONCLUSION=$(echo "$CHECK_RUNS" | tail -n1)
 
             echo "Found check run: status=$STATUS, conclusion=$CONCLUSION"
 
