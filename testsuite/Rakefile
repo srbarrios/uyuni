@@ -93,9 +93,8 @@ namespace :utils do
     filter_tests = YAML.load_file(filter_yaml) || []
     input_tests = YAML.load_file(input_yaml) || []
 
-    # Log for debugging
-    puts "Filter Tests: #{filter_tests}"
-    puts "Input Tests: #{input_tests}"
+    # Normalize the test names
+    filter_tests = filter_tests.map { |test| "features/secondary/#{test}.feature" }
 
     # Intersect filter_tests with input_tests to create the filtered set
     filtered_tests = input_tests.select { |test| filter_tests.include?(test) }
