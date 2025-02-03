@@ -59,7 +59,7 @@ jobs:
           TESTS=$(gh pr view $PR_NUMBER --repo $REPO --json comments --jq '.comments[] | select(.body | contains("<!-- suggested_tests -->")) | .body' | tail -n +2)
           echo "Recommended tests:"
           echo "$TESTS"
-          echo "recommended_tests=$TESTS" >> $GITHUB_ENV
+          echo "RECOMMENDED_TESTS=$TESTS" >> $GITHUB_ENV
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -68,4 +68,4 @@ jobs:
         with:
           secondary_tests: "19_run_secondary_fast.sh"
           server_id: "secondary_f"
-          recommended_tests: "${{ env.recommended_tests }}"
+          recommended_tests: "${{ RECOMMENDED_TESTS }}"
