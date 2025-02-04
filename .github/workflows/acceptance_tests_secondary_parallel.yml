@@ -1,4 +1,4 @@
-name: Additional Acceptance Tests
+name: Acceptance Tests
 on:
   pull_request:
     types:
@@ -12,7 +12,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 jobs:
-  acceptance-tests-secondary-parallel:
+  additional-acceptance-tests:
+    name: ${{ matrix.set }}
     # Skip running scheduled jobs on forks
     if: (github.repository == 'uyuni-project/uyuni' || github.event_name != 'schedule')
     uses: ./.github/workflows/acceptance_tests_common.yml
