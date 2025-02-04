@@ -5,7 +5,9 @@ on:
       - opened
       - reopened
       - synchronize
-
+  pull_request_target:
+    types:
+      - labeled  # Trigger when a label is added
   schedule:
     - cron: '0 */12 * * *'
 concurrency:
@@ -14,8 +16,10 @@ concurrency:
 jobs:
   additional-acceptance-tests:
     name: ${{ matrix.set }}
-    # Skip running scheduled jobs on forks
-    if: (github.repository == 'uyuni-project/uyuni' || github.event_name != 'schedule')
+    # Skip running scheduled jobs on forks and only run if "run-full-testsuite" label is present
+    if: >-
+      (github.repository == 'uyuni-project/uyuni' || github.event_name != 'schedule') &&
+      contains(github.event.pull_request.labels.*.name, 'run-full-testsuite')
     uses: ./.github/workflows/acceptance_tests_common.yml
     strategy:
       fail-fast: false
