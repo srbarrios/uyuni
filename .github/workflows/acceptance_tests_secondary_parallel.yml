@@ -1,4 +1,4 @@
-name: Acceptance Tests
+name: Additional Tests
 on:
   pull_request:
     types:
