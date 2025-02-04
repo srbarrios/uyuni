@@ -14,6 +14,8 @@
  */
 package com.redhat.rhn.manager.audit;
 
+//TEST
+
 import com.redhat.rhn.common.RhnRuntimeException;
 import com.redhat.rhn.common.conf.Config;
 import com.redhat.rhn.common.db.datasource.DataResult;

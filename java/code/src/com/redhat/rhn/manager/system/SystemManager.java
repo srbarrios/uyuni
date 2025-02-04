@@ -14,7 +14,7 @@
  * in this software or its documentation.
  */
 
-// TEST
+package com.redhat.rhn.manager.system;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
