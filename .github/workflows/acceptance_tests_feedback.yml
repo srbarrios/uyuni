@@ -1,4 +1,4 @@
-name: acceptance-tests-feedback
+name: Ask for acceptance tests feedback
 on:
   pull_request_target:
     paths:
