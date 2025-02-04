@@ -1,4 +1,4 @@
-name: acceptance-tests-secondary-parallel
+name: Additional Acceptance Tests
 on:
   pull_request:
     types:

@@ -1,4 +1,4 @@
-name: acceptance-tests-secondary
+name: Acceptance Tests
 on:
   pull_request:
     types:

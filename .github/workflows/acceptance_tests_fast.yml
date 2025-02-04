@@ -1,4 +1,4 @@
-name: smart-tests
+name: Recommended Tests
 
 on:
   pull_request_target:
@@ -40,6 +40,6 @@ jobs:
     needs: generate_recommended_tests
     uses: ./.github/workflows/acceptance_tests_common.yml
     with:
-      secondary_tests: "19_run_secondary_fast.sh"
+      secondary_tests: "19_run_recommended_tests.sh"
       server_id: "secondary_f"
       recommended_tests: ${{ needs.generate_recommended_tests.outputs.recommended_tests }}
