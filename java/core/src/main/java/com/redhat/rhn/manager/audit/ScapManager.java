@@ -515,12 +515,12 @@ public class ScapManager extends BaseManager {
             BenchMark benchmark = createXmlPersister().read(BenchMark.class, resumeIn);
             List<Profile> profiles = Optional.ofNullable(benchmark.getProfiles()).orElse(Collections.emptyList());
             if (profiles.isEmpty()) {
-                log.error("Scap data stream misses profiles");
+                LOGGER.error("Scap data stream misses profiles");
                 throw new RuntimeException("Scap data stream misses profiles");
             }
             return benchmark;
         } catch (Exception e) {
-            log.error("Scap xccdf eval failed", e);
+            LOGGER.error("Scap xccdf eval failed", e);
             throw new RuntimeException("Scap xccdf eval failed", e);
         } finally {
             output.delete();
@@ -542,12 +542,12 @@ public class ScapManager extends BaseManager {
             BenchMark benchmark = createXmlPersister().read(BenchMark.class, resumeIn);
             List<Profile> profiles = Optional.ofNullable(benchmark.getProfiles()).orElse(Collections.emptyList());
             if (profiles.isEmpty()) {
-                log.error("Scap data stream misses profiles");
+                LOGGER.error("Scap data stream misses profiles");
                 throw new RuntimeException("Scap data stream misses profiles");
             }
             return benchmark;
         } catch (Exception e) {
-            log.error("Scap xccdf eval failed", e);
+            LOGGER.error("Scap xccdf eval failed", e);
             throw new RuntimeException("Scap xccdf eval failed", e);
         } finally {
             output.delete();
@@ -618,7 +618,27 @@ public class ScapManager extends BaseManager {
                     "\nSome text strings were truncated when saving to the database.";
             }
             result.setErrors(HibernateFactory.stringToByteArray(errs));
-            return new ScapFactory().save(result);
+            new ScapFactory().save(result);
+
+            // get rules with remediations
+
+            List<Rule> remediations = resume.getRules().stream()
+
+                    .filter(s -> Objects.nonNull(s.getRemediation())).collect(Collectors.toList());
+
+            remediations.stream().forEach(s-> {
+
+                XccdfRuleFix xccdfRuleFix = ScapFactory.lookupRuleRemediation(resume.getId(), s.getId())
+
+                        .orElse(new XccdfRuleFix(resume.getId(), s.getId(), s.getRemediation()));
+
+                xccdfRuleFix.setRemediation(s.getRemediation());
+
+                ScapFactory.saveXccfRuleFix(xccdfRuleFix);
+
+            });
+
+            return result;
         }
         catch (Exception e) {
             LOGGER.error("Scap xccdf eval failed", e);

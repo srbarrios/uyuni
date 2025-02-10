@@ -21,11 +21,14 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import java.util.List;
+
 /**
  * Bean used to unmarshall an intermediary SCAP report.
  */
 @XmlRootElement(name = "benchmark-resume")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Root(name = "/", strict = false)
 public class BenchmarkResume {
 
     @XmlAttribute(required = true)
@@ -40,6 +43,8 @@ public class BenchmarkResume {
     @XmlElement(name = "TestResult", required = true)
     private TestResult testResult;
 
+    @ElementList(name = "rule", inline=true, required = false)
+    private List<Rule> rules;
     /**
      * @return id to get
      */
@@ -94,6 +99,14 @@ public class BenchmarkResume {
      */
     public void setTestResult(TestResult testResultIn) {
         this.testResult = testResultIn;
+    }
+
+    public List<Rule> getRules() {
+        return rules;
+    }
+
+    public void setRules(List<Rule> rules) {
+        this.rules = rules;
     }
 
     @Override
