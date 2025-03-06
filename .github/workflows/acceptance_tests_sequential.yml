@@ -24,3 +24,4 @@ jobs:
       tests: "18_run_secondary_tests.sh"
       server_id: "secondary"
       skip_tests: false
+
