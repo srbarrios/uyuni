@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 SUSE LLC
+ * Copyright (c) 2025 SUSE LLC
  *
  * This software is licensed to you under the GNU General Public License,
  * version 2 (GPLv2). There is NO WARRANTY for this software, express or
@@ -74,6 +74,11 @@ public class ContentManagementViewsController {
         get("/manager/contentmanagement/filters",
                 withUserPreferences(withCsrfToken(withRolesTemplate(
                         ContentManagementViewsController::listFiltersView))), jade);
+
+        //Added dummy route for demo.
+        get("/manager/contentmanagement/dummy",
+                withUserPreferences(withCsrfToken(withRolesTemplate(
+                        ContentManagementViewsController::dummyMethod))), jade);
     }
 
     /**
@@ -180,4 +185,16 @@ public class ContentManagementViewsController {
         return new ModelAndView(data, "controllers/contentmanagement/templates/list-filters.jade");
     }
 
+    /**
+     * Dummy method for demo.
+     * @param req the request object
+     * @param res the response object
+     * @param user the current user
+     * @return the ModelAndView object to render the dummy page.
+     */
+    public static ModelAndView dummyMethod(Request req, Response res, User user) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("dummyData", "This is dummy data for the demo.");
+        return new ModelAndView(data, "controllers/contentmanagement/templates/dummy.jade");
+    }
 }
