@@ -190,7 +190,7 @@ jobs:
         run: ./testsuite/podman_runner/17_run_init_clients_tests.sh
 
       - name: Split tests into multiple YAML files
-        if: ${{ !inputs.skip_tests && contains(inputs.server_id, 'parallel') }}
+        if: ${{ !inputs.skip_tests && contains(inputs.server_id, 'additional') }}
         run: ./testsuite/podman_runner/23_split_secondary_p_tests.sh
 
       - name: Run acceptance tests

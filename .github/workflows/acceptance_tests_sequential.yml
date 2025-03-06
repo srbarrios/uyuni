@@ -14,7 +14,7 @@ jobs:
     uses: ./.github/workflows/acceptance_tests_base.yml
     with:
       tests: "18_run_secondary_tests.sh"
-      server_id: "secondary"
+      server_id: "acceptance"
       skip_tests: ${{ inputs.skip_tests == true }}
   scheduled-acceptance-tests:
     name: Scheduled 0
@@ -22,6 +22,6 @@ jobs:
     uses: ./.github/workflows/acceptance_tests_base.yml
     with:
       tests: "18_run_secondary_tests.sh"
-      server_id: "secondary"
+      server_id: "acceptance"
       skip_tests: false
 
