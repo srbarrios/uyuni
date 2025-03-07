@@ -17,7 +17,6 @@ jobs:
       server_id: "secondary"
       skip_tests: ${{ inputs.skip_tests == true }}
   scheduled-acceptance-tests:
-    name: "0"
     if: ${{ github.event_name == 'repository_dispatch' }}
     uses: ./.github/workflows/acceptance_tests_base.yml
     with:
