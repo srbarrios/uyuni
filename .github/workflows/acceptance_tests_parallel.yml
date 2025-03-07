@@ -21,6 +21,7 @@ jobs:
       server_id: "secondary_parallel_${{ matrix.set }}"
       skip_tests: ${{ inputs.skip_tests == true }}
   scheduled-additional-tests:
+    name: Scheduled ${{ matrix.set }}
     if: ${{ github.event_name == 'repository_dispatch' }}
     uses: ./.github/workflows/acceptance_tests_base.yml
     strategy:
