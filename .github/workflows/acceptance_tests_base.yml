@@ -33,7 +33,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
-        if: ${{ !inputs.skip_tests }}
         id: filter
         with:
           filters: |
