@@ -14,7 +14,6 @@ on:
 jobs:
   recommended-tests:
     name: "recommended"
-    if: ${{ github.event_name == 'repository_dispatch' }}
     uses: ./.github/workflows/acceptance_tests_base.yml
     with:
       tests: "19_run_recommended_tests.sh"
