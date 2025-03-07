@@ -60,7 +60,7 @@ jobs:
     uses: ./.github/workflows/acceptance_tests_recommended.yml
     secrets: inherit
     with:
-      skip: ${{ needs.determine_tests.outputs.run_full_testsuite }}
+      skip_tests: ${{ needs.determine_tests.outputs.run_full_testsuite == 'true' }}
       recommended_tests: ${{ needs.determine_tests.outputs.recommended_tests }}
 
   run_acceptance_tests:
@@ -68,11 +68,11 @@ jobs:
     uses: ./.github/workflows/acceptance_tests_sequential.yml
     secrets: inherit
     with:
-      skip: ${{ !needs.determine_tests.outputs.run_full_testsuite }}
+      skip_tests: ${{ needs.determine_tests.outputs.run_full_testsuite != 'true' }}
 
   run_additional_tests:
     needs: determine_tests
     uses: ./.github/workflows/acceptance_tests_parallel.yml
     secrets: inherit
     with:
-      skip: ${{ !needs.determine_tests.outputs.run_full_testsuite }}
+      skip_tests: ${{ needs.determine_tests.outputs.run_full_testsuite != 'true' }}
