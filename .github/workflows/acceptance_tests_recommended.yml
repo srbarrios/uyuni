@@ -16,7 +16,7 @@ jobs:
     name: 0
     uses: ./.github/workflows/acceptance_tests_base.yml
     with:
-      tests: "19_run_recommended_tests.sh"
+      tests: "20_run_recommended_tests.sh"
       server_id: "secondary"
       recommended_tests: ${{ inputs.recommended_tests }}
       skip_tests: ${{ inputs.skip_tests == true }}
