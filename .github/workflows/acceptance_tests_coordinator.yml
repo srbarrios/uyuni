@@ -1,4 +1,4 @@
-name: Acceptance Tests Coordinator
+name: TestFlow
 
 on:
   pull_request:
@@ -55,7 +55,8 @@ jobs:
       recommended_tests: ${{ steps.tests_covering_pr.outputs.recommended_tests }}
       run_full_testsuite: ${{ steps.determine_running_full_testsuite.outputs.run_full_testsuite }}
 
-  run_recommended_tests:
+  recommended:
+    name: Recommended Tests
     needs: determine_tests
     uses: ./.github/workflows/acceptance_tests_recommended.yml
     secrets: inherit
@@ -63,14 +64,16 @@ jobs:
       skip_tests: ${{ needs.determine_tests.outputs.run_full_testsuite == 'true' }}
       recommended_tests: ${{ needs.determine_tests.outputs.recommended_tests }}
 
-  run_acceptance_tests:
+  acceptance:
+    name: Acceptance Tests
     needs: determine_tests
     uses: ./.github/workflows/acceptance_tests_sequential.yml
     secrets: inherit
     with:
       skip_tests: ${{ needs.determine_tests.outputs.run_full_testsuite != 'true' }}
 
-  run_additional_tests:
+  additional:
+    name: Additional Tests
     needs: determine_tests
     uses: ./.github/workflows/acceptance_tests_parallel.yml
     secrets: inherit
