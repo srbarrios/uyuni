@@ -17,7 +17,7 @@ jobs:
       matrix:
         set: ['1', '2', '3', '4', '5']
     with:
-      tests: "19_run_secondary_parallelizable_tests_subset.sh ${{ matrix.set }}"
+      tests: "22_run_secondary_parallelizable_tests_subset.sh ${{ matrix.set }}"
       server_id: "secondary_parallel_${{ matrix.set }}"
       skip_tests: ${{ inputs.skip_tests == true }}
   scheduled-additional-tests:
@@ -29,6 +29,6 @@ jobs:
       matrix:
         set: ['1', '2', '3', '4', '5']
     with:
-      tests: "19_run_secondary_parallelizable_tests_subset.sh ${{ matrix.set }}"
+      tests: "22_run_secondary_parallelizable_tests_subset.sh ${{ matrix.set }}"
       server_id: "secondary_parallel_${{ matrix.set }}"
       skip_tests: false

@@ -190,8 +190,8 @@ jobs:
         run: ./testsuite/podman_runner/17_run_init_clients_tests.sh
 
       - name: Split tests into multiple YAML files
-        if: ${{ !inputs.skip_tests }}
-        run: ./testsuite/podman_runner/19_split_secondary_p_tests.sh
+        if: ${{ !inputs.skip_tests && contains(inputs.server_id, 'parallel') }}
+        run: ./testsuite/podman_runner/23_split_secondary_p_tests.sh
 
       - name: Run acceptance tests
         if: ${{ !inputs.skip_tests }}
@@ -199,11 +199,11 @@ jobs:
 
       - name: Get server logs
         if: ${{ failure() && !inputs.skip_tests }}
-        run: ./testsuite/podman_runner/20_get_server_logs.sh ${{ inputs.server_id }}
+        run: ./testsuite/podman_runner/24_get_client_logs.sh ${{ inputs.server_id }}
 
       - name: Get client logs
         if: ${{ failure() && !inputs.skip_tests }}
-        run: ./testsuite/podman_runner/21_get_client_logs.sh ${{ inputs.server_id }}
+        run: ./testsuite/podman_runner/25_get_client_logs.sh ${{ inputs.server_id }}
 
       - name: Upload server log artifacts
         if: ${{ failure() && !inputs.skip_tests }}
