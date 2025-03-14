@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 SUSE LLC
+ * Copyright (c) 2025 SUSE LLC
  *
  * This software is licensed to you under the GNU General Public License,
  * version 2 (GPLv2). There is NO WARRANTY for this software, express or
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Custom {@link List} deserializer that handles arbitrary numbers properly
+ * Custom {@link List} deserializer that handles arbitrary JSON structures properly.
  */
 public class ListDeserializer implements JsonDeserializer<List<Object>> {
     @Override
@@ -43,41 +43,36 @@ public class ListDeserializer implements JsonDeserializer<List<Object>> {
                 list.add(context.deserialize(el, List.class));
             }
             else if (el.isJsonPrimitive()) {
-                JsonPrimitive prim = el.getAsJsonPrimitive();
-                if (prim.isNumber()) {
-                    Number num = null;
-                    try {
-                        num = Integer.parseInt(prim.getAsString());
-                    }
-                    catch (NumberFormatException eInt) {
-                        try {
-                            num = Long.parseLong(prim.getAsString());
-                        }
-                        catch (NumberFormatException eLong) {
-                            try {
-                                num = Double.parseDouble(prim.getAsString());
-                            }
-                            catch (NumberFormatException eDouble) {
-                                // Not a valid number
-                                list.add(prim.getAsString());
-                            }
-                        }
-                    }
-                    if (num != null) {
-                        list.add(num);
-                    }
-                }
-                else if (prim.isBoolean()) {
-                    list.add(prim.getAsBoolean());
-                }
-                else if (prim.isString()) {
-                    list.add(prim.getAsString());
-                }
-                else {
-                    list.add(null);
-                }
+                list.add(parsePrimitive(el.getAsJsonPrimitive()));
             }
         }
         return list;
+    }
+
+    private Object parsePrimitive(JsonPrimitive prim) {
+        if (prim.isNumber()) {
+            return parseNumber(prim.getAsString());
+        } else if (prim.isBoolean()) {
+            return prim.getAsBoolean();
+        } else if (prim.isString()) {
+            return prim.getAsString();
+        }
+        return null;
+    }
+
+    private Number parseNumber(String numberStr) {
+        try {
+            return Integer.parseInt(numberStr);
+        } catch (NumberFormatException e) {
+            try {
+                return Long.parseLong(numberStr);
+            } catch (NumberFormatException e2) {
+                try {
+                    return Double.parseDouble(numberStr);
+                } catch (NumberFormatException e3) {
+                    return null; // Not a valid number, return null
+                }
+            }
+        }
     }
 }
