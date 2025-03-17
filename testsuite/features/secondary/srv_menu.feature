@@ -12,6 +12,9 @@ Feature: Web UI - Main landing page menu, texts and links
   Scenario: Log in as admin user
     Given I am authorized for the "Admin" section
 
+  Scenario: Demo scenario to force a failure
+    Then I should see a "Demo failure" text
+
   Scenario: The Home menu
     When I follow the left menu "Home"
     And I should see a "Overview" link in the left menu
