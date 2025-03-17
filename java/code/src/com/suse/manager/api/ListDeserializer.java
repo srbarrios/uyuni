@@ -52,9 +52,11 @@ public class ListDeserializer implements JsonDeserializer<List<Object>> {
     private Object parsePrimitive(JsonPrimitive prim) {
         if (prim.isNumber()) {
             return parseNumber(prim.getAsString());
-        } else if (prim.isBoolean()) {
+        }
+        else if (prim.isBoolean()) {
             return prim.getAsBoolean();
-        } else if (prim.isString()) {
+        }
+        else if (prim.isString()) {
             return prim.getAsString();
         }
         return null;
@@ -63,13 +65,16 @@ public class ListDeserializer implements JsonDeserializer<List<Object>> {
     private Number parseNumber(String numberStr) {
         try {
             return Integer.parseInt(numberStr);
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             try {
                 return Long.parseLong(numberStr);
-            } catch (NumberFormatException e2) {
+            }
+            catch (NumberFormatException e2) {
                 try {
                     return Double.parseDouble(numberStr);
-                } catch (NumberFormatException e3) {
+                }
+                catch (NumberFormatException e3) {
                     return null; // Not a valid number, return null
                 }
             }
