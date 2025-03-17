@@ -199,7 +199,7 @@ jobs:
 
       - name: Get server logs
         if: ${{ failure() && !inputs.skip_tests }}
-        run: ./testsuite/podman_runner/24_get_client_logs.sh ${{ inputs.server_id }}
+        run: ./testsuite/podman_runner/24_get_server_logs.sh ${{ inputs.server_id }}
 
       - name: Get client logs
         if: ${{ failure() && !inputs.skip_tests }}
