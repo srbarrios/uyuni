@@ -18,6 +18,9 @@
 @no_auth_registry
 Feature: API "image" namespace for containers and sub-namespaces
 
+  Scenario: Demo scenario to force a failure
+    Then I should see a "Demo failure" text
+
   Scenario: Test "image.store" namespace
     When I create and delete an image store via API
     And I list image store types and image stores via API
