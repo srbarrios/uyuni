@@ -4,6 +4,9 @@
 @scope_api
 Feature: API "activationkey" namespace
 
+  Scenario: Demo scenario to force a failure
+    Then I should see a "Demo failure" text
+
   Scenario: List all activation keys
     Then I should get some activation keys
 
