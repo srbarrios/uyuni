@@ -7,7 +7,7 @@ on:
 
 jobs:
   parse:
-    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/run ')
+    if: startsWith(github.event.comment.body, '/run')
     runs-on: ubuntu-latest
     outputs:
       test_suite: ${{ steps.parse_comment.outputs.test_suite }}
@@ -29,7 +29,7 @@ jobs:
 
   recommended-tests:
     needs: parse
-    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/run ') && needs.parse.outputs.test_suite == 'recommended'
+    if: startsWith(github.event.comment.body, '/run')
     name: Recommended Tests Run
     uses: ./.github/workflows/acceptance_tests_base.yml
     with:
@@ -41,7 +41,7 @@ jobs:
 
   acceptance-tests:
     needs: parse
-    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/run ') && needs.parse.outputs.test_suite == 'all'
+    if: startsWith(github.event.comment.body, '/run')
     name: Acceptance Tests Run
     uses: ./.github/workflows/acceptance_tests_base.yml
     with:
@@ -51,10 +51,8 @@ jobs:
     secrets: inherit
 
   additional-tests:
-    # Add needs context
     needs: parse
-    # Use consistent if condition and check if parse step actually produced output needed
-    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/run ') && needs.parse.outputs.test_suite == 'all'
+    if: startsWith(github.event.comment.body, '/run')
     name: Additional Tests Run - ${{ matrix.set }}
     uses: ./.github/workflows/acceptance_tests_base.yml
     strategy:
