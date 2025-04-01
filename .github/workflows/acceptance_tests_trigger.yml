@@ -9,43 +9,53 @@ jobs:
   parse:
     if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/run ')
     runs-on: ubuntu-latest
+    outputs:
+      test_suite: ${{ steps.parse_comment.outputs.test_suite }}
+      recommended_tests: ${{ steps.parse_comment.outputs.recommended_tests }}
     steps:
       - name: Determine which test suite to run
         id: parse_comment
         run: |
           COMMENT="${{ github.event.comment.body }}"
           if [[ "$COMMENT" == "/run all-tests" ]]; then
-            echo "test_suite=all" >> $GITHUB_ENV
+            TEST_SUITE="all"
           elif [[ "$COMMENT" == "/run recommended-tests"* ]]; then
-            echo "test_suite=recommended" >> $GITHUB_ENV
-            echo "recommended_tests=${COMMENT#'/run recommended-tests '}" >> $GITHUB_ENV
+            TEST_SUITE="recommended"
+            RECOMMENDED_TESTS="${COMMENT#*/run recommended-tests }"
           fi
-    outputs:
-      test_suite: ${{ steps.parse_comment.outputs.test_suite }}
-      recommended_tests: ${{ steps.parse_comment.outputs.recommended_tests }}
+          # Set step outputs using GITHUB_OUTPUT
+          echo "test_suite=${TEST_SUITE}" >> $GITHUB_OUTPUT
+          echo "recommended_tests=${RECOMMENDED_TESTS}" >> $GITHUB_OUTPUT
 
   recommended-tests:
-    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/run')
-    name: 0
+    needs: parse
+    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/run ') && needs.parse.outputs.test_suite == 'recommended'
+    name: Recommended Tests Run
     uses: ./.github/workflows/acceptance_tests_base.yml
     with:
       tests: "20_run_recommended_tests.sh"
       server_id: "recommended"
-      recommended_tests: ${{ github.job.trigger_tests.outputs.recommended_tests }}
-      skip_tests: ${{ github.job.trigger_tests.outputs.test_suite != 'recommended' }}
+      recommended_tests: ${{ needs.parse.outputs.recommended_tests }}
+      skip_tests: ${{ needs.parse.outputs.test_suite != 'recommended' }}
+    secrets: inherit
 
   acceptance-tests:
-    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/run')
-    name: "0"
+    needs: parse
+    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/run ') && needs.parse.outputs.test_suite == 'all'
+    name: Acceptance Tests Run
     uses: ./.github/workflows/acceptance_tests_base.yml
     with:
       tests: "18_run_secondary_tests.sh"
       server_id: "acceptance"
-      skip_tests: ${{ github.job.trigger_tests.outputs.test_suite != 'all' }}
+      skip_tests: ${{ needs.parse.outputs.test_suite != 'all' }}
+    secrets: inherit
 
   additional-tests:
-    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/run')
-    name: ${{ matrix.set }}
+    # Add needs context
+    needs: parse
+    # Use consistent if condition and check if parse step actually produced output needed
+    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/run ') && needs.parse.outputs.test_suite == 'all'
+    name: Additional Tests Run - ${{ matrix.set }}
     uses: ./.github/workflows/acceptance_tests_base.yml
     strategy:
       fail-fast: false
@@ -54,4 +64,5 @@ jobs:
     with:
       tests: "22_run_secondary_parallelizable_tests_subset.sh ${{ matrix.set }}"
       server_id: "additional_${{ matrix.set }}"
-      skip_tests: ${{ github.job.trigger_tests.outputs.test_suite != 'all' }}
+      skip_tests: ${{ needs.parse.outputs.test_suite != 'all' }}
+    secrets: inherit
