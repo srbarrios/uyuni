@@ -1,4 +1,4 @@
-name: Acceptance Tests
+name: Tests
 
 on:
   workflow_call:
@@ -145,7 +145,7 @@ jobs:
         run: ./testsuite/podman_runner/05_install_gems_in_controller.sh
 
       - name: Collect and tag flaky tests in controller
-        # Until we refactor the usage of the secret, it only runs on uyuni-project/uyuni repository branches
+        # For security reasons, it only runs on uyuni-project/uyuni repository, as it collects data from a private GH board
         if: ${{ !inputs.skip_tests && github.repository == 'uyuni-project/uyuni'  && needs.filter-paths.outputs.require_acceptance_tests == 'true' }}
         run: ./testsuite/podman_runner/06_collect_and_tag_flaky_tests_in_controller.sh
         env:
