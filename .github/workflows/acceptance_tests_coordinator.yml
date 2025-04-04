@@ -24,9 +24,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
 
       - name: Run Redis container
-        run: |
-          ./testsuite/podman_runner/02_setup_network.sh
-          ./testsuite/podman_runner/run_redis.sh
+        run: ./testsuite/podman_runner/run_redis.sh
 
       - name: Get changed files
         id: changed_files
@@ -65,7 +63,7 @@ jobs:
 
   recommended-tests:
     needs: determine_tests
-    name: Recommended Tests
+    name: Recommended
     uses: ./.github/workflows/acceptance_tests_base.yml
     with:
       tests: "20_run_recommended_tests.sh"
@@ -76,7 +74,7 @@ jobs:
 
   acceptance-tests:
     needs: determine_tests
-    name: Acceptance Tests
+    name: Acceptance
     uses: ./.github/workflows/acceptance_tests_base.yml
     with:
       tests: "18_run_secondary_tests.sh"
@@ -86,7 +84,7 @@ jobs:
 
   additional-tests:
     needs: determine_tests
-    name: Additional Tests - ${{ matrix.set }}
+    name: (${{ matrix.set }}) Additional
     uses: ./.github/workflows/acceptance_tests_base.yml
     strategy:
       fail-fast: false
