@@ -11,6 +11,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.head.ref }}
   cancel-in-progress: true
 
+env:
+  UYUNI_PROJECT: uyuni-project
+  UYUNI_VERSION: master
+
 jobs:
   determine_tests:
     name: Get recommended tests
