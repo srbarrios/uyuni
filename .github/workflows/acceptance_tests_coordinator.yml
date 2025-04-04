@@ -1,7 +1,7 @@
-name: Decide Tests
+name: TestFlow
 
 on:
-  pull_request_target:
+  pull_request:
     types:
       - opened
       - reopened
@@ -16,10 +16,14 @@ jobs:
     name: Get recommended tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout base repository
+      - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
 
-      - id: changed_files
+      - name: Run Redis container
+        run: ./testsuite/podman_runner/run_redis.sh
+
+      - name: Get changed files
+        id: changed_files
         uses: Ana06/get-changed-files@25f79e676e7ea1868813e21465014798211fad8c #v2.3.0
         with:
           filter: '*.java'
@@ -29,15 +33,11 @@ jobs:
         with:
           node-version: 22
 
-      - run: npm i ioredis
+      - name: Install NPM Redis dependency
+        run: npm i ioredis
 
       - id: tests_covering_pr
         name: Tests covering the Pull Request
-        env:
-          REDIS_USER: ${{ secrets.REDIS_USER }}
-          REDIS_PASS: ${{ secrets.REDIS_PASS }}
-          REDIS_HOST: ${{ secrets.REDIS_HOST }}
-          REDIS_PORT: ${{ secrets.REDIS_PORT }}
         run: |
           recommended_tests=$(node .github/scripts/test_covering_pr.js ${{ steps.changed_files.outputs.all }})
           echo "recommended_tests=$recommended_tests" >> $GITHUB_OUTPUT
@@ -57,24 +57,37 @@ jobs:
       recommended_tests: ${{ steps.tests_covering_pr.outputs.recommended_tests }}
       run_full_testsuite: ${{ steps.determine_running_full_testsuite.outputs.run_full_testsuite }}
 
-  post-comment:
+  recommended-tests:
     needs: determine_tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea #v7.0.1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const fullTestSuite = "${{ needs.determine_tests.outputs.run_full_testsuite }}" === "true";
-            const recommendedTests = "${{ needs.determine_tests.outputs.recommended_tests }}";
+    name: Recommended Tests
+    uses: ./.github/workflows/acceptance_tests_base.yml
+    with:
+      tests: "20_run_recommended_tests.sh"
+      server_id: "recommended"
+      recommended_tests: ${{ needs.determine_tests.outputs.recommended_tests }}
+      skip_tests: ${{ needs.determine_tests.outputs.run_full_testsuite == true }}
+    secrets: inherit
 
-            let commentBody = fullTestSuite
-              ? "/run all-tests"
-              : `/run recommended-tests ${recommendedTests}`;
+  acceptance-tests:
+    needs: determine_tests
+    name: Acceptance Tests
+    uses: ./.github/workflows/acceptance_tests_base.yml
+    with:
+      tests: "18_run_secondary_tests.sh"
+      server_id: "acceptance"
+      skip_tests: ${{ needs.determine_tests.outputs.run_full_testsuite == false }}
+    secrets: inherit
 
-            github.rest.issues.createComment({
-              issue_number: context.payload.pull_request.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: commentBody
-            });
+  additional-tests:
+    needs: determine_tests
+    name: Additional Tests - ${{ matrix.set }}
+    uses: ./.github/workflows/acceptance_tests_base.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        set: ['1', '2', '3', '4', '5']
+    with:
+      tests: "22_run_secondary_parallelizable_tests_subset.sh ${{ matrix.set }}"
+      server_id: "additional_${{ matrix.set }}"
+      skip_tests: ${{ needs.determine_tests.outputs.run_full_testsuite == false }}
+    secrets: inherit

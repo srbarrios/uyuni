@@ -38,8 +38,8 @@ jobs:
         with:
           context: ./testsuite/dockerfiles/redis/
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/redis:qe-develop
-          labels: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/redis:qe-develop
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             AWS_REDIS_USER=${{ secrets.REDIS_USER }}
             AWS_REDIS_PASS=${{ secrets.REDIS_PASS }}

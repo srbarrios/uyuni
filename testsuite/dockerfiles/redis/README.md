@@ -11,5 +11,5 @@ docker build --build-arg AWS_REDIS_USER="your-user" \
 --build-arg AWS_REDIS_PASS="your-password" \
 --build-arg AWS_REDIS_HOST="your-aws-redis-host" \
 --build-arg AWS_REDIS_PORT="6379" \
--t my-redis-backup .
+-t redis:latest .
 ```
