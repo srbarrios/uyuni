@@ -24,7 +24,9 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
 
       - name: Run Redis container
-        run: ./testsuite/podman_runner/run_redis.sh
+        run: |
+          ./testsuite/podman_runner/02_setup_network.sh
+          ./testsuite/podman_runner/run_redis.sh
 
       - name: Get changed files
         id: changed_files
