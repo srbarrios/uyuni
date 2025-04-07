@@ -69,7 +69,7 @@ jobs:
       tests: "20_run_recommended_tests.sh"
       server_id: "recommended"
       recommended_tests: ${{ needs.determine_tests.outputs.recommended_tests }}
-      skip_tests: ${{ needs.determine_tests.outputs.run_full_testsuite == true }}
+      skip_tests: ${{ needs.determine_tests.outputs.run_full_testsuite == 'true' }}
     secrets: inherit
 
   acceptance-tests:
@@ -79,7 +79,7 @@ jobs:
     with:
       tests: "18_run_secondary_tests.sh"
       server_id: "acceptance"
-      skip_tests: ${{ needs.determine_tests.outputs.run_full_testsuite == false }}
+      skip_tests: ${{ needs.determine_tests.outputs.run_full_testsuite == 'false' }}
     secrets: inherit
 
   additional-tests:
@@ -93,5 +93,5 @@ jobs:
     with:
       tests: "22_run_secondary_parallelizable_tests_subset.sh ${{ matrix.set }}"
       server_id: "additional_${{ matrix.set }}"
-      skip_tests: ${{ needs.determine_tests.outputs.run_full_testsuite == false }}
+      skip_tests: ${{ needs.determine_tests.outputs.run_full_testsuite == 'false' }}
     secrets: inherit
