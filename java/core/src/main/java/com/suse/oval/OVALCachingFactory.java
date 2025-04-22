@@ -23,8 +23,8 @@ import com.redhat.rhn.common.db.datasource.SelectMode;
 import com.redhat.rhn.common.db.datasource.WriteMode;
 import com.redhat.rhn.common.hibernate.HibernateFactory;
 import com.redhat.rhn.domain.rhnpackage.PackageEvr;
-
 import com.redhat.rhn.manager.audit.CVEAuditManagerOVAL;
+
 import com.suse.oval.manager.OVALResourcesCache;
 import com.suse.oval.ovaltypes.DefinitionType;
 import com.suse.oval.ovaltypes.OvalRootType;
