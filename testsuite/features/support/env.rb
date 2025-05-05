@@ -18,6 +18,7 @@ require 'set'
 require 'timeout'
 require_relative 'code_coverage'
 require_relative 'quality_intelligence'
+require_relative 'ai_test_reviewer'
 require_relative 'remote_nodes_env'
 require_relative 'commonlib'
 
@@ -37,6 +38,10 @@ end
 if ENV.fetch('QUALITY_INTELLIGENCE', false)
   $quality_intelligence_mode = true
   $stdout.puts('QUALITY INTELLIGENCE MODE ENABLED.')
+end
+if ENV.fetch('AI_TEST_REVIEWER', true)
+  $ai_test_reviewer_enabled = true
+  $stdout.puts('AI TEST REVIEWER ENABLED.')
 end
 
 # Context per feature
@@ -128,6 +133,9 @@ $code_coverage = CodeCoverage.new if $code_coverage_mode
 # Init Quality Intelligence Handler
 $quality_intelligence = QualityIntelligence.new if $quality_intelligence_mode
 
+# Init AI Test Reviewer
+$ai_test_reviewer = AITestReviewer.new if $ai_test_reviewer_enabled
+
 # Define the current feature scope
 Before do |scenario|
   $feature_scope = scenario.location.file.split(%r{(\.feature|/)})[-2]
@@ -175,6 +183,7 @@ def handle_screenshot_and_relog(scenario, current_epoch)
     attach path, 'image/png'
     # Attach additional information
     attach "#{Time.at(@scenario_start_time).strftime('%H:%M:%S:%L')} - #{Time.at(current_epoch).strftime('%H:%M:%S:%L')} | Current URL: #{current_url}", 'text/plain'
+    attach analyze_failed_scenario(scenario), 'text/plain'
   rescue StandardError => e
     warn "Error message: #{e.message}"
   ensure
@@ -721,4 +730,20 @@ def print_server_logs
     $stdout.puts line.to_s
   end
   $stdout.puts
+end
+
+# Analyze the failed scenario using AI Test Reviewer
+def analyze_failed_scenario(scenario)
+  file_path = scenario.location.file
+  feature_text = File.read(file_path)
+  collected_data = $ai_test_reviewer.collect(feature_text)
+  attach collected_data, 'text/plain'
+  if scenario.exception
+    error_message = scenario.exception.message
+    stacktrace = scenario.exception.backtrace.join("\n")
+    test_failure = "#{error_message}\n#{stacktrace}"
+  else
+    test_failure = 'No failure message available.'
+  end
+  $ai_test_reviewer.analyze(collected_data, feature_text, test_failure)
 end
