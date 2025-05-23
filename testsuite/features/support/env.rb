@@ -183,9 +183,7 @@ def handle_screenshot_and_relog(scenario, current_epoch)
     attach path, 'image/png'
     # Attach additional information
     attach "#{Time.at(@scenario_start_time).strftime('%H:%M:%S:%L')} - #{Time.at(current_epoch).strftime('%H:%M:%S:%L')} | Current URL: #{current_url}", 'text/plain'
-    root_cause_hint = analyze_failed_scenario(scenario)['root_cause_hint']
-    attach root_cause_hint, 'text/plain'
-    $stdout.puts root_cause_hint
+    attach_ai_root_cause_hint(scenario, path) if $ai_test_reviewer_enabled
   rescue StandardError => e
     warn "Error message: #{e.message}"
   ensure
@@ -734,12 +732,11 @@ def print_server_logs
   $stdout.puts
 end
 
-# Analyze the failed scenario using AI Test Reviewer
-def analyze_failed_scenario(scenario)
+# Analyze the failed scenario using AI Test Reviewer and attach the root cause hint
+def attach_ai_root_cause_hint(scenario, screenshot_path)
   file_path = scenario.location.file
   feature_text = File.read(file_path)
   collected_data = $ai_test_reviewer.collect(feature_text)
-  attach collected_data, 'text/plain'
   if scenario.exception
     error_message = scenario.exception.message
     stacktrace = scenario.exception.backtrace.join("\n")
@@ -747,5 +744,11 @@ def analyze_failed_scenario(scenario)
   else
     test_failure = 'No failure message available.'
   end
-  $ai_test_reviewer.analyze(collected_data, page.html, feature_text, test_failure)
+  screenshot = Base64.encode64(File.read(screenshot_path)) if File.exist?(screenshot_path)
+  result = $ai_test_reviewer.analyze(collected_data, screenshot, feature_text, test_failure)
+  root_cause_hint = result.fetch('root_cause_hint', nil)&.to_s
+  return if root_cause_hint.nil? || root_cause_hint.empty?
+
+  attach root_cause_hint, 'text/plain'
+  $stdout.puts root_cause_hint
 end

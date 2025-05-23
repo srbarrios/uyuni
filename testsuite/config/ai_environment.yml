@@ -47,6 +47,7 @@ components:
         command: "journalctl --lines 100"
 
 # Definition of the hosts to be analyzed
+# TODO: We need to change the hostnames to the ones specified on the .bashrc file on the test runner.
 hosts:
   - hostname: "uyuni-ci-master-podman-server.mgr.suse.de"
     role: "server"
@@ -71,5 +72,5 @@ ollama:
   model: "mistral"
   request_timeout: 600
   seed: 1 # Seed to generate the same text for the same prompt.
-  # embedding_model: "nomic-embed-text" # Model to use for embeddings
-  # persist_directory: "examples/uyuni/chroma_db" # Chroma DB path
+  #embedding_model: "nomic-embed-text" # Model to use for embeddings
+  #persist_directory: "examples/uyuni/chroma_db" # Chroma DB path

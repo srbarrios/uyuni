@@ -53,6 +53,14 @@ to run lists of Cucumber features stored in YAML format
 * [`quality_intelligence`] is a custom Ruby class that make use of `MetricsCollectorHandler` in order to monitor fitness functions in the test suite, like for example the time taken to bootstrap or onboard a minion. But it could be extend by embedding a `KeyValueStore` to store other QI data to process.
 In order to enable this feature, you need to set the `QUALITY_INTELLIGENCE` environment variable to `true`.
 
+### AI Test Reviewer
+
+* [`ai_test_reviewer`] is a custom Ruby class designed to analyze failed test scenarios and suggest potential root causes. It sets up a local Ollama server to run the AI model and pulls a Docker container of FailTale, a server with two API endpoints (`/v1/collect` and `/v1/analyze`) that enables AI-powered test reviews using an LLM.
+
+To enable this feature, set the `AI_TEST_REVIEWER` environment variable to `true`. Additionally, specify the test environment you're using in the `testsuite/config/ai_environment.yml` file.
+
+You can also configure the AI model by setting the model field in the ollama section of `ai_environment.yml`. By default, the model is set to `mistral`.
+
 ### Simulation of user interaction
 
 * [`capybara`](https://github.com/teamcapybara/capybara) simulates user interaction with a web interface.
