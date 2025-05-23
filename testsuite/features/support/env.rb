@@ -183,7 +183,9 @@ def handle_screenshot_and_relog(scenario, current_epoch)
     attach path, 'image/png'
     # Attach additional information
     attach "#{Time.at(@scenario_start_time).strftime('%H:%M:%S:%L')} - #{Time.at(current_epoch).strftime('%H:%M:%S:%L')} | Current URL: #{current_url}", 'text/plain'
-    attach analyze_failed_scenario(scenario), 'text/plain'
+    root_cause_hint = analyze_failed_scenario(scenario)['root_cause_hint']
+    attach root_cause_hint, 'text/plain'
+    $stdout.puts root_cause_hint
   rescue StandardError => e
     warn "Error message: #{e.message}"
   ensure
@@ -745,5 +747,5 @@ def analyze_failed_scenario(scenario)
   else
     test_failure = 'No failure message available.'
   end
-  $ai_test_reviewer.analyze(collected_data, feature_text, test_failure)
+  $ai_test_reviewer.analyze(collected_data, page.html, feature_text, test_failure)
 end

@@ -65,11 +65,12 @@ class AITestReviewer
   # Sends a request to the `/v1/analyze` endpoint to retrieve root cause hints.
   #
   # @param [Hash] collected_data. Diagnostic data from hosts.
+  # @param [String] page_html. Current HTML page content.
   # @param [String] test_report. Test report in Gherkin format.
   # @param [String] test_failure. Test failure returned by Cucumber.
   #
   # @return [Hash] Response from the FailTale endpoint.
-  def analyze(collected_data, test_report, test_failure)
+  def analyze(collected_data, page_html, test_report, test_failure)
     if collected_data.nil? || collected_data.empty?
       warn 'Analyze called with empty collected_data.'
       return { 'error' => 'collected_data is empty.' }
@@ -77,6 +78,7 @@ class AITestReviewer
 
     payload = {
       'collected_data' => collected_data,
+      'page_html' => page_html,
       'test_report' => test_report,
       'test_failure' => test_failure
     }
