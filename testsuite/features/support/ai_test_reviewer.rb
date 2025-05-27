@@ -15,7 +15,7 @@ require_relative 'network_utils'
 # Usage assumes a YAML file containing the `hosts:` section with machine definitions
 # and a running FailTale server.
 class AITestReviewer
-  attr_reader :base_url, :environment_file, :hosts, :timeout
+  attr_reader :base_url, :environment_file, :environment, :hosts, :timeout
 
   # Initializes the AITestReviewer.
   #
@@ -34,11 +34,14 @@ class AITestReviewer
     @analyze_endpoint = "#{@base_url}/v1/analyze"
     @timeout = timeout
     @environment_file = environment_file
-    @hosts = load_hosts_from_yaml
+    @environment = YAML.load_file(@environment_file)
+    @hosts = @environment['hosts'] || []
+    @llm_provider = @environment['default_llm_provider'] || 'ollama'
+    raise ArgumentError, "Mising #{@llm_provider} API Key" if @llm_provider != 'ollama' && !@environment[@llm_provider].key?('api_key_env_var') && !@environment[@llm_provider].key?('api_key')
 
     return if File.exist?('/tmp/ai_test_reviewer_setup')
 
-    setup_ollama
+    setup_ollama if @llm_provider == 'ollama'
     install_and_run_ai_test_reviewer
     system('touch /tmp/ai_test_reviewer_setup')
   end
@@ -115,24 +118,11 @@ class AITestReviewer
     system('zypper install -y docker')
     system('systemctl enable docker && systemctl start docker')
     system('docker pull ghcr.io/srbarrios/failtale:latest')
-    system("docker run -d --rm --net=host -v /root/.ssh/id_ed25519:/root/.ssh/id_ed25519:ro -v #{@environment_file}:/app/config.yaml:ro --name failtale_service ghcr.io/srbarrios/failtale")
-  end
-
-  # Loads the list of target hosts from the YAML environment file.
-  #
-  # The file must define a `hosts` key containing an array of hashes.
-  # Each host may define:
-  #   - hostname: [String] (required),
-  #   - role: [String] (required),
-  #   - ssh_username: [String] (optional),
-  #   - ssh_password: [String] (optional),
-  #   - mandatory: [Boolean] whether this host must be reachable.
-  #
-  # @return [Array<Hash>] Parsed host configurations or empty array if none defined.
-  # @raise [ArgumentError] If the file is missing or unreadable.
-  def load_hosts_from_yaml
-    yaml_content = YAML.load_file(environment_file)
-    yaml_content['hosts'] || []
+    docker_run = "docker run -d --rm --net=host -v /root/.ssh/id_ed25519:/root/.ssh/id_ed25519:ro -v #{@environment_file}:/app/config.yaml:ro --name failtale_service"
+    api_key_env_var = @environment[@llm_provider]['api_key_env_var'] || ''
+    docker_run += " -e #{api_key_env_var}=#{ENV[api_key_env_var]}" if ENV.key?(api_key_env_var)
+    docker_run += ' ghcr.io/srbarrios/failtale'
+    system(docker_run)
   end
 
   # Sends a POST request with a JSON body to a given FailTale endpoint.
