@@ -1533,13 +1533,17 @@ class RepoSync(object):
         ) as pool:
             results = [
                 pool.apply_async(
-                    self.import_package_batch,
+                    RepoSync.import_package_batch,
                     args=[
                         to_process_batch,
                         to_disassociate,
                         is_non_local_repo,
                         i,
                         len(to_process_batches),
+                        self.metadata_only,
+                        self.org_id,
+                        self.fail,
+                        self.import_batch_size,
                     ],
                 )
                 for i, to_process_batch in enumerate(to_process_batches)
@@ -1653,8 +1657,17 @@ class RepoSync(object):
         element_index = i % batch_size
         return batch_count * element_index + batch_index
 
+    @staticmethod
     def import_package_batch(
-        self, to_process, to_disassociate, is_non_local_repo, batch_index, batch_count
+        to_process,
+        to_disassociate,
+        is_non_local_repo,
+        batch_index,
+        batch_count,
+        metadata_only,
+        org_id,
+        fail,
+        import_batch_size,
     ):
         # Prepare SQL statements
         rhnSQL.closeDB(committing=False, closing=False)
@@ -1693,10 +1706,10 @@ class RepoSync(object):
 
                 pack.load_checksum_from_header()
 
-                if not self.metadata_only:
+                if not metadata_only:
                     rel_package_path = rhnPackageUpload.relative_path_from_header(
                         pack.a_pkg.header,
-                        self.org_id,
+                        org_id,
                         pack.a_pkg.checksum_type,
                         pack.a_pkg.checksum,
                     )
@@ -1740,7 +1753,7 @@ class RepoSync(object):
                     checksum_type=pack.a_pkg.checksum_type,
                     checksum=pack.a_pkg.checksum,
                     relpath=rel_package_path,
-                    org_id=self.org_id,
+                    org_id=org_id,
                     header_start=pack.a_pkg.header_start,
                     header_end=pack.a_pkg.header_end,
                     channels=[],
@@ -1773,7 +1786,7 @@ class RepoSync(object):
                 if e:
                     log2(0, 1, e, stream=sys.stderr)
                 log2(0, 1, traceback.format_exc(), stream=sys.stderr)
-                if self.fail:
+                if fail:
                     raise
                 to_process[index] = (pack, False, False)
             finally:
@@ -1781,7 +1794,7 @@ class RepoSync(object):
                     # importing packages by batch or if the current packages is the last
                     if mpm_bin_batch and (
                         import_count == to_download_count
-                        or len(mpm_bin_batch) % self.import_batch_size == 0
+                        or len(mpm_bin_batch) % import_batch_size == 0
                     ):
                         importer = packageImport.PackageImport(
                             mpm_bin_batch, backend, caller=upload_caller
@@ -1796,7 +1809,7 @@ class RepoSync(object):
 
                     if mpm_src_batch and (
                         import_count == to_download_count
-                        or len(mpm_src_batch) % self.import_batch_size == 0
+                        or len(mpm_src_batch) % import_batch_size == 0
                     ):
                         src_importer = packageImport.SourcePackageImport(
                             mpm_src_batch, backend, caller=upload_caller
@@ -1812,7 +1825,7 @@ class RepoSync(object):
                 except Exception as e:
                     e_message = f"Exception: {e}"
                     log2(0, 1, e_message, stream=sys.stderr)
-                    if self.fail:
+                    if fail:
                         raise
                 finally:
                     if is_non_local_repo and stage_path:
