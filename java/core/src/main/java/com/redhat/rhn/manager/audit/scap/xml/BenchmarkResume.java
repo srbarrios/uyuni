@@ -43,7 +43,7 @@ public class BenchmarkResume {
     @XmlElement(name = "TestResult", required = true)
     private TestResult testResult;
 
-    @ElementList(name = "rule", inline=true, required = false)
+    @ElementList(name = "rule", inline = true, required = false)
     private List<Rule> rules;
     /**
      * @return id to get
@@ -105,8 +105,8 @@ public class BenchmarkResume {
         return rules;
     }
 
-    public void setRules(List<Rule> rules) {
-        this.rules = rules;
+    public void setRules(List<Rule> rulesIn) {
+        this.rules = rulesIn;
     }
 
     @Override
