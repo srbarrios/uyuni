@@ -359,42 +359,40 @@ When(/^I create an activation key including custom channels for "([^"]*)" via AP
   # Get the list of child channels for this base channel
   child_channels = $api_test.channel.software.list_child_channels(base_channel_label)
 
-  # filter out wrong child channels for SLE Micro 5.5 as normal minion
-  if client.include? 'slemicro55'
-    child_channels.reject! { |channel| channel.include? 'suse-manager-proxy-5.0-pool-x86_64' }
-    child_channels.reject! { |channel| channel.include? 'suse-manager-proxy-5.0-updates-x86_64' }
-    child_channels.reject! { |channel| channel.include? 'suse-manager-retail-branch-server-5.0-pool-x86_64' }
-    child_channels.reject! { |channel| channel.include? 'suse-manager-retail-branch-server-5.0-updates-x86_64' }
+  # Define which clients trigger which exclusions
+  channel_filters = {
+    /sle15sp6|slemicro55/ => %w[
+      suse-manager-proxy
+      suse-manager-retail-branch-server
+      suse-manager-server
+    ],
+    /sle15sp7|slmicro6[12]/ => %w[
+      suse-multi-linux-manager-proxy
+      suse-multi-linux-manager-retail-branch-server
+      suse-multi-linux-manager-server
+    ]
+  }.freeze
+
+  # Apply the filters to don't have wrong child channels on normal minions
+  channel_filters.each do |pattern, exclusions|
+    child_channels.reject! { |channel| exclusions.any? { |ex| channel.include?(ex) } } if client.match?(pattern)
   end
 
-  # filter out wrong child channels for SLES 15 SP6 as normal minion
-  if client.include? 'sle15sp6'
-    child_channels.reject! { |channel| channel.include? 'suse-manager-proxy-5.0-pool-x86_64-sp6' }
-    child_channels.reject! { |channel| channel.include? 'suse-manager-proxy-5.0-updates-x86_64-sp6' }
-    child_channels.reject! { |channel| channel.include? 'suse-manager-retail-branch-server-5.0-pool-x86_64-sp6' }
-    child_channels.reject! { |channel| channel.include? 'suse-manager-retail-branch-server-5.0-updates-x86_64-sp6' }
-  end
+  if client.include?('proxy_nontransactional')
+    # The non-transactional proxy for 5.1 and 5.2 is based on the same HostOS SLES15 SP7
+    # we need to determine the proxy version and exclude the channels for the other proxy version.
+    version = product_version_full
+    version_to_exclude =
+      if version&.include?('5.1')
+        '5.2'
+      elsif version&.include?('5.2') || version&.include?('head')
+        '5.1'
+      else
+        nil
+      end
 
-  # filter out wrong child channels for SL Micro 6.1 as normal minion
-  if client.include? 'slmicro61'
-    child_channels.reject! { |channel| channel.include? 'suse-multi-linux-manager-proxy-5.1-x86_64' }
-    child_channels.reject! { |channel| channel.include? 'suse-multi-linux-manager-retail-branch-server-5.1-x86_64' }
-    child_channels.reject! { |channel| channel.include? 'suse-multi-linux-manager-server-5.1-x86_64' }
-  end
-
-  # filter out wrong child channels for SL Micro 6.2 as normal Minion
-  if client.include? 'slmicro62'
-    child_channels.reject! { |channel| channel.include? 'suse-multi-linux-manager-proxy-5.2-x86_64' }
-    child_channels.reject! { |channel| channel.include? 'suse-multi-linux-manager-retail-branch-server-5.2-x86_64' }
-    child_channels.reject! { |channel| channel.include? 'suse-multi-linux-manager-server-5.2-x86_64' }
-  end
-
-  # filter out wrong child channels for SLES 15 SP7 as normal minion
-  if client.include? 'sle15sp7'
-    child_channels.reject! { |channel| channel.include? 'suse-multi-linux-manager-proxy-sle-5.1-pool-x86_64-sp7' }
-    child_channels.reject! { |channel| channel.include? 'suse-multi-linux-manager-proxy-sle-5.1-updates-x86_64-sp7' }
-    child_channels.reject! { |channel| channel.include? 'suse-multi-linux-manager-retail-branch-server-sle-5.1-pool-x86_64-sp7' }
-    child_channels.reject! { |channel| channel.include? 'suse-multi-linux-manager-retail-branch-server-sle-5.1-updates-x86_64-sp7' }
+    # Reject the channels containing the version we want to exclude
+    child_channels.reject! { |channel| channel.include?(version_to_exclude) } if version_to_exclude
   end
 
   $stdout.puts "Child_channels for #{key}: <#{child_channels}>"
