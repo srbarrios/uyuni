@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 SUSE LLC
  * Copyright (c) 2012--2014 Red Hat, Inc.
  *
  * This software is licensed to you under the GNU General Public License,
@@ -21,7 +22,6 @@ import com.redhat.rhn.common.db.datasource.ModeFactory;
 import com.redhat.rhn.common.db.datasource.SelectMode;
 import com.redhat.rhn.common.hibernate.HibernateFactory;
 import com.redhat.rhn.common.hibernate.LookupException;
-import com.redhat.rhn.common.util.DateFormatTransformer;
 import com.redhat.rhn.domain.action.scap.ScapAction;
 import com.redhat.rhn.domain.audit.ScapFactory;
 import com.redhat.rhn.domain.audit.XccdfBenchmark;
@@ -51,8 +51,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.simpleframework.xml.core.Persister;
-import org.simpleframework.xml.transform.RegistryMatcher;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -71,10 +69,15 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.xml.XMLConstants;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
 
 /**
  * ScapManager
@@ -87,6 +90,8 @@ public class ScapManager extends BaseManager {
 
     private static final List<String> SEARCH_TERM_PRECEDENCE = Arrays.asList(
             "slabel", "start", "end", "result");
+
+    private static final JAXBContext JAXB_CONTEXT = initializeJaxbContext();
 
     /**
      * Returns the given system is scap enabled.
@@ -502,12 +507,24 @@ public class ScapManager extends BaseManager {
                                                   InputStream resumeXml) {
         ScapFactory.clearTestResult(server.getId(), action.getId());
         try {
-            BenchmarkResume resume = createXmlPersister()
-                    .read(BenchmarkResume.class, resumeXml);
-            Profile profile = Optional.ofNullable(resume.getProfile()).orElse(
-                    new Profile("None",
-                            "No profile selected. Using defaults.",
-                            ""));
+            XMLInputFactory inputFactory = XMLInputFactory.newFactory();
+
+            // Disable external entities to prevent XXE
+            inputFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+            inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+
+            XMLStreamReader streamReader = inputFactory.createXMLStreamReader(resumeXml);
+            BenchmarkResume resume;
+
+            try {
+                resume = (BenchmarkResume) JAXB_CONTEXT.createUnmarshaller().unmarshal(streamReader);
+            }
+            finally {
+                streamReader.close();
+            }
+
+            Profile profile = Optional.ofNullable(resume.getProfile())
+                .orElse(new Profile("None", "No profile selected. Using defaults.", ""));
             TestResult testResults = resume.getTestResult();
             if (testResults == null) {
                 LOGGER.error("Scap report misses profile or testresult element");
@@ -630,12 +647,6 @@ public class ScapManager extends BaseManager {
                                         system));
     }
 
-    private static Persister createXmlPersister() {
-        RegistryMatcher registryMatcher = new RegistryMatcher();
-        registryMatcher.bind(Date.class, DateFormatTransformer.createXmlDateTransformer());
-        return new Persister(registryMatcher);
-    }
-
     private static String truncate(String string, int maxLen, MutableBoolean truncated) {
         if (string != null && string.length() > maxLen) {
             truncated.setValue(true);
@@ -644,4 +655,12 @@ public class ScapManager extends BaseManager {
         return string;
     }
 
+    private static JAXBContext initializeJaxbContext() {
+        try {
+            return JAXBContext.newInstance(BenchmarkResume.class);
+        }
+        catch (JAXBException e) {
+            throw new RhnRuntimeException("Unable to initialize JAXB context", e);
+        }
+    }
 }

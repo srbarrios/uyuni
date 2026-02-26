@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import com.redhat.rhn.common.hibernate.HibernateFactory;
-import com.redhat.rhn.common.util.DateFormatTransformer;
 import com.redhat.rhn.domain.action.Action;
 import com.redhat.rhn.domain.action.scap.ScapAction;
 import com.redhat.rhn.domain.audit.XccdfIdent;
@@ -38,8 +37,6 @@ import org.jmock.Expectations;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.simpleframework.xml.core.Persister;
-import org.simpleframework.xml.transform.RegistryMatcher;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -50,6 +47,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import jakarta.xml.bind.JAXBContext;
 
 /**
  * Test for {@link ScapManager}
@@ -323,9 +322,9 @@ public class ScapManagerTest extends JMockBaseTestCaseWithUser {
             </benchmark-resume>
             """;
 
-        RegistryMatcher registryMatcher = new RegistryMatcher();
-        registryMatcher.bind(Date.class, DateFormatTransformer.createXmlDateTransformer());
-        BenchmarkResume benchmarkResume = new Persister(registryMatcher).read(BenchmarkResume.class, new ByteArrayInputStream(resume.getBytes(StandardCharsets.UTF_8)));
+        BenchmarkResume benchmarkResume = (BenchmarkResume) JAXBContext.newInstance(BenchmarkResume.class)
+                .createUnmarshaller()
+                .unmarshal(new ByteArrayInputStream(resume.getBytes(StandardCharsets.UTF_8)));
 
         assertNotNull(benchmarkResume.getTestResult());
         assertNotNull(benchmarkResume.getTestResult().getPass());
