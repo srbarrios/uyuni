@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-01 10:55+0100\n"
-"PO-Revision-Date: 2026-03-07 08:04+0000\n"
+"PO-Revision-Date: 2026-03-08 07:04+0000\n"
 "Last-Translator: Seeun Lee <selee@e4net.net>\n"
 "Language-Team: Korean <https://l10n.opensuse.org/projects/uyuni/spacecmd/ko/>\n"
 "Language: ko\n"
@@ -3045,9 +3045,9 @@ msgid "Error adding %s script"
 msgstr "%s 스크립트 추가 중 오류"
 
 #: ../src/spacecmd/kickstart.py:2731
-#, python-format
+#, fuzzy, python-format
 msgid "failed to add ip range %s-%s, continuing"
-msgstr "IP 범위 %s~%s 추가 실패, 진행"
+msgstr "IP 범위 %s~%s 추가 실패, 계속 진행"
 
 #: ../src/spacecmd/kickstart.py:2752
 #, python-format
@@ -5987,6 +5987,7 @@ msgstr "소프트웨어 채널 %s에서 %s(으)로의 %s 패키지"
 #: ../src/spacecmd/softwarechannel.py:2743
 #: ../src/spacecmd/softwarechannel.py:2915
 #: ../src/spacecmd/softwarechannel.py:2923
+#, fuzzy
 msgid "failed to read key id"
 msgstr "키 ID를 읽지 못함"
 
@@ -7254,7 +7255,7 @@ msgid "New Child channels %s"
 msgstr "새 하위 채널 %s"
 
 #: ../src/spacecmd/system.py:2864 ../src/spacecmd/system.py:4724
-#, python-format
+#, fuzzy, python-format
 msgid "Scheduled action id: %s"
 msgstr "예약된 작업 ID: %s"
 
