@@ -1519,6 +1519,13 @@ DATA = {
         "DEST": DOCUMENT_ROOT + "/pub/repositories/raspbian/12/bootstrap/",
         "TYPE": "deb",
     },
+    "raspberrypios-12-arm64": {
+        "PDID": [-48, 3029],
+        "BETAPDID": [3031],
+        "PKGLIST": PKGLISTRASPBERRYPIOS12,
+        "DEST": DOCUMENT_ROOT + "/pub/repositories/debian/12/bootstrap/",
+        "TYPE": "deb",
+    },
     "debian13-amd64": {
         # TODO: Use the right PDIDs
         #"PDID": [-43, 3028],
@@ -1566,12 +1573,5 @@ DATA = {
         "BETAPDID": [3042],
         "PKGLIST": OPENEULER,
         "DEST": DOCUMENT_ROOT + "/pub/repositories/openEuler/24.03/bootstrap/",
-    },
-    "raspberrypios12-arm64": {
-        "PDID": [-48, 3029],
-        "BETAPDID": [3031],
-        "PKGLIST": PKGLISTRASPBERRYPIOS12,
-        "DEST": DOCUMENT_ROOT + "/pub/repositories/raspbian/12/bootstrap/",
-        "TYPE": "deb",
-    },
+    }
 }
