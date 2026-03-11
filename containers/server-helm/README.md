@@ -51,7 +51,7 @@ The following persistent volume claims will be created and will need to be bound
 - `var-cache`: (default size: 10Gi)
 - `var-cobbler`: (default size: 10Mi)
 - `var-log`: (default size: 2Gi)
-- `var-pgsql`: (default size: 50Gi)
+- `var-pgsql18`: (default size: 50Gi)
 - `var-salt`: (default size: 10Mi)
 - `var-search`: (default size: 10Gi)
 - `var-spacewalk`: (default size: 100Gi)
