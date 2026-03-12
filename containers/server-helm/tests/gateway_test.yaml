@@ -262,7 +262,7 @@ tests:
                     replacePrefixMatch: /
             backendRefs:
               - name: tomcat
-                port: 5557
+                port: 5556
           any: true
         template: routes.yaml
         documentSelector:
@@ -284,7 +284,7 @@ tests:
                     replacePrefixMatch: /
             backendRefs:
               - name: taskomatic
-                port: 5556
+                port: 5557
           any: true
         template: routes.yaml
         documentSelector:
