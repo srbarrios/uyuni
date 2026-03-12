@@ -132,7 +132,7 @@ spec:
             path: { type: ReplacePrefixMatch, replacePrefixMatch: / }
       backendRefs:
         - name: tomcat
-          port: 5557
+          port: 5556
     
     # Taskomatic Monitoring Exporter
     - matches:
@@ -154,7 +154,7 @@ spec:
             path: { type: ReplacePrefixMatch, replacePrefixMatch: / }
       backendRefs:
         - name: taskomatic
-          port: 5556
+          port: 5557
     {{- end }}
     {{- if .Values.saline.enable }}
     - matches:

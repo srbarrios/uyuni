@@ -339,14 +339,14 @@ spec:
           service:
             name: taskomatic
             port:
-              number: 5556
+              number: 5557
         pathType: Prefix
       - path: /tomcat-jmx
         backend:
           service:
             name: tomcat
             port:
-              number: 5557
+              number: 5556
         pathType: Prefix
   {{- end }}
   {{- if .Values.saline.enable }}

@@ -138,9 +138,9 @@ spec:
   ports:
 {{- if ne .Values.enableMonitoring false }}
     - name: jmx
-      port: 5556
+      port: 5557
       protocol: TCP
-      targetPort: 5556
+      targetPort: 5557
     - name: mtrx
       port: 9800
       protocol: TCP
@@ -208,9 +208,9 @@ spec:
       targetPort: 9100
 {{- if ne .Values.enableMonitoring false }}
     - name: jmx
-      port: 5557
+      port: 5556
       protocol: TCP
-      targetPort: 5557
+      targetPort: 5556
     - name: pgsql-exporter
       port: 9187
       protocol: TCP

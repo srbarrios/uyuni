@@ -235,7 +235,7 @@ tests:
               service:
                 name: taskomatic
                 port:
-                  number: 5556
+                  number: 5557
         documentSelector:
           path: metadata.name
           value: "uyuni-ingress-nossl"
@@ -248,7 +248,7 @@ tests:
               service:
                 name: tomcat
                 port:
-                  number: 5557
+                  number: 5556
         documentSelector:
           path: metadata.name
           value: "uyuni-ingress-nossl"
