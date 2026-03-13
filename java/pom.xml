@@ -548,28 +548,38 @@
             </dependency>
             <dependency>
                 <groupId>io.prometheus</groupId>
-                <artifactId>simpleclient</artifactId>
-                <version>0.3.0</version>
+                <artifactId>prometheus-metrics-config</artifactId>
+                <version>1.5.0</version>
             </dependency>
             <dependency>
                 <groupId>io.prometheus</groupId>
-                <artifactId>simpleclient_common</artifactId>
-                <version>0.3.0</version>
+                <artifactId>prometheus-metrics-core</artifactId>
+                <version>1.5.0</version>
             </dependency>
             <dependency>
                 <groupId>io.prometheus</groupId>
-                <artifactId>simpleclient_hibernate</artifactId>
-                <version>0.3.0</version>
+                <artifactId>prometheus-metrics-model</artifactId>
+                <version>1.5.0</version>
             </dependency>
             <dependency>
                 <groupId>io.prometheus</groupId>
-                <artifactId>simpleclient_httpserver</artifactId>
-                <version>0.3.0</version>
+                <artifactId>prometheus-metrics-exporter-common</artifactId>
+                <version>1.5.0</version>
             </dependency>
             <dependency>
                 <groupId>io.prometheus</groupId>
-                <artifactId>simpleclient_servlet</artifactId>
-                <version>0.3.0</version>
+                <artifactId>prometheus-metrics-exporter-httpserver</artifactId>
+                <version>1.5.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.prometheus</groupId>
+                <artifactId>prometheus-metrics-exporter-servlet-jakarta</artifactId>
+                <version>1.5.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.prometheus</groupId>
+                <artifactId>prometheus-metrics-exposition-textformats</artifactId>
+                <version>1.5.0</version>
             </dependency>
             <dependency>
                 <groupId>org.yaml</groupId>

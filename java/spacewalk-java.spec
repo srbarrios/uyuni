@@ -129,7 +129,13 @@ BuildRequires:  netty
 BuildRequires:  perl
 BuildRequires:  pgjdbc-ng
 BuildRequires:  postgresql-jdbc
-BuildRequires:  prometheus-client-java
+BuildRequires:  prometheus-metrics-java-core
+BuildRequires:  prometheus-metrics-java-config
+BuildRequires:  prometheus-metrics-java-model
+BuildRequires:  prometheus-metrics-java-exporter-servlet-jakarta
+BuildRequires:  prometheus-metrics-java-exporter-common
+BuildRequires:  prometheus-metrics-java-exporter-httpserver
+BuildRequires:  prometheus-metrics-java-exposition-textformats
 BuildRequires:  quartz
 BuildRequires:  redstone-xmlrpc
 BuildRequires:  salt-netapi-client >= 1.0.0
@@ -212,7 +218,13 @@ Requires:       log4j-slf4j
 Requires:       mgr-libmod
 Requires:       netty
 Requires:       pgjdbc-ng
-Requires:       prometheus-client-java
+Requires:       prometheus-metrics-java-core
+Requires:       prometheus-metrics-java-config
+Requires:       prometheus-metrics-java-model
+Requires:       prometheus-metrics-java-exporter-common
+Requires:       prometheus-metrics-java-exporter-servlet-jakarta
+Requires:       prometheus-metrics-java-exporter-httpserver
+Requires:       prometheus-metrics-java-exposition-textformats
 Requires:       redstone-xmlrpc
 Requires:       salt-netapi-client >= 1.0.0
 Requires:       tomcat11-servlet-6_1-api
