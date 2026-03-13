@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2025 SUSE LLC
+# Copyright (c) 2022-2026 SUSE LLC
 # Licensed under the terms of the MIT license.
 
 Feature: Update activation keys
@@ -48,6 +48,7 @@ Feature: Update activation keys
 
 @scc_credentials
 @susemanager
+@ssh_minion
   Scenario: Update SLE SSH key with synced base product
     When I follow the left menu "Systems > Activation Keys"
     And I follow "SUSE SSH Test Key x86_64" in the content area
@@ -65,6 +66,7 @@ Feature: Update activation keys
     Then I should see a "Activation key SUSE SSH Test Key x86_64 has been modified" text
 
 @uyuni
+@ssh_minion
   Scenario: Update openSUSE Tumbleweed SSH key with synced base product
     When I follow the left menu "Systems > Activation Keys"
     And I follow "SUSE SSH Test Key x86_64" in the content area
@@ -79,6 +81,7 @@ Feature: Update activation keys
 
 @scc_credentials
 @susemanager
+@ssh_minion
   Scenario: Update SLE SSH tunnel key with synced base product
     When I follow the left menu "Systems > Activation Keys"
     And I follow "SUSE SSH Tunnel Test Key x86_64" in the content area
@@ -96,6 +99,7 @@ Feature: Update activation keys
     Then I should see a "Activation key SUSE SSH Tunnel Test Key x86_64 has been modified" text
 
 @uyuni
+@ssh_minion
   Scenario: Update openSUSE Tumbleweed SSH tunnel key with synced base product
     When I follow the left menu "Systems > Activation Keys"
     And I follow "SUSE SSH Tunnel Test Key x86_64" in the content area
@@ -120,9 +124,9 @@ Feature: Update activation keys
     And I select the parent channel for the "proxy_container" from "selectedBaseChannel"
     And I wait for child channels to appear
     And I include the recommended child channels
-    And I wait until "ManagerTools-SL-Micro-6.1 for x86_64" has been checked
-    And I check "SUSE-Multi-Linux-Manager-Proxy-5.1 for x86_64"
-    And I check "SUSE-Multi-Linux-Manager-Retail-Branch-Server-5.1 for x86_64"
+    And I wait until "Multi-Linux-ManagerTools-SLE-16 for x86_64 6.2" has been checked
+    And I check "SUSE-Multi-Linux-Manager-Proxy-5.2 for x86_64"
+    And I check "SUSE-Multi-Linux-Manager-Retail-Branch-Server-5.2 for x86_64"
     And I click on "Update Activation Key"
     Then I should see a "Activation key Proxy Key x86_64 has been modified" text
 

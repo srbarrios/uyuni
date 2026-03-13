@@ -20,9 +20,9 @@ tests:
           path: spec.ports
           content:
             name: jmx
-            port: 5556
+            port: 5557
             protocol: TCP
-            targetPort: 5556
+            targetPort: 5557
         template: services.yaml
         documentSelector:
           path: metadata.name
@@ -93,9 +93,9 @@ tests:
           path: spec.ports
           content:
             name: jmx
-            port: 5556
+            port: 5557
             protocol: TCP
-            targetPort: 5556
+            targetPort: 5557
         template: services.yaml
         documentSelector:
           path: metadata.name
