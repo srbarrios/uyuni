@@ -131,7 +131,7 @@ def in_memory_pressure():
     Check if MemAvailable < 3GB (~10% of minimal server memory requirement)
     """
     try:
-        with open("/proc/meminfo", "r") as f:
+        with open("/proc/meminfo", "r", encoding="utf-8") as f:
             for line in f:
                 if line.startswith("MemAvailable:"):
                     mem_available = int(line.split()[1])
