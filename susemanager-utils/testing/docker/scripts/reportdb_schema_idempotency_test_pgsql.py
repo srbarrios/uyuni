@@ -279,6 +279,8 @@ def diff_dumps(initial_dump, migrated_dump):
             return [
                 line.rstrip()
                 for line in re.sub("\t", "       ", fd.read()).splitlines()
+                # Exclude sequence values as they change between dumps and cause false positives
+                if not line.startswith("SELECT pg_catalog.setval")
             ]
 
     def get_sorted_tables(lines):
@@ -360,7 +362,6 @@ def argparser():
         )
     # Exclude tables and sequences that are not updated by the SQL scripts (version control)
     args.excluded_tables = [
-        "pg_catalog.setval",
         "public.rhnpackageevr",
         "public.rhn_pkg_evr_seq",
         "public.versioninfo",
