@@ -6125,7 +6125,7 @@ user before attempting to deactivate their account.</source>
         <context-group name="ctx">
           <context context-type="sourcefile">/rhn/keys/CryptoKeysCreate.do</context>
         </context-group>
-        <target state="final">GPL/SSL キーコンテンツがありません。</target>
+        <target state="final">ファイルの内容が見つかりません。ローカルマシンから適切なキーファイルを選択してアップロードしてください。</target>
       </trans-unit>
       <trans-unit approved="yes" id="crypto.key.success" xml:space="preserve">
         <source>Key updated.</source>
@@ -12113,10 +12113,10 @@ To amend this situation, please add SCC credentials &lt;a href="/rhn/admin/setup
         </context-group>
         <target state="final">アクセス制御</target>
       </trans-unit>
-    <trans-unit id="pxeeventfailed" xml:space="preserve">
+      <trans-unit id="pxeeventfailed" xml:space="preserve">
         <source>PXE Event Failed</source>
-      <target state="new"/>
-  </trans-unit>
-      </body>
+        <target state="new"/>
+      </trans-unit>
+    </body>
   </file>
 </xliff>
