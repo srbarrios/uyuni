@@ -633,7 +633,7 @@ end
 
 # do some tests only for head product builds
 Before('@head') do
-  skip_this_scenario unless product_version_full&.include?('head')
+  skip_this_scenario unless product_version_full == 'head'
 end
 
 # do some tests only if we are using salt bundle
