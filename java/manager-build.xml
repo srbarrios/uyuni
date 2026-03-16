@@ -230,9 +230,11 @@
         </javac>
 
         <copy toDir="${build.dir}/classes">
-            <fileset dir="core/src/main/resources" />
+            <fileset dir="core/src/main/resources">
+                <exclude name="log4j2.xml" />
+            </fileset>
             <fileset dir="core/src/test/resources">
-                <exclude name="log4j2-test.properties" />
+                <exclude name="log4j2-test.xml" />
             </fileset>
         </copy>
     </target>
@@ -589,8 +591,6 @@
             <path refid="libjars"/>
         </path>
 
-        <move file="${build.dir}/classes/log4j2.xml" tofile="${build.dir}/classes/log4j2.xml.bak"/>
-
         <mkdir dir="${report.dir}/apidocs"/>
         <mkdir dir="${report.dir}/apidocs/${template.dir}/"/>
         <mkdir dir="${report.dir}/apidocs/${template.dir}/handlers/"/>
@@ -606,8 +606,6 @@
             </fileset>
             <excludepackage name="**/*"/>
         </javadoc>
-
-        <move file="${build.dir}/classes/log4j2.xml.bak" tofile="${build.dir}/classes/log4j2.xml"/>
     </target>
 
     <target name="make-eclipse-project" description="Configures this checkout as an eclipse project.">
