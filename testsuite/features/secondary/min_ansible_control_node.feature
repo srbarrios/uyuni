@@ -163,6 +163,7 @@ Feature: Operate an Ansible control node in a normal minion
     And I should see a "4242" text
     And I should see a "(code 0)" text
 
+  @skip_if_github_validation
   Scenario: Run the basic tests playbook while editing the NULL variable and changing its value
     Given I am on the Systems overview page of this "sle_minion"
     When I follow "Ansible" in the content area
@@ -194,6 +195,7 @@ Feature: Operate an Ansible control node in a normal minion
     Then I should see a "65536" text
     And I should see a "(code 0)" text
 
+  @skip_if_github_validation
   Scenario: Run the basic tests playbook on SAVE operation of YAML editor with pre-crafted strings
     Given I am on the Systems overview page of this "sle_minion"
     When I follow "Ansible" in the content area
