@@ -96,6 +96,118 @@ The other values in the `gateway` structure may need to be set depending on the 
 
 **Note that on RKE2 1.35 on top of enabling Traefik with Gateway API, the `TLSRoute` and `TCPRoute` CRDs need to be manually added and the Traefik helm chart has to be deployed with the `providers.kubernetesGateway.experimentalChannel`.**
 
+### AppArmor
+
+If the node where the server pod is running has AppArmor, the containerd profile won't let it mount the cgroup2 file system.
+This can be addressed in two different ways.
+The easiest, but unsafe way is to set `server.superPrivileged=true` value so the server containers run unconfined.
+Otherwise set the `server.apparmorProfile` to the name of a profile containing a definition like the following.
+If using exactly this content, the name of the profile to use will be `k8s-systemd-uyuni`.
+
+To deploy the AppArmor profile, copy this content to `/etc/apparmor.d/k8s-systemd-uyuni` and run `apparmor_parser -r /etc/apparmor.d/k8s-systemd-uyuni` to load it.
+
+```
+#include <tunables/global>
+
+profile k8s-systemd-uyuni flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+
+  # Standard container permissions
+  file,
+  network,
+  capability,
+  ptrace,
+  unix,
+
+  # Deny writes to critical kernel interfaces that systemd doesn't need to change
+  deny /sys/firmware/** rwklx,
+  deny /sys/kernel/debug/** rwklx,
+
+  # Broadly allow the specific flag combinations used for systemd hardening
+  # This covers /dev/pts/, /dev/mqueue/, and the previous /etc/ errors.
+  mount options=(ro, nosuid, noexec, nodev, remount, bind) -> **,
+  mount options=(ro, nosuid, noexec, remount, bind) -> **,
+  mount options=(ro, nosuid, nodev, remount, bind) -> **,
+  mount options=(ro, nosuid, remount, bind) -> **,
+  mount options=(ro, remount, bind) -> **,
+
+  # Allow mount propagation (Required for systemd to function at all)
+  mount options=(rw, rslave) -> **,
+  mount options=(rw, slave) -> **,
+  mount options=(rw, shared) -> **,
+
+  # Specific filesystem types for systemd's API mounts
+  mount fstype=tmpfs options=(rw, nosuid, nodev, noexec) -> /tmp/,
+  mount fstype=tmpfs options=(rw, nosuid, nodev) -> /tmp/,
+  mount fstype=tmpfs -> /run/**,
+  mount fstype=cgroup2 -> /sys/fs/cgroup/,
+  mount fstype=mqueue -> /dev/mqueue/,
+  mount fstype=fusectl -> /sys/fs/fuse/connections/,
+  mount fstype=devpts -> /dev/pts/,
+
+  # Generic remounts (for general compatibility)
+  mount options=(rw, remount) -> **,
+  mount options=(ro, remount) -> **, 
+  
+  # Required for the uyuni server container specifically
+  /sys/fs/cgroup/** rw,
+  /run/** rw,
+  /var/** rw,
+  # Allow reading the various config volumes mapped in the chart
+  /etc/** r,
+}
+```
+
+### SELinux
+
+If the node where the server pod is running has SELinux and RKE2 is configured to use it, the container won't be able to mount the cgroup2 file system.
+This can be addressed in two different ways.
+The easiest, but unsafe way is to set `server.superPrivileged=true` value so the server containers run with the `spc_t` label.
+Otherwise apply the following custom policy:
+
+* Create a `/root/systemdcontainerpolicy.te` file with this content:
+
+```sepolicy
+module systemdcontainerpolicy 1.0;
+
+require {
+    type container_t;
+    type cgroup_t;
+    type tmpfs_t;
+    type proc_t;
+    
+    class dir { search write add_name create remove_name rmdir setattr getattr mounton search };
+    class file { create open write append read unlink setattr getattr watch };
+    class filesystem { mount getattr relabelfrom relabelto };
+}
+
+#============= container_t ==============
+allow container_t cgroup_t:dir { add_name create remove_name rmdir setattr write search getattr };
+allow container_t cgroup_t:file { create open write append read setattr getattr unlink watch };
+allow container_t cgroup_t:filesystem { mount getattr relabelfrom relabelto };
+
+# Allow systemd's credential helper (sd-mkdcreds) to use /dev/shm as a mount point for service credentials.
+allow container_t tmpfs_t:dir mounton;
+
+# Standard lookups and attributes for the mount point
+allow container_t tmpfs_t:dir { getattr search };
+
+# Allow systemd to mount/remount the proc filesystem for namespacing
+allow container_t proc_t:filesystem { mount remount unmount };
+
+# Required to use directories as mount points
+allow container_t proc_t:dir mounton;
+```
+
+* Apply it:
+
+```sh
+checkmodule -M -m -o /root/systemdcontainerpolicy.mod /root/systemdcontainerpolicy.te
+semodule_package -o /root/systemdcontainerpolicy.pp -m /root/systemdcontainerpolicy.mod
+semodule -i /root/systemdcontainerpolicy.pp
+```
+
 ## Usage
 
 Once installed, the web interface can be accessed directly on the configured FQDN.

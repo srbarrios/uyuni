@@ -64,8 +64,14 @@ spec:
             add:
             - SYS_ADMIN
   {{- if .Values.server.superPrivileged }}
+          appArmorProfile:
+            type: Unconfined
           seLinuxOptions:
             type: "spc_t"
+  {{- else if .Values.server.apparmorProfile }}
+          appArmorProfile:
+            type: Localhost
+            localhostProfile: {{ .Values.server.apparmorProfile }}
   {{- end }}
         ports:
         - containerPort: 80

@@ -57,8 +57,12 @@
         },
         "superPrivileged": {
           "type": "boolean",
-          "description": "Run the server container with super privileges, bypassing a lot of selinux checks. This is dangerous!",
+          "description": "Run the server container with super privileges, bypassing a lot of selinux or AppArmor checks. This is dangerous!",
           "default": false
+        },
+        "apparmorProfile": {
+          "type": "string",
+          "description": "appArmor profile is the name of an AppArmor profile to use for the server pod."
         },
         "systemdLogLevel": {
           "type": "string",
