@@ -17,6 +17,10 @@ Feature: Add a Maintenance Update custom channel and the custom repositories for
     And I click on "Create Channel"
     Then I should see a "Channel Custom Channel for monitoring_server created" text
 
+  @head
+  Scenario: Create development custom repositories to the custom channel for monitoring_server
+    When I prepare the development repositories of "monitoring_server" as part of "custom_channel_monitoring_server" channel
+
   Scenario: Add the Maintenance update repositories for sle15sp7_minion
     When I create the MU repositories for "sle15sp7_minion"
 
