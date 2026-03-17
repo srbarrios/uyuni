@@ -15,6 +15,7 @@
 
 package com.redhat.rhn.common.test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -25,16 +26,15 @@ import com.redhat.rhn.common.UyuniGeneralException;
 import com.redhat.rhn.common.UyuniReportStrategy;
 
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.function.Supplier;
 
-public class ErrorReportingStrategiesTest {
+class ErrorReportingStrategiesTest {
 
     @Test
-    public void testValidationReportingStrategyThrowsExceptionOnErrors() {
+    void testValidationReportingStrategyThrowsExceptionOnErrors() {
         UyuniReportStrategy<UyuniError> strategy = ErrorReportingStrategies.validationReportingStrategy();
         List<UyuniError> errors = List.of(new UyuniError("Test error"));
 
@@ -42,24 +42,22 @@ public class ErrorReportingStrategiesTest {
     }
 
     @Test
-    public void testRaiseAndLog() {
+    void testRaiseAndLog() {
+        String expectedLoggerName = Dummy.class.getName().replace('$', '.');
         String testMessage = "Test error message";
-        Supplier<RhnRuntimeException> exceptionSupplier = ErrorReportingStrategies.raiseAndLog(this, testMessage);
+        LoggerContext context = (LoggerContext) LogManager.getContext(false);
 
-        RhnRuntimeException exception = exceptionSupplier.get();
+        assertFalse(hasLogger(context, expectedLoggerName));
+        RhnRuntimeException exception = ErrorReportingStrategies.raiseAndLog(new Dummy(), testMessage).get();
         assertTrue(exception.getMessage().contains(testMessage));
+        assertTrue(hasLogger(context, expectedLoggerName));
     }
 
-    @Test
-    public void testRaiseAndLogLogsMessage() {
-        String testMessage = "Test error message";
-        Supplier<RhnRuntimeException> exceptionSupplier = ErrorReportingStrategies.raiseAndLog(this, testMessage);
+    static class Dummy {
+    }
 
-        // Capture the log output
-        Logger logger = LogManager.getLogger(this.getClass().getName());
-        logger.error(testMessage);
-
-        RhnRuntimeException exception = exceptionSupplier.get();
-        assertTrue(exception.getMessage().contains(testMessage));
+    private static boolean hasLogger(LoggerContext context, String loggerName) {
+        return context.getLoggers().stream()
+                .anyMatch(logger -> logger.getName().equals(loggerName));
     }
 }
