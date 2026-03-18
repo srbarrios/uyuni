@@ -2028,13 +2028,11 @@ class RepoSync(object):
 
     def disassociate_package_by_id(self, package_id):
         log(3, f"Disassociating package with id: {package_id}")
-        h = rhnSQL.prepare(
-            """
+        h = rhnSQL.prepare("""
             delete from rhnChannelPackage cp
              where cp.channel_id = :channel_id
                and cp.package_id = :package_id
-        """
-        )
+        """)
         h.execute(channel_id=int(self.channel["id"]), package_id=package_id)
 
     def disassociate_erratum(self, advisory_name):
@@ -2051,9 +2049,11 @@ class RepoSync(object):
         h.execute(channel_id=self.channel["id"], advisory_name=advisory_name)
 
     def disassociate_erratum_package(self, advisory_name, package_id):
-        log(3, f"Disassociating erratum package: {advisory_name} [package id: {package_id}]")
-        h = rhnSQL.prepare(
-            """
+        log(
+            3,
+            f"Disassociating erratum package: {advisory_name} [package id: {package_id}]",
+        )
+        h = rhnSQL.prepare("""
                 delete from rhnErrataPackage ep
                  where ep.package_id = :package_id
                        and ep.errata_id in (select e.id
@@ -2061,9 +2061,10 @@ class RepoSync(object):
                                              where e.advisory_name = :advisory_name
                                               and (e.org_id = :org_id or (e.org_id is null and :org_id is null))
                                            )
-            """
+        """)
+        h.execute(
+            package_id=package_id, advisory_name=advisory_name, org_id=self.org_id
         )
-        h.execute(package_id=package_id, advisory_name=advisory_name, org_id=self.org_id)
 
     def load_channel(self):
         return rhnChannel.channel_info(self.channel_label)
@@ -2739,7 +2740,9 @@ class RepoSync(object):
                     and oldpkg["org_id"] != ret["org_id"]
                 ):
                     erratum_packages.remove(oldpkg)
-                    self.disassociate_erratum_package(advisory_name, oldpkg["package_id"])
+                    self.disassociate_erratum_package(
+                        advisory_name, oldpkg["package_id"]
+                    )
             if not found:
                 erratum_packages.append(ret)
         return erratum_packages

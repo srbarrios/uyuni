@@ -27,7 +27,6 @@ from spacewalk.common.rhnTranslate import _
 from spacewalk.server import rhnSQL
 from .rhnLib import parseRPMFilename
 
-
 #
 # Functions that deal with the database
 #
@@ -298,24 +297,20 @@ def _none2emptyString(foo):
 def add_eula_to_package(package_id, eula_id):
     """Associates an EULA to a package"""
 
-    h = rhnSQL.prepare(
-        """
+    h = rhnSQL.prepare("""
         SELECT *
           FROM susePackageEula
          WHERE package_id = :package_id
            AND eula_id    = :eula_id
-    """
-    )
+    """)
     h.execute(package_id=package_id, eula_id=eula_id)
     ret = h.fetchone_dict()
 
     if not ret:
-        h = rhnSQL.prepare(
-            """
+        h = rhnSQL.prepare("""
             INSERT INTO susePackageEula (package_id, eula_id)
                  VALUES (:package_id, :eula_id)
-        """
-        )
+        """)
         h.execute(package_id=package_id, eula_id=eula_id)
 
 
