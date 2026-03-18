@@ -39,7 +39,7 @@ server:
   #  claimName: mirror
   #  hostPath: /srv/mirror
 
-  ## superPrivileged may need to be set to true to run on a cluster with selinux enforced.
+  ## superPrivileged may need to be set to true to run on a cluster with selinux or AppArmor enforced.
   ## This is only for the server pod, since it runs systemd.
   ## Setting this to true opens a big security can of worms.
   superPrivileged: false
@@ -48,6 +48,10 @@ server:
   ## Note, that this will add a tty to the container.
   ## The possible values are debug, info, notice, warning, err, crit, alert, emerg or "" to keep the default.
   systemdLogLevel: ""
+
+  ## appArmor profile is the name of an AppArmor profile to use for the server pod.
+  ## The profile need to be showing up in the aa-status command output.
+  apparmorProfile: ""
 
 
 global:
