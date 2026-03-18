@@ -161,13 +161,12 @@ class Table:
 
     def isNullable(self, field):
         if field not in self.fields:
-            # pylint: disable-next=consider-using-f-string
-            raise TypeError("Unknown field %s" % field)
+            raise TypeError(f"Unknown field {field}")
         return field in self.nullable
 
     def isOrNull(self, field):
         if field not in self.fields:
-            raise TypeError("Unknown field %s" % field)
+            raise TypeError(f"Unknown field {field}")
         return field in self.or_null
 
     def getPK(self):
