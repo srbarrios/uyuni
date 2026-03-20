@@ -14,17 +14,15 @@
  */
 package com.redhat.rhn.manager.channel.test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.redhat.rhn.domain.user.User;
 import com.redhat.rhn.frontend.xmlrpc.channel.repo.InvalidRepoLabelException;
-import com.redhat.rhn.frontend.xmlrpc.channel.repo.InvalidRepoTypeException;
-import com.redhat.rhn.frontend.xmlrpc.channel.repo.InvalidRepoUrlException;
 import com.redhat.rhn.frontend.xmlrpc.channel.repo.InvalidRepoUrlInputException;
 import com.redhat.rhn.manager.channel.repo.BaseRepoCommand;
 import com.redhat.rhn.manager.channel.repo.CreateRepoCommand;
-import com.redhat.rhn.testing.RhnBaseTestCase;
-import com.redhat.rhn.testing.UserTestUtils;
+import com.redhat.rhn.testing.BaseTestCaseWithUser;
+import com.redhat.rhn.testing.TestUtils;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,15 +30,16 @@ import org.junit.jupiter.api.Test;
 /**
  * BaseRepoCommandTest
  */
-public class BaseRepoCommandTest extends RhnBaseTestCase {
+public class BaseRepoCommandTest extends BaseTestCaseWithUser {
 
     private BaseRepoCommand ccc = null;
     private int labelCount = 0;
 
     @Override
     @BeforeEach
-    public void setUp() {
-        User user = UserTestUtils.createUser();
+    public void setUp() throws Exception {
+        super.setUp();
+
         ccc = new CreateRepoCommand(user.getOrg());
     }
 
@@ -93,22 +92,10 @@ public class BaseRepoCommandTest extends RhnBaseTestCase {
         // need to specify MetadataSigned
         ccc.setMetadataSigned(Boolean.FALSE);
 
-        try {
+        assertThrows(InvalidRepoUrlInputException.class, () -> {
             ccc.store();
-            fail("invalid url should have thrown error: " + url);
-        }
-        catch (InvalidRepoUrlException e) {
-            fail("non duplicate url caused error: " + url);
-        }
-        catch (InvalidRepoUrlInputException expected) {
-            // expected
-        }
-        catch (InvalidRepoLabelException e) {
-            fail("valid repo label caused error: " + url);
-        }
-        catch (InvalidRepoTypeException e) {
-            fail("valid repo type caused error: " + url);
-        }
+            TestUtils.flushAndClearSession();
+        });
     }
 
     private void validUrlInput(String url, String type) {
@@ -121,21 +108,10 @@ public class BaseRepoCommandTest extends RhnBaseTestCase {
         // need to specify MetadataSigned
         ccc.setMetadataSigned(Boolean.FALSE);
 
-        try {
+        assertDoesNotThrow(() -> {
             ccc.store();
-        }
-        catch (InvalidRepoUrlException e) {
-            fail("non duplicate url caused error: " + url);
-        }
-        catch (InvalidRepoUrlInputException e) {
-            fail("valid repo url input caused error: " + url);
-        }
-        catch (InvalidRepoLabelException e) {
-            fail("valid repo label caused error: " + url);
-        }
-        catch (InvalidRepoTypeException e) {
-            fail("valid repo type caused error: " + url);
-        }
+            TestUtils.flushAndClearSession();
+        });
     }
 
     @Test
@@ -172,21 +148,10 @@ public class BaseRepoCommandTest extends RhnBaseTestCase {
         // need to specify MetadataSigned
         ccc.setMetadataSigned(Boolean.FALSE);
 
-        try {
+        assertDoesNotThrow(() -> {
             ccc.store();
-        }
-        catch (InvalidRepoUrlException e) {
-            fail("non duplicate url caused error");
-        }
-        catch (InvalidRepoUrlInputException e) {
-            fail("valid repo url input caused error");
-        }
-        catch (InvalidRepoLabelException e) {
-            fail("valid repo label caused error");
-        }
-        catch (InvalidRepoTypeException e) {
-            fail("valid repo type caused error");
-        }
+            TestUtils.flushAndClearSession();
+        });
     }
 
     private void invalidRepoLabelInput(String label) {
@@ -199,21 +164,9 @@ public class BaseRepoCommandTest extends RhnBaseTestCase {
         // need to specify MetadataSigned
         ccc.setMetadataSigned(Boolean.FALSE);
 
-        try {
+        assertThrows(InvalidRepoLabelException.class, () -> {
             ccc.store();
-            fail("invalid repository label should have thrown error: " + label);
-        }
-        catch (InvalidRepoUrlException e) {
-            fail("non duplicate url caused error");
-        }
-        catch (InvalidRepoUrlInputException e) {
-            fail("valid repo url input caused error");
-        }
-        catch (InvalidRepoLabelException e) {
-            // expected
-        }
-        catch (InvalidRepoTypeException e) {
-            fail("valid repo type caused error");
-        }
+            TestUtils.flushAndClearSession();
+        });
     }
 }

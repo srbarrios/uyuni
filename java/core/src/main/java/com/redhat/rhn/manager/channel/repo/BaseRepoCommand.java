@@ -18,7 +18,6 @@
 package com.redhat.rhn.manager.channel.repo;
 
 import com.redhat.rhn.common.client.InvalidCertificateException;
-import com.redhat.rhn.common.hibernate.HibernateFactory;
 import com.redhat.rhn.domain.channel.ChannelFactory;
 import com.redhat.rhn.domain.channel.ContentSource;
 import com.redhat.rhn.domain.channel.ContentSourceType;
@@ -252,8 +251,7 @@ public abstract class BaseRepoCommand {
                 throw new InvalidRepoUrlInputException(url);
             }
             ContentSourceType cst = ChannelFactory.lookupContentSourceType(this.type);
-            boolean alreadyExists = !ChannelFactory.lookupContentSourceByOrgAndRepo(
-                    org, cst, url).isEmpty();
+            boolean alreadyExists = !ChannelFactory.lookupContentSourceByOrgAndRepo(org, cst, url).isEmpty();
             if (!this.url.equals(repo.getSourceUrl())) {
                 if (alreadyExists) {
                     throw new InvalidRepoUrlException(url);
@@ -270,8 +268,6 @@ public abstract class BaseRepoCommand {
         repo.setMetadataSigned(this.metadataSigned);
 
         ChannelFactory.save(repo);
-        HibernateFactory.commitTransaction();
-        HibernateFactory.closeSession();
     }
 
     /**
