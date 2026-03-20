@@ -16,6 +16,7 @@ package com.redhat.rhn.manager.channel.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.redhat.rhn.common.client.InvalidCertificateException;
 import com.redhat.rhn.domain.channel.ChannelFactory;
@@ -28,6 +29,7 @@ import com.redhat.rhn.manager.channel.repo.EditRepoCommand;
 import com.redhat.rhn.testing.BaseTestCaseWithUser;
 import com.redhat.rhn.testing.TestUtils;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,6 +70,17 @@ public class EditRepoCommandTest extends BaseTestCaseWithUser {
         assertEquals(caCert.getId(), sslContentSource.getCaCert().getId(), "CA cert ID should match");
         assertEquals(sslClientCert.getId(), sslContentSource.getClientCert().getId(), "CA cert ID should match");
         assertEquals(sslClientKey.getId(), sslContentSource.getClientKey().getId(), "CA cert ID should match");
+
+        // Ensure we can also remove the ssl settings
+        repoCommand.deleteAllSslSets();
+        repoCommand.store();
+
+        TestUtils.flushAndClearSession();
+
+        contentSource = ChannelFactory.lookupContentSource(contentSourceId, user.getOrg());
+        assertNotNull(contentSource);
+        assertTrue(CollectionUtils.isEmpty(contentSource.getSslSets()),
+                "No SSL data should be associated with the content source after deletion");
     }
 
     private static long createInitialContentSource(Org org) {
