@@ -206,44 +206,7 @@ PKGLISTRASPBERRYPIOS12 = [
     "venv-salt-minion",
 ]
 
-PKGLISTRASPBERRYPIOS13 = [
-    # gnupg dependencies
-    "dirmngr",
-    "gnupg",
-    "gnupg-l10n",
-    "gnupg-utils",
-    "gpg",
-    "gpg-agent",
-    "gpg-wks-client",
-    "gpgconf",
-    "gpgsm",
-    "gpgv",
-    "libassuan9",
-    "libffi8",
-    "libgcrypt20",
-    "libgnutls30t64",
-    "libgpg-error-l10n",
-    "libgpg-error0",
-    "libgpm2",
-    "libidn2-0",
-    "libksba8",
-    "libldap-common",
-    "libldap2",
-    "libncursesw6",
-    "libnpth0t64",
-    "libp11-kit0",
-    "libreadline8t64",
-    "libsasl2-2",
-    "libsasl2-modules",
-    "libsasl2-modules-db",
-    "libtasn1-6",
-    "libunistring5",
-    "pinentry-curses",
-    "readline-common",
-    # end of gnupg dependencies
-    "logrotate",
-    "venv-salt-minion",
-]
+PKGLISTRASPBERRYPIOS13 = PKGLISTDEBIAN13
 
 DATA = {
     "SLE-12-ppc64le": {
