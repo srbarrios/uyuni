@@ -1084,6 +1084,10 @@ public class KickstartScheduleCommand extends BaseSystemOperation {
                 // found salt-minion - returning
                 return null;
             }
+            if (pli.getName().equals("venv-salt-minion")) {
+                // found venv-salt-minion - returning
+                return null;
+            }
 
             if (pli.getName().equals("up2date")) {
                 log.debug("    found up2date ...");
