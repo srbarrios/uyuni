@@ -2,6 +2,7 @@
 # Licensed under the terms of the MIT license.
 
 @slemicro55_minion
+# SL Micro 6.2 is reposynched even if there is no SL Micro 6.2 minion deployed
 Feature: Migrate a SLE Micro 5.5 Salt minion to SL Micro 6.2
 
   Scenario: Log in as admin user
