@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.redhat.rhn.common.hibernate.HibernateFactory;
 import com.redhat.rhn.domain.action.Action;
 import com.redhat.rhn.domain.action.salt.inspect.ImageInspectActionDetails;
 import com.redhat.rhn.domain.channel.Channel;
@@ -70,6 +71,7 @@ import com.suse.manager.webui.services.test.TestSystemQuery;
 import com.suse.manager.webui.utils.salt.custom.ImageChecksum;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.hibernate.Session;
 import org.jmock.Expectations;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.junit5.JUnit5Mockery;
@@ -589,25 +591,26 @@ public class ImageInfoFactoryTest extends BaseTestCaseWithUser {
                                              user.getOrg().getId())))));
             will(returnValue(Optional.of(true)));
         }});
-
         Org org = user.getOrg();
         ImageStore store = ImageStoreFactory.lookupBylabelAndOrg("SUSE Manager OS Image Store", org).get();
+
+        // Add extra org pillar so at the end we do not check for 0
+        org.getPillars().add(new Pillar("testCategory", Collections.singletonMap("key", "value"), org));
 
         ImageInfo img1 = createImageInfo("test", "1.0.0", store, user);
         ImageInfo img2 = createImageInfo("test", "1.0.1", store, user);
         ImageInfo img3 = createImageInfo("test", "1.0.2", store, user);
-
-        TestUtils.flushSession();
-
         DeltaImageInfo delta1 = ImageInfoFactory.createDeltaImageInfo(img1, img2,
                                                  "delta1.tgz", new TreeMap<String, Object>());
         ImageInfoFactory.createDeltaImageInfo(img2, img3,
                                                  "delta2.tgz", new TreeMap<String, Object>());
 
         TestUtils.flushSession();
+        Session session = HibernateFactory.getSession();
+        session.refresh(org);
         assertEquals(3, ImageInfoFactory.listImageInfos(org).size());
         assertEquals(2, ImageInfoFactory.listDeltaImageInfos(org).size());
-        assertEquals(2, org.getPillars().size()); //each delta has a pillar
+        assertEquals(3, org.getPillars().size()); //each delta has a pillar
         TestUtils.clearSession();
 
         img3 = TestUtils.reload(img3);
@@ -615,33 +618,36 @@ public class ImageInfoFactoryTest extends BaseTestCaseWithUser {
         ImageInfoFactory.delete(img3, saltApiMock);
 
         TestUtils.flushSession();
+        // reload because of session.clear
         org = TestUtils.reload(org);
 
         assertEquals(2, ImageInfoFactory.listImageInfos(org).size());
         assertEquals(1, ImageInfoFactory.listDeltaImageInfos(org).size());
-        assertEquals(1, org.getPillars().size());
+        assertEquals(2, org.getPillars().size());
 
         delta1 = TestUtils.reload(delta1);
         // deleting a delta should not delete the images
         ImageInfoFactory.deleteDeltaImage(delta1, saltApiMock);
 
         TestUtils.flushSession();
-        org = TestUtils.reload(org);
+        org.getPillars().clear();
+        session.refresh(org);
 
         assertEquals(2, ImageInfoFactory.listImageInfos(org).size());
         assertEquals(0, ImageInfoFactory.listDeltaImageInfos(org).size());
-        assertEquals(0, org.getPillars().size());
+        assertEquals(1, org.getPillars().size());
 
         img1 = TestUtils.reload(img1);
         // deleting a source image should delete also the delta
         ImageInfoFactory.delete(img1, saltApiMock);
 
         TestUtils.flushSession();
-        org = TestUtils.reload(org);
+        org.getPillars().clear();
+        session.refresh(org);
 
         assertEquals(1, ImageInfoFactory.listImageInfos(org).size());
         assertEquals(0, ImageInfoFactory.listDeltaImageInfos(org).size());
-        assertEquals(0, org.getPillars().size());
+        assertEquals(1, org.getPillars().size());
     }
 
     private TaskomaticApi getTaskomaticApi() throws TaskomaticApiException {
