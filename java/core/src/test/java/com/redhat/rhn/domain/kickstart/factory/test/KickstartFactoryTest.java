@@ -19,12 +19,14 @@ import com.redhat.rhn.domain.kickstart.KickstartData;
 import com.redhat.rhn.domain.kickstart.KickstartFactory;
 import com.redhat.rhn.domain.kickstart.KickstartSession;
 import com.redhat.rhn.domain.kickstart.KickstartSessionState;
+import com.redhat.rhn.domain.kickstart.crypto.SslCryptoKey;
 import com.redhat.rhn.domain.kickstart.test.KickstartDataTest;
 import com.redhat.rhn.domain.kickstart.test.KickstartSessionTest;
 import com.redhat.rhn.domain.org.Org;
 import com.redhat.rhn.testing.BaseTestCaseWithUser;
 import com.redhat.rhn.testing.TestUtils;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 
 public class KickstartFactoryTest extends BaseTestCaseWithUser {
@@ -86,5 +88,16 @@ public class KickstartFactoryTest extends BaseTestCaseWithUser {
         // containing a hibernate query that is not covered by any test so far
         // feel free to modify and/or complete it
         KickstartFactory.listUnsyncedKickstartTrees();
+    }
+
+    public static SslCryptoKey createTestSslKey(Org orgIn) {
+        SslCryptoKey key = new SslCryptoKey();
+
+        key.setCryptoKeyType(KickstartFactory.KEY_TYPE_SSL);
+        key.setDescription("some key test " + RandomStringUtils.insecure().nextNumeric(6));
+        key.setOrg(orgIn);
+
+        TestUtils.persist(key);
+        return key;
     }
 }

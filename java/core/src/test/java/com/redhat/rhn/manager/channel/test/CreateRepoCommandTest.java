@@ -14,34 +14,37 @@
  */
 package com.redhat.rhn.manager.channel.test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.redhat.rhn.domain.user.User;
+import com.redhat.rhn.common.client.InvalidCertificateException;
+import com.redhat.rhn.domain.channel.ChannelFactory;
+import com.redhat.rhn.domain.channel.ContentSource;
+import com.redhat.rhn.domain.channel.SslContentSource;
+import com.redhat.rhn.domain.kickstart.crypto.SslCryptoKey;
+import com.redhat.rhn.domain.kickstart.factory.test.KickstartFactoryTest;
 import com.redhat.rhn.frontend.xmlrpc.channel.repo.InvalidRepoLabelException;
-import com.redhat.rhn.frontend.xmlrpc.channel.repo.InvalidRepoTypeException;
-import com.redhat.rhn.frontend.xmlrpc.channel.repo.InvalidRepoUrlException;
 import com.redhat.rhn.frontend.xmlrpc.channel.repo.InvalidRepoUrlInputException;
-import com.redhat.rhn.manager.channel.repo.BaseRepoCommand;
 import com.redhat.rhn.manager.channel.repo.CreateRepoCommand;
-import com.redhat.rhn.testing.RhnBaseTestCase;
-import com.redhat.rhn.testing.UserTestUtils;
+import com.redhat.rhn.testing.BaseTestCaseWithUser;
+import com.redhat.rhn.testing.TestUtils;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-/**
- * BaseRepoCommandTest
- */
-public class BaseRepoCommandTest extends RhnBaseTestCase {
+public class CreateRepoCommandTest extends BaseTestCaseWithUser {
 
-    private BaseRepoCommand ccc = null;
+    private CreateRepoCommand repoCommand;
     private int labelCount = 0;
 
     @Override
     @BeforeEach
-    public void setUp() {
-        User user = UserTestUtils.createUser();
-        ccc = new CreateRepoCommand(user.getOrg());
+    public void setUp() throws Exception {
+        super.setUp();
+
+        repoCommand = new CreateRepoCommand(user.getOrg());
     }
 
     @Test
@@ -85,57 +88,34 @@ public class BaseRepoCommandTest extends RhnBaseTestCase {
 
     private void invalidUrlInput(String url, String type) {
         // give it an invalid url
-        ccc.setUrl(url);
+        repoCommand.setUrl(url);
         // give it a valid label
-        ccc.setLabel("valid-label-name");
+        repoCommand.setLabel("valid-label-name");
         // need to specify a type
-        ccc.setType(type);
+        repoCommand.setType(type);
         // need to specify MetadataSigned
-        ccc.setMetadataSigned(Boolean.FALSE);
+        repoCommand.setMetadataSigned(Boolean.FALSE);
 
-        try {
-            ccc.store();
-            fail("invalid url should have thrown error: " + url);
-        }
-        catch (InvalidRepoUrlException e) {
-            fail("non duplicate url caused error: " + url);
-        }
-        catch (InvalidRepoUrlInputException expected) {
-            // expected
-        }
-        catch (InvalidRepoLabelException e) {
-            fail("valid repo label caused error: " + url);
-        }
-        catch (InvalidRepoTypeException e) {
-            fail("valid repo type caused error: " + url);
-        }
+        assertThrows(InvalidRepoUrlInputException.class, () -> {
+            repoCommand.store();
+            TestUtils.flushAndClearSession();
+        });
     }
 
     private void validUrlInput(String url, String type) {
         // give it a valid url
-        ccc.setUrl(url);
+        repoCommand.setUrl(url);
         // need to create unique label names.
-        ccc.setLabel("valid-label-name-" + labelCount++);
+        repoCommand.setLabel("valid-label-name-" + labelCount++);
         // need to specify a type
-        ccc.setType(type);
+        repoCommand.setType(type);
         // need to specify MetadataSigned
-        ccc.setMetadataSigned(Boolean.FALSE);
+        repoCommand.setMetadataSigned(Boolean.FALSE);
 
-        try {
-            ccc.store();
-        }
-        catch (InvalidRepoUrlException e) {
-            fail("non duplicate url caused error: " + url);
-        }
-        catch (InvalidRepoUrlInputException e) {
-            fail("valid repo url input caused error: " + url);
-        }
-        catch (InvalidRepoLabelException e) {
-            fail("valid repo label caused error: " + url);
-        }
-        catch (InvalidRepoTypeException e) {
-            fail("valid repo type caused error: " + url);
-        }
+        assertDoesNotThrow(() -> {
+            repoCommand.store();
+            TestUtils.flushAndClearSession();
+        });
     }
 
     @Test
@@ -162,58 +142,61 @@ public class BaseRepoCommandTest extends RhnBaseTestCase {
         validRepoLabelInput("My_Example_Repo_'15.5'");
     }
 
+    @Test
+    public void canCreateRepoWithSSLData() throws InvalidCertificateException {
+        SslCryptoKey caCert = KickstartFactoryTest.createTestSslKey(user.getOrg());
+        SslCryptoKey sslClientCert = KickstartFactoryTest.createTestSslKey(user.getOrg());
+        SslCryptoKey sslClientKey = KickstartFactoryTest.createTestSslKey(user.getOrg());
+
+        repoCommand.setLabel("TestWitSSLData");
+        repoCommand.setType("yum");
+        repoCommand.setUrl("http://localhost");
+        repoCommand.setMetadataSigned(false);
+        repoCommand.addSslSet(caCert.getId(), sslClientCert.getId(), sslClientKey.getId());
+        repoCommand.store();
+
+        TestUtils.flushAndClearSession();
+
+        ContentSource contentSource = ChannelFactory.lookupContentSource(repoCommand.getRepo().getId(), user.getOrg());
+        assertNotNull(contentSource);
+        assertNotNull(contentSource.getSslSets());
+        assertEquals(1, contentSource.getSslSets().size(), "One SSL set must be associated with the content source");
+
+        SslContentSource sslContentSource = contentSource.getSslSets().iterator().next();
+        assertEquals(caCert.getId(), sslContentSource.getCaCert().getId(), "CA cert ID should match");
+        assertEquals(sslClientCert.getId(), sslContentSource.getClientCert().getId(), "CA cert ID should match");
+        assertEquals(sslClientKey.getId(), sslContentSource.getClientKey().getId(), "CA cert ID should match");
+    }
+
     private void validRepoLabelInput(String label) {
         // give it a valid url
-        ccc.setUrl("http://localhost/" + labelCount++);
+        repoCommand.setUrl("http://localhost/" + labelCount++);
         // need to create unique label names.
-        ccc.setLabel(label);
+        repoCommand.setLabel(label);
         // need to specify a type
-        ccc.setType("yum");
+        repoCommand.setType("yum");
         // need to specify MetadataSigned
-        ccc.setMetadataSigned(Boolean.FALSE);
+        repoCommand.setMetadataSigned(Boolean.FALSE);
 
-        try {
-            ccc.store();
-        }
-        catch (InvalidRepoUrlException e) {
-            fail("non duplicate url caused error");
-        }
-        catch (InvalidRepoUrlInputException e) {
-            fail("valid repo url input caused error");
-        }
-        catch (InvalidRepoLabelException e) {
-            fail("valid repo label caused error");
-        }
-        catch (InvalidRepoTypeException e) {
-            fail("valid repo type caused error");
-        }
+        assertDoesNotThrow(() -> {
+            repoCommand.store();
+            TestUtils.flushAndClearSession();
+        });
     }
 
     private void invalidRepoLabelInput(String label) {
         // give it a valid url
-        ccc.setUrl("http://localhost/");
+        repoCommand.setUrl("http://localhost/");
         // need to create unique label names.
-        ccc.setLabel(label);
+        repoCommand.setLabel(label);
         // need to specify a type
-        ccc.setType("yum");
+        repoCommand.setType("yum");
         // need to specify MetadataSigned
-        ccc.setMetadataSigned(Boolean.FALSE);
+        repoCommand.setMetadataSigned(Boolean.FALSE);
 
-        try {
-            ccc.store();
-            fail("invalid repository label should have thrown error: " + label);
-        }
-        catch (InvalidRepoUrlException e) {
-            fail("non duplicate url caused error");
-        }
-        catch (InvalidRepoUrlInputException e) {
-            fail("valid repo url input caused error");
-        }
-        catch (InvalidRepoLabelException e) {
-            // expected
-        }
-        catch (InvalidRepoTypeException e) {
-            fail("valid repo type caused error");
-        }
+        assertThrows(InvalidRepoLabelException.class, () -> {
+            repoCommand.store();
+            TestUtils.flushAndClearSession();
+        });
     }
 }
