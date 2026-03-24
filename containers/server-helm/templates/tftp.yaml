@@ -42,4 +42,15 @@ spec:
       imagePullSecrets:
       - name: {{ .Values.registrySecret }}
 {{- end }}
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - |2
+          until curl -L http://web/rhn/manager/api/api/getVersion; do
+            sleep 60
+          done
+        image: {{ include "uyuni.image" (dict "name" "proxy-tftpd" "global" . "local" .Values.tftp) }}
+        imagePullPolicy: {{ .Values.pullPolicy }}
+        name: server-waiter
 {{- end }}
