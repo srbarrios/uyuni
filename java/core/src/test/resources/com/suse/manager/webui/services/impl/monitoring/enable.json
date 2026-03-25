@@ -167,31 +167,18 @@
             "duration": 8.879,
             "__id__": "jmx_exporter_tomcat_yaml_config"
         },
-        "file_|-jmx_tomcat_config_|-/etc/sysconfig/tomcat/systemd/jmx.conf_|-managed": {
+        "file_|-jmx_tomcat_config_|-/etc/tomcat/conf.d/tomcat_jmx.conf_|-managed": {
             "changes": {
                 "diff": "New file",
                 "mode": "0644"
             },
-            "comment": "File /etc/sysconfig/tomcat/systemd/jmx.conf updated",
-            "name": "/etc/sysconfig/tomcat/systemd/jmx.conf",
+            "comment": "File /etc/tomcat/conf.d/tomcat_jmx.conf updated",
+            "name": "/etc/tomcat/conf.d/tomcat_jmx.conf",
             "result": true,
             "__sls__": "srvmonitoring.enable",
             "__run_num__": 13,
             "start_time": "15:40:42.669609",
             "duration": 6.799,
-            "__id__": "jmx_tomcat_config"
-        },
-        "mgrcompat_|-jmx_tomcat_config_|-service.systemctl_reload_|-module_run": {
-            "name": "service.systemctl_reload",
-            "changes": {
-                "ret": true
-            },
-            "comment": "Module function service.systemctl_reload executed",
-            "result": true,
-            "__sls__": "srvmonitoring.enable",
-            "__run_num__": 14,
-            "start_time": "15:40:42.676592",
-            "duration": 493.713,
             "__id__": "jmx_tomcat_config"
         },
         "service_|-jmx_exporter_tomcat_service_cleanup_|-prometheus-jmx_exporter@tomcat_|-dead": {
@@ -298,31 +285,18 @@
             "duration": 6.03,
             "__id__": "jmx_exporter_taskomatic_yaml_config"
         },
-        "file_|-jmx_taskomatic_config_|-/etc/sysconfig/taskomatic/systemd/jmx.conf_|-managed": {
+        "file_|-jmx_taskomatic_config_|-/etc/rhn/taskomatic.conf.d/taskomatic_jmx.conf_|-managed": {
             "changes": {
                 "diff": "New file",
                 "mode": "0644"
             },
-            "comment": "File /etc/sysconfig/taskomatic/systemd/jmx.conf updated",
-            "name": "/etc/sysconfig/taskomatic/systemd/jmx.conf",
+            "comment": "File /etc/rhn/taskomatic.conf.d/taskomatic_jmx.conf updated",
+            "name": "/etc/rhn/taskomatic.conf.d/taskomatic_jmx.conf",
             "result": true,
             "__sls__": "srvmonitoring.enable",
             "__run_num__": 24,
             "start_time": "15:40:43.331837",
             "duration": 8.71,
-            "__id__": "jmx_taskomatic_config"
-        },
-        "mgrcompat_|-jmx_taskomatic_config_|-service.systemctl_reload_|-module_run": {
-            "name": "service.systemctl_reload",
-            "changes": {
-                "ret": true
-            },
-            "comment": "Module function service.systemctl_reload executed",
-            "result": true,
-            "__sls__": "srvmonitoring.enable",
-            "__run_num__": 25,
-            "start_time": "15:40:43.340791",
-            "duration": 415.795,
             "__id__": "jmx_taskomatic_config"
         },
         "service_|-jmx_exporter_taskomatic_service_cleanup_|-prometheus-jmx_exporter@taskomatic_|-dead": {
