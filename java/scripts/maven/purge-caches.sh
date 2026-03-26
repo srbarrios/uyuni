@@ -73,6 +73,13 @@ while (($#)); do
     shift
 done
 
+# Simple check to warn the user if an IDE process is running, as it might interfere with the cache purging
+if command -v pgrep &> /dev/null; then
+    if pgrep -u "$USER" -i -f "\<(idea|code|eclipse)\>" &> /dev/null; then
+        echo "** An IDE process is running. It's recommended to close any IDE before purging the caches **"
+    fi
+fi
+
 if [ "$FORCE" == false ]; then
     echo "Dry run, use the -f or --force option to actually perform the deletions."
 fi
