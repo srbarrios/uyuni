@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017--2021 SUSE LLC
+ * Copyright (c) 2017--2026 SUSE LLC
  *
  * This software is licensed to you under the GNU General Public License,
  * version 2 (GPLv2). There is NO WARRANTY for this software, express or
@@ -7,10 +7,6 @@
  * FOR A PARTICULAR PURPOSE. You should have received a copy of GPLv2
  * along with this software; if not, see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- *
- * Red Hat trademarks are not licensed under GPLv2. No permission is
- * granted to use or replicate Red Hat trademarks that are incorporated
- * in this software or its documentation.
  */
 package com.redhat.rhn.manager.audit;
 
@@ -18,10 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import com.redhat.rhn.common.hibernate.HibernateFactory;
+import com.redhat.rhn.common.util.DateFormatTransformer;
 import com.redhat.rhn.domain.action.Action;
 import com.redhat.rhn.domain.action.scap.ScapAction;
 import com.redhat.rhn.domain.audit.XccdfIdent;
@@ -29,6 +27,8 @@ import com.redhat.rhn.domain.audit.XccdfTestResult;
 import com.redhat.rhn.domain.server.MinionServer;
 import com.redhat.rhn.domain.server.MinionServerFactoryTest;
 import com.redhat.rhn.manager.action.ActionManager;
+import com.redhat.rhn.manager.audit.scap.xml.BenchmarkResume;
+import com.redhat.rhn.manager.audit.scap.xml.TestResultRuleResult;
 import com.redhat.rhn.manager.system.SystemManager;
 import com.redhat.rhn.taskomatic.TaskomaticApi;
 import com.redhat.rhn.testing.JMockBaseTestCaseWithUser;
@@ -38,6 +38,8 @@ import org.jmock.Expectations;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.simpleframework.xml.core.Persister;
+import org.simpleframework.xml.transform.RegistryMatcher;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -290,6 +292,57 @@ public class ScapManagerTest extends JMockBaseTestCaseWithUser {
                 Arrays.asList(
                         "rule-kernel-syncookies"
                 ));
+    }
+
+    @Test
+    public void testBenchmarkResumeUnmarshallsRuleResultIdents() throws Exception {
+
+        String resume = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <benchmark-resume id="benchmark-id" version="1">
+              <profile title="Default" id="Default" description=""/>
+              <TestResult id="xccdf_org.open-scap_testresult_Default"
+                            start-time="2017-02-14T15:22:39" end-time="2017-02-14T15:22:39">
+                <pass>
+                  <rr id="rule-sysctl-ipv4-forward">
+                    <ident system="SYSTEM">IDENT1</ident>
+                    <ident system="abc"></ident>
+                    <ident system="def" />
+                    <ident system="ghi">   </ident>
+                  </rr>
+                </pass>
+                <fail/>
+                <error/>
+                <unknown/>
+                <notapplicable/>
+                <notchecked/>
+                <notselected/>
+                <informational/>
+                <fixed/>
+              </TestResult>
+            </benchmark-resume>
+            """;
+
+        RegistryMatcher registryMatcher = new RegistryMatcher();
+        registryMatcher.bind(Date.class, DateFormatTransformer.createXmlDateTransformer());
+        BenchmarkResume benchmarkResume = new Persister(registryMatcher).read(BenchmarkResume.class, new ByteArrayInputStream(resume.getBytes(StandardCharsets.UTF_8)));
+
+        assertNotNull(benchmarkResume.getTestResult());
+        assertNotNull(benchmarkResume.getTestResult().getPass());
+        assertEquals(1, benchmarkResume.getTestResult().getPass().size());
+
+        TestResultRuleResult passedRule = benchmarkResume.getTestResult().getPass().get(0);
+        assertEquals("rule-sysctl-ipv4-forward", passedRule.getId());
+        assertNotNull(passedRule.getIdents());
+        assertEquals(4, passedRule.getIdents().size());
+        assertEquals("SYSTEM", passedRule.getIdents().get(0).getSystem());
+        assertEquals("IDENT1", passedRule.getIdents().get(0).getText());
+        assertEquals("abc", passedRule.getIdents().get(1).getSystem());
+        assertNull(passedRule.getIdents().get(1).getText());
+        assertEquals("def", passedRule.getIdents().get(2).getSystem());
+        assertNull(passedRule.getIdents().get(2).getText());
+        assertEquals("ghi", passedRule.getIdents().get(3).getSystem());
+        assertEquals("   ", passedRule.getIdents().get(3).getText());
     }
 
     @Test
