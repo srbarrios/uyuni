@@ -114,6 +114,42 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>purge-caches</id>
+            <activation>
+                <property>
+                    <name>purge.caches</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- Configuration to run the clean up script -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.4.1</version>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <id>clean-all-caches</id>
+                                <phase>clean</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <useMavenLogger>true</useMavenLogger>
+                                    <executable>/bin/bash</executable>
+                                    <commandlineArgs>
+                                        ${spacewalk-java.dir}/scripts/maven/purge-caches.sh -i -f
+                                    </commandlineArgs>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <build>
