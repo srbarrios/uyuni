@@ -61,6 +61,47 @@ They all are using the `ReadWriteOnce` access mode and can be configured in the 
 Changing the default volume sizes according to the distributions you plan to synchronize and manage is recommended.
 See the [requirements documentation](https://www.uyuni-project.org/uyuni-docs/en/uyuni/installation-and-upgrade/uyuni-install-requirements.html) for more information.
 
+### Node Tuning
+
+For each of the components it is possible to tune the node where the pod will be scheduled.
+This chart supports a **default** configuration with **local overrides**, allowing baseline rules to be set for all pods and customized for specific components when needed.
+
+Scheduling can be controlled using `nodeSelector`, `affinity`, `tolerations`, or `nodeName`. It is not necessary to use all of them; simply choose the method that matches the cluster's scheduling strategy.
+
+For example, to set a baseline rule for all components but override the placement for the `db` pod specifically, the `values.yaml` would look like this:
+
+```yaml
+# DEFAULTS
+# These rules apply to all pods unless overridden by a specific component.
+placement:
+  nodeSelector:
+    environment: production
+
+  tolerations:
+  - key: "server-tier"
+    operator: "Equal"
+    value: "true"
+    effect: "NoSchedule"
+
+# LOCAL OVERRIDES
+# These rules apply ONLY to the specific component and override the global equivalents.
+db:
+  nodeSelector:
+    "kubernetes.io/hostname": "node-42"
+
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: "kubernetes.io/hostname"
+            operator: In
+            values:
+            - "node-42"
+
+  # nodeName: "node-42"
+```
+
 ### Exposing ports
 
 Uyuni requires some TCP and UDP ports to be routed to its services.

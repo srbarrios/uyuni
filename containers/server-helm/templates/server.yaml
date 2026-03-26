@@ -20,6 +20,7 @@ spec:
         app.kubernetes.io/component: server
         app.kubernetes.io/part-of: uyuni
     spec:
+{{- include "uyuni.nodePlacement" (dict "global" .Values.placement "local" .Values.server) | nindent 6 }}
       containers:
       - env:
         - name: container
