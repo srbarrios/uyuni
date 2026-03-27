@@ -52,6 +52,50 @@
             "duration": 1.905,
             "__id__": "jmx_taskomatic_config"
         },
+        "file_|-legacy_tomcat_sysconfig_jmx_cleanup_|-/etc/sysconfig/tomcat/systemd/jmx.conf_|-absent": {
+            "name": "/etc/sysconfig/tomcat/systemd/jmx.conf",
+            "changes": {},
+            "result": true,
+            "comment": "File /etc/sysconfig/tomcat/systemd/jmx.conf is not present",
+            "__sls__": "srvmonitoring.disable",
+            "__run_num__": 5,
+            "start_time": "15:41:30.850000",
+            "duration": 2.000,
+            "__id__": "legacy_tomcat_sysconfig_jmx_cleanup"
+        },
+        "file_|-legacy_tomcat_systemd_dropin_jmx_cleanup_|-/usr/lib/systemd/system/tomcat.service.d/jmx.conf_|-absent": {
+            "name": "/usr/lib/systemd/system/tomcat.service.d/jmx.conf",
+            "changes": {},
+            "result": true,
+            "comment": "File /usr/lib/systemd/system/tomcat.service.d/jmx.conf is not present",
+            "__sls__": "srvmonitoring.disable",
+            "__run_num__": 6,
+            "start_time": "15:41:30.860000",
+            "duration": 2.000,
+            "__id__": "legacy_tomcat_systemd_dropin_jmx_cleanup"
+        },
+        "file_|-legacy_taskomatic_sysconfig_jmx_cleanup_|-/etc/sysconfig/taskomatic/systemd/jmx.conf_|-absent": {
+            "name": "/etc/sysconfig/taskomatic/systemd/jmx.conf",
+            "changes": {},
+            "result": true,
+            "comment": "File /etc/sysconfig/taskomatic/systemd/jmx.conf is not present",
+            "__sls__": "srvmonitoring.disable",
+            "__run_num__": 7,
+            "start_time": "15:41:30.870000",
+            "duration": 2.000,
+            "__id__": "legacy_taskomatic_sysconfig_jmx_cleanup"
+        },
+        "file_|-legacy_taskomatic_systemd_dropin_jmx_cleanup_|-/usr/lib/systemd/system/taskomatic.service.d/jmx.conf_|-absent": {
+            "name": "/usr/lib/systemd/system/taskomatic.service.d/jmx.conf",
+            "changes": {},
+            "result": true,
+            "comment": "File /usr/lib/systemd/system/taskomatic.service.d/jmx.conf is not present",
+            "__sls__": "srvmonitoring.disable",
+            "__run_num__": 8,
+            "start_time": "15:41:30.880000",
+            "duration": 2.000,
+            "__id__": "legacy_taskomatic_systemd_dropin_jmx_cleanup"
+        },
         "cmd_|-mgr_enable_prometheus_self_monitoring_|-/usr/bin/grep -q '^prometheus_monitoring_enabled.*=.*' /etc/rhn/rhn.conf && sed -i 's/^prometheus_monitoring_enabled.*/prometheus_monitoring_enabled = 0/' /etc/rhn/rhn.conf || echo 'prometheus_monitoring_enabled = 0' >> /etc/rhn/rhn.conf_|-run": {
             "name": "/usr/bin/grep -q '^prometheus_monitoring_enabled.*=.*' /etc/rhn/rhn.conf && sed -i 's/^prometheus_monitoring_enabled.*/prometheus_monitoring_enabled = 0/' /etc/rhn/rhn.conf || echo 'prometheus_monitoring_enabled = 0' >> /etc/rhn/rhn.conf",
             "changes": {
