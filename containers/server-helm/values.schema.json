@@ -177,7 +177,8 @@
             "sslRedirect": { "type": "object" },
             "nossl": { "type": "object" },
             "saline": { "type": "object" },
-            "hub": { "type": "object" }
+            "hub": { "type": "object" },
+            "exporters": { "type": "object" }
           }
         }
       }
