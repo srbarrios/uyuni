@@ -483,27 +483,27 @@ public class SPMigrationAction extends RhnAction {
      * @param targetProducts target products
      */
     private void setMissingSuccessorsInfo(HttpServletRequest request, Optional<SUSEProductSet> sourceProducts,
-                                      List<SUSEProductSet> targetProducts) {
-    Set<SUSEProduct> missingSuccessors = new HashSet<>();
+                                          List<SUSEProductSet> targetProducts) {
+        Set<SUSEProduct> missingSuccessors = new HashSet<>();
 
-    DistUpgradeManager.removeIncompatibleTargets(sourceProducts, targetProducts, missingSuccessors);
-    boolean isSLES15Source = sourceProducts
-            .map(SUSEProductSet::getBaseProduct)
-            .filter(Objects::nonNull)
-            .map(SUSEProduct::isSles15)
-            .orElse(false);
-    boolean isSLES16Target = targetProducts.stream()
-            .map(SUSEProductSet::getBaseProduct)
-            .anyMatch(p -> p != null && p.isSles16());
-    // Skip the successors warning for specific SLES 15 -> 16 migrations, show the pre-flight checklist instead
-    if (isSLES15Source && isSLES16Target) {
-        request.setAttribute("hasSLES16Target", true);
-    } 
-    else {
-        request.setAttribute(MISSING_SUCCESSOR_EXTENSIONS, missingSuccessors.stream()
-        .map(SUSEProduct::getFriendlyName).toList());
+        DistUpgradeManager.removeIncompatibleTargets(sourceProducts, targetProducts, missingSuccessors);
+        boolean isSLES15Source = sourceProducts
+                .map(SUSEProductSet::getBaseProduct)
+                .filter(Objects::nonNull)
+                .map(SUSEProduct::isSles15)
+                .orElse(false);
+        boolean isSLES16Target = targetProducts.stream()
+                .map(SUSEProductSet::getBaseProduct)
+                .anyMatch(p -> p != null && p.isSles16());
+        // Skip the successors warning for specific SLES 15 -> 16 migrations, show the pre-flight checklist instead
+        if (isSLES15Source && isSLES16Target) {
+            request.setAttribute("hasSLES16Target", true);
+        }
+        else {
+            request.setAttribute(MISSING_SUCCESSOR_EXTENSIONS, missingSuccessors.stream()
+                    .map(SUSEProduct::getFriendlyName).toList());
+        }
     }
-}
     /**
      * Find the destination given the current page and the dispatch string.
      * The order of actions is: TARGET -> SETUP -> CONFIRM -> SCHEDULE.
