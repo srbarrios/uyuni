@@ -62,6 +62,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
@@ -263,17 +264,21 @@ public class SPMigrationAction extends RhnAction {
         // flag to know if we are going back or forward in the setup wizard
         parHolder.setGoBack(dispatch.equals(LocalizationService.getInstance().getMessage(GO_BACK)));
 
+        Optional<SUSEProduct> sourceProduct = minion.flatMap(MinionServer::getInstalledProductSet)
+        .map(SUSEProductSet::getBaseProduct);
+
+        Optional<SUSEProduct> targetProduct = Optional.ofNullable(parHolder.getTargetBaseProduct())
+        .map(SUSEProductFactory::getProductById);
+        
         // flag to know if we should show the dry-run button or not
-        String bpProductClass = minion.map(m -> m.getInstalledProductSet()
-                .map(i -> i.getBaseProduct().getChannelFamily().getLabel())
-                .orElse("")).orElse("");
+        String bpProductClass = sourceProduct.map(p -> p.getChannelFamily().getLabel()).orElse("");
+        String tgtProductClass = targetProduct.map(s -> s.getChannelFamily().getLabel()).orElse("");
 
-        String tgtProductClass = Optional.ofNullable(parHolder.getTargetBaseProduct())
-                .map(SUSEProductFactory::getProductById)
-                .map(s -> s.getChannelFamily().getLabel())
-                .orElse("");
+        boolean isSles15Source = sourceProduct.map(SUSEProduct::isSles15).orElse(false);
+        boolean isSLES16Target = targetProduct.map(SUSEProduct::isSles16).orElse(false);
+        boolean isMajorJump15To16 = isSles15Source && isSLES16Target;        
 
-        parHolder.setHasDryRun(!parHolder.isRedHatMinion() && bpProductClass.equals(tgtProductClass));
+        parHolder.setHasDryRun(!parHolder.isRedHatMinion() && bpProductClass.equals(tgtProductClass) && !isMajorJump15To16);
         request.setAttribute(HAS_DRYRUN_CAPABLITY, parHolder.isHasDryRun());
     }
 
@@ -310,7 +315,6 @@ public class SPMigrationAction extends RhnAction {
             logger.debug("Found at least one migration target");
             request.setAttribute(TARGET_PRODUCTS, migrationTargets);
         }
-
         return false;
     }
 
@@ -471,19 +475,12 @@ public class SPMigrationAction extends RhnAction {
 
     /**
      * Identify the extensions which don't have successors and set that information in the request.
-     * OUT: MISSING_SUCESSOR_EXTENSIONS
      * @param request
      * @param sourceProducts installed or selected products
      * @param targetProducts target products
      */
     private void setMissingSuccessorsInfo(HttpServletRequest request, Optional<SUSEProductSet> sourceProducts,
-                                          List<SUSEProductSet> targetProducts) {
-        Set<SUSEProduct> missingSuccessors = new HashSet<>();
-
-        DistUpgradeManager.removeIncompatibleTargets(sourceProducts, targetProducts, missingSuccessors);
         request.setAttribute(MISSING_SUCCESSOR_EXTENSIONS, missingSuccessors.stream()
-            .map(SUSEProduct::getFriendlyName)
-            .toList());
     }
 
     /**
