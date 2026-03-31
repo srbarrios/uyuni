@@ -206,6 +206,8 @@ PKGLISTRASPBERRYPIOS12 = [
     "venv-salt-minion",
 ]
 
+PKGLISTRASPBERRYPIOS13 = PKGLISTDEBIAN13
+
 DATA = {
     "SLE-12-ppc64le": {
         "PDID": [1116, 3045],
@@ -1532,9 +1534,15 @@ DATA = {
         "TYPE": "deb",
     },
     "debian13-amd64": {
-        # TODO: Use the right PDIDs
-        #"PDID": [-43, 3028],
-        #"BETAPDID": [3030],
+        "PDID": [-59, 3365],
+        "BETAPDID": [3367],
+        "PKGLIST": PKGLISTDEBIAN13,
+        "DEST": DOCUMENT_ROOT + "/pub/repositories/debian/13/bootstrap/",
+        "TYPE": "deb",
+    },
+    "debian13-arm64": {
+        "PDID": [-60, 3366],
+        "BETAPDID": [3368],
         "PKGLIST": PKGLISTDEBIAN13,
         "DEST": DOCUMENT_ROOT + "/pub/repositories/debian/13/bootstrap/",
         "TYPE": "deb",
@@ -1545,15 +1553,22 @@ DATA = {
         "DEST": DOCUMENT_ROOT + "/pub/repositories/debian/13/bootstrap/",
         "TYPE": "deb",
     },
+    "raspberrypios-13-arm64": {
+        "PDID": [-61, 3366],
+        "BETAPDID": [3368],
+        "PKGLIST": PKGLISTRASPBERRYPIOS13,
+        "DEST": DOCUMENT_ROOT + "/pub/repositories/debian/13/bootstrap/",
+        "TYPE": "deb",
+    },
     "raspberrypios-13-arm64-uyuni": {
         "BASECHANNEL": "raspberrypios-13-pool-arm64-uyuni",
-        "PKGLIST": PKGLISTDEBIAN13,
+        "PKGLIST": PKGLISTRASPBERRYPIOS13,
         "DEST": DOCUMENT_ROOT + "/pub/repositories/debian/13/bootstrap/",
         "TYPE": "deb",
     },
     "raspberrypios-13-armhf-uyuni": {
         "BASECHANNEL": "raspberrypios-13-pool-armhf-uyuni",
-        "PKGLIST": PKGLISTDEBIAN13,
+        "PKGLIST": PKGLISTRASPBERRYPIOS13,
         "DEST": DOCUMENT_ROOT + "/pub/repositories/raspbian/13/bootstrap/",
         "TYPE": "deb",
     },
