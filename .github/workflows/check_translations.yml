@@ -94,7 +94,10 @@ jobs:
             needs_translation=false
           fi
 
-          echo "needs_translation=${needs_translation}" > translation-result
+          {
+            echo "pr_number=${{ github.event.pull_request.number }}"
+            echo "needs_translation=${needs_translation}"
+          } > translation-result
 
       - name: Upload translation result
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 #v5.0.0
