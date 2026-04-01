@@ -44,6 +44,7 @@ import com.redhat.rhn.manager.rhnpackage.PackageManager;
 import com.redhat.rhn.taskomatic.TaskomaticApiException;
 
 import com.suse.manager.maintenance.NotInMaintenanceModeException;
+import com.suse.manager.model.products.migration.MigrationDataFactory;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.logging.log4j.LogManager;
@@ -271,14 +272,8 @@ public class SPMigrationAction extends RhnAction {
         .map(SUSEProductFactory::getProductById);
         
         // flag to know if we should show the dry-run button or not
-        String bpProductClass = sourceProduct.map(p -> p.getChannelFamily().getLabel()).orElse("");
-        String tgtProductClass = targetProduct.map(s -> s.getChannelFamily().getLabel()).orElse("");
-
-        boolean isSles15Source = sourceProduct.map(SUSEProduct::isSles15).orElse(false);
-        boolean isSLES16Target = targetProduct.map(SUSEProduct::isSles16).orElse(false);
-        boolean isMajorJump15To16 = isSles15Source && isSLES16Target;        
-
-        parHolder.setHasDryRun(!parHolder.isRedHatMinion() && bpProductClass.equals(tgtProductClass) && !isMajorJump15To16);
+        parHolder.setHasDryRun(MigrationDataFactory.computeHasDryRunCapability(
+                parHolder.isRedHatMinion(), sourceProduct.orElse(null), targetProduct.orElse(null)));
         request.setAttribute(HAS_DRYRUN_CAPABLITY, parHolder.isHasDryRun());
     }
 
