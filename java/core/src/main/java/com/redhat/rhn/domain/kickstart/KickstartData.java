@@ -1664,12 +1664,4 @@ public class KickstartData extends BaseDomainHelper {
         return SHA256Crypt.crypt(password);
     }
 
-    /**
-     * Check if 'salt' should be used in registration process, for this install type
-     * @return `true` if install type label is defined in `salt_enabled_kickstart_install_types` property in rhn.conf
-     *
-     */
-    public boolean isUserSelectedSaltInstallType() {
-        return ConfigDefaults.get().getUserSelectedSaltInstallTypeLabels().contains(getInstallType().getLabel());
-    }
 }
