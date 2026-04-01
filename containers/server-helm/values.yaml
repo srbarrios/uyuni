@@ -8,6 +8,9 @@ pullPolicy: "IfNotPresent"
 
 # registrySecret defines the name of secret to use to pull the images from the
 # registry with authentication. Leave empty for no authentication.
+#
+# To create the secret, see:
+# https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 registrySecret: ""
 
 # The time zone to set in the containers
