@@ -20,8 +20,8 @@ import com.redhat.rhn.domain.action.server.ServerAction;
 import com.redhat.rhn.domain.channel.Channel;
 import com.redhat.rhn.domain.product.SUSEProduct;
 import com.redhat.rhn.domain.product.SUSEProductUpgrade;
-import com.redhat.rhn.domain.server.MinionSummary;
 import com.redhat.rhn.domain.server.MinionServer;
+import com.redhat.rhn.domain.server.MinionSummary;
 import com.redhat.rhn.domain.server.Server;
 import com.redhat.rhn.domain.server.ServerFactory;
 import com.redhat.rhn.frontend.struts.RequestContext;
@@ -54,7 +54,16 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.persistence.CascadeType;
@@ -152,11 +161,11 @@ public class DistUpgradeAction extends Action {
               .ifPresent(minion -> {
                   if (!isSLES15to16Migration) {
                       switchChannels(minion, subscribedChannels, unsubscribedChannels, false);
-                  } else {
+                  }
+                  else {
                       sles16TargetChannelTokens.addAll(generateSles16Tokens(minion, subscribedChannels));
                   }
               });
-            
             Map<String, Object> pillar = new HashMap<>();
             Map<String, Object> susemanager = new HashMap<>();
             pillar.put("susemanager", susemanager);
@@ -231,11 +240,12 @@ public class DistUpgradeAction extends Action {
         // SaltUtils.updateServerAction() calls setStatusCompleted() BEFORE calling
         // this method. We must explicitly undo that here, otherwise
         // the action would appear complete while the minion is still offline.
-        if (!details.isDryRun() && details.isSles15To16Migration()
-             && serverAction.getStatus() == ActionFactory.STATUS_COMPLETED) {
+        if (!details.isDryRun() && details.isSles15To16Migration() &&
+          serverAction.getStatus() == ActionFactory.STATUS_COMPLETED) {
             serverAction.setStatusPickedUp();
             serverAction.setCompletionTime(null);
-            LOG.info("SLES 16: reset action to In Progress on server {} — waiting for post-reconnect verification.", serverId);
+            LOG.info("SLES 16: reset action to In Progress on server {} — waiting for post-reconnect verification.",
+              serverId);
             return;
         }
 
@@ -275,7 +285,6 @@ public class DistUpgradeAction extends Action {
             });
         }
     }
-    
     /**
      * Check if the result is from a sles16_verify state.
      *
@@ -286,11 +295,9 @@ public class DistUpgradeAction extends Action {
         if (jsonResult == null || !jsonResult.isJsonObject()) {
             return false;
         }
-        return jsonResult.getAsJsonObject().keySet().stream()
-            .anyMatch(k -> k.contains(SLES16_SUCCESS_STATE) || 
+        return jsonResult.getAsJsonObject().keySet().stream().anyMatch(k -> k.contains(SLES16_SUCCESS_STATE) ||
                            k.contains(SLES16_FAILED_STATE));
     }
-    
     /**
      * Handle SLES 16 migration verification result.
      * Called when the sles16_verify state runs after the minion reconnects to the server.
@@ -311,7 +318,8 @@ public class DistUpgradeAction extends Action {
 
             LOG.info("SLES 16 migration succeeded for server: {}", serverAction.getServerId());
             applyDelayedChannelSwitch(serverAction);
-        } else {
+        }
+        else {
             serverAction.setStatusFailed();
             String failureMsg = ls.getMessage("distupgrade.sles16.migration.failed", "\n\n" + resultMessage);
             serverAction.setResultMsg(failureMsg);
@@ -359,7 +367,6 @@ public class DistUpgradeAction extends Action {
 
     /**
      * Apply the delayed channel switch for SLES 16 migration.
-     * 
      * @param serverAction the server action
      */
     private void applyDelayedChannelSwitch(ServerAction serverAction) {
@@ -367,7 +374,6 @@ public class DistUpgradeAction extends Action {
             DistUpgradeActionDetails details = getDetails(minion.getId());
             if (details != null && !details.isDryRun()) {
                 LOG.info("Applying delayed channel switch for SLES 16 migration on server: {}", minion.getId());
-                
                 Map<Boolean, List<Channel>> channelTaskMap = details
                     .getChannelTasks()
                     .stream()
@@ -380,7 +386,6 @@ public class DistUpgradeAction extends Action {
                 List<Channel> unsubscribedChannels = channelTaskMap.get(false);
 
                 switchChannels(minion, subscribedChannels, unsubscribedChannels, true);
-                
                 LOG.info("Delayed channel switch applied and channel state scheduled for server: {}", minion.getId());
             }
         });
@@ -394,14 +399,13 @@ public class DistUpgradeAction extends Action {
      * @param channelsToRemove The channels to remove
      * @param scheduleStateApply If true, publishes Events to run the "channels" salt state immediately
      */
-    private void switchChannels(MinionServer minion, List<Channel> channelsToAdd, List<Channel> channelsToRemove, boolean scheduleStateApply) {
+    private void switchChannels(MinionServer minion, List<Channel> channelsToAdd, List<Channel> channelsToRemove,
+                                boolean scheduleStateApply) {
         Set<Channel> currentChannels = minion.getChannels();
         channelsToRemove.forEach(currentChannels::remove);
         currentChannels.addAll(channelsToAdd);
-        
         MinionPillarManager.INSTANCE.generatePillar(minion);
         ServerFactory.save(minion);
-        
         if (scheduleStateApply) {
             MessageQueue.publish(new ChannelsChangedEventMessage(minion.getId()));
             MessageQueue.publish(new ApplyStatesEventMessage(minion.getId(), false, ApplyStatesEventMessage.CHANNELS));
@@ -419,26 +423,24 @@ public class DistUpgradeAction extends Action {
                         .usingServerSecret()
                         .allowingOnlyChannels(Collections.singleton(channel.getLabel()))
                         .build();
-                
                 Map<String, String> entry = new HashMap<>();
                 entry.put("label", channel.getLabel());
                 entry.put("name", channel.getName());
                 entry.put("token", token.getSerializedForm());
                 tokens.add(entry);
-            } catch (TokenBuildingException e) {
+            }
+            catch (TokenBuildingException e) {
                 LOG.error("Could not generate SLES16 migration token for channel: {}", channel.getLabel(), e);
             }
         });
         return tokens;
     }
-    
     /**
      * Parse migration status from the SLES 16 verification result map.
-     * This method traverses the Salt result map to find either 'sles16_migration_success' 
-     * or 'sles16_migration_failed' and extracts the boolean "result" field.
-     *
+     * This method traverses the Salt result map to find either 'sles16_migration_success'
+     * or 'sles16_migration_failed' and extracts the boolean "result" field
      * @param jsonResult the full state.apply result map from Salt
-     * @return true if the migration success state was found and returned a true result; 
+     * @return true if the migration success state was found and returned a true result;
      * false if failed, malformed, or no outcome state was found.
      */
     private boolean parseVerificationStatus(JsonElement jsonResult) {
@@ -447,7 +449,7 @@ public class DistUpgradeAction extends Action {
             return false;
         }
         return jsonResult.getAsJsonObject().entrySet().stream()
-            .filter(e -> e.getKey().contains(SLES16_SUCCESS_STATE) || 
+            .filter(e -> e.getKey().contains(SLES16_SUCCESS_STATE) ||
                          e.getKey().contains(SLES16_FAILED_STATE))
             .map(Map.Entry::getValue)
             .filter(JsonElement::isJsonObject)
@@ -462,7 +464,6 @@ public class DistUpgradeAction extends Action {
                 return false;
             });
     }
-    
     /**
      * Extract the human-readable result message from the SLES 16 verification result map.
      * This method looks for the 'comment' field within the primary migration outcome states.
@@ -479,7 +480,7 @@ public class DistUpgradeAction extends Action {
         try {
             return result.getAsJsonObject().entrySet().stream()
             // Filter to only match primary outcome states
-            .filter(entry -> entry.getKey().contains(SLES16_SUCCESS_STATE) || 
+            .filter(entry -> entry.getKey().contains(SLES16_SUCCESS_STATE) ||
                              entry.getKey().contains(SLES16_FAILED_STATE))
             .map(Map.Entry::getValue)
             .filter(JsonElement::isJsonObject)
@@ -492,9 +493,10 @@ public class DistUpgradeAction extends Action {
             .map(String::trim)
             .filter(s -> !s.isEmpty())
             .findFirst()
-            .orElse("Migration verification finished: No migration state was executed (check if migration was started).");
+            .orElse("Migration verification finished: No migration state was executed");
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOG.error("SLES 16 Migration: Failed to extract result message from nested Salt response", e);
             return "Unable to extract result message (parsing error)";
         }

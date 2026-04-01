@@ -270,7 +270,6 @@ public class SPMigrationAction extends RhnAction {
 
         Optional<SUSEProduct> targetProduct = Optional.ofNullable(parHolder.getTargetBaseProduct())
         .map(SUSEProductFactory::getProductById);
-        
         // flag to know if we should show the dry-run button or not
         parHolder.setHasDryRun(MigrationDataFactory.computeHasDryRunCapability(
                 parHolder.isRedHatMinion(), sourceProduct.orElse(null), targetProduct.orElse(null)));

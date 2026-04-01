@@ -48,6 +48,8 @@ import com.redhat.rhn.domain.rhnpackage.PackageName;
 import com.redhat.rhn.domain.rhnpackage.PackageTest;
 import com.redhat.rhn.domain.scc.SCCRepository;
 import com.redhat.rhn.domain.server.InstalledProduct;
+import com.redhat.rhn.domain.server.MinionServer;
+import com.redhat.rhn.domain.server.MinionServerFactoryTest;
 import com.redhat.rhn.domain.server.Server;
 import com.redhat.rhn.domain.server.ServerConstants;
 import com.redhat.rhn.domain.server.ServerFactoryTest;
@@ -59,6 +61,10 @@ import com.redhat.rhn.taskomatic.TaskomaticApi;
 import com.redhat.rhn.testing.BaseTestCaseWithUser;
 import com.redhat.rhn.testing.ErrataTestUtils;
 import com.redhat.rhn.testing.TestUtils;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -81,13 +87,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import com.redhat.rhn.domain.server.MinionServer;
-import com.redhat.rhn.domain.server.test.MinionServerFactoryTest;
 
 /**
  * Tests for {@link DistUpgradeManager} methods.
@@ -1048,9 +1047,6 @@ public class DistUpgradeManagerTest extends BaseTestCaseWithUser {
         root.add("some_other_state", state);
         return root;
     }
-
-
- 
     @Test
     public void testIsSles15To16MigrationTrue() {
         SUSEProduct from = buildSlesProduct("sles", "15.7", true);
@@ -1087,7 +1083,6 @@ public class DistUpgradeManagerTest extends BaseTestCaseWithUser {
         assertFalse(DistUpgradeAction.isMajorMigrationVerificationResult(
                 JsonParser.parseString("\"not-an-object\"")));
     }
-    
     @Test
     public void testHandleVerificationResultSuccess() throws Exception {
         MinionServer minion = MinionServerFactoryTest.createTestMinionServer(user);
@@ -1174,8 +1169,8 @@ public class DistUpgradeManagerTest extends BaseTestCaseWithUser {
     @Test
     public void testScheduleDistUpgradeSles16DoesNotForcePackageListRefresh() throws Exception {
         // Set up a SLES 15 -> 16 migration — products that satisfy isSles15To16Migration()
-        SUSEProduct sles15 = buildSlesProduct("sles", "15.7", true);
-        SUSEProduct sles16 = buildSlesProduct("sles", "16.0", true);
+        SUSEProduct sles15 = SUSEProductTestUtils.createTestSUSEProduct(user, "sles", "15.7", "x86_64", "7261", true);
+        SUSEProduct sles16 = SUSEProductTestUtils.createTestSUSEProduct(user, "sles", "16.0", "x86_64", "7261", true);
 
         MinionServer minion = MinionServerFactoryTest.createTestMinionServer(user);
         Channel subscribedChannel = ChannelFactoryTest.createTestChannel(user);
@@ -1215,7 +1210,7 @@ public class DistUpgradeManagerTest extends BaseTestCaseWithUser {
     private JsonElement loadSles16VerifySuccessFixture() {
         try (var reader = new java.io.InputStreamReader(
                 getClass().getResourceAsStream(
-                        "/com/suse/manager/reactor/messaging/test/sles16_verify_success.json"))) {
+                        "/com/suse/manager/reactor/messaging/sles16_verify_success.json"))) {
             return JsonParser.parseReader(reader);
         }
         catch (java.io.IOException e) {
