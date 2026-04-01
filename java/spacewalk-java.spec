@@ -540,6 +540,7 @@ install -m 644 conf/default/rhn_hibernate.conf %{buildroot}%{_datadir}/rhn/confi
 install -m 644 conf/default/rhn_reporting_hibernate.conf %{buildroot}%{_datadir}/rhn/config-defaults/rhn_reporting_hibernate.conf
 install -m 644 conf/default/rhn_taskomatic_daemon.conf %{buildroot}%{_datadir}/rhn/config-defaults/rhn_taskomatic_daemon.conf
 install -m 644 conf/default/taskomatic.conf %{buildroot}%{_sysconfdir}/rhn/taskomatic.conf
+install -d -m 755 %{buildroot}%{_sysconfdir}/rhn/taskomatic.conf.d
 install -m 644 conf/default/rhn_org_quartz.conf %{buildroot}%{_datadir}/rhn/config-defaults/rhn_org_quartz.conf
 install -m 644 conf/rhn_java.conf %{buildroot}%{_datadir}/rhn/config-defaults
 install -m 644 conf/rhn_java_sso.conf %{buildroot}%{_datadir}/rhn/config-defaults
@@ -769,6 +770,7 @@ fi
 %{_datadir}/rhn/config-defaults/rhn_reporting_hibernate.conf
 %{_datadir}/rhn/config-defaults/rhn_taskomatic_daemon.conf
 %config(noreplace) %{_sysconfdir}/rhn/taskomatic.conf
+%dir %{_sysconfdir}/rhn/taskomatic.conf.d
 %{_datadir}/rhn/config-defaults/rhn_org_quartz.conf
 %{_datadir}/rhn/config-defaults/rhn_java.conf
 %{_datadir}/rhn/config-defaults/rhn_java_sso.conf
