@@ -24,7 +24,6 @@ jobs:
       is-external: ${{ steps.association.outputs.is_external }}
     permissions:
       actions: read
-      contents: read
       pull-requests: read
     runs-on: ubuntu-latest
     steps:
@@ -42,8 +41,8 @@ jobs:
         pr_number="$(cat pr-number)"
         echo "number=${pr_number}" >> "$GITHUB_OUTPUT"
 
-    - name: Read PR association
-      id: association
+    - name: Read PR author
+      id: pr_author
       uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd #v8.0.0
       with:
         github-token: ${{ github.token }}
@@ -55,9 +54,51 @@ jobs:
             pull_number: prNumber,
           });
 
-          const internalAssociations = new Set(['OWNER', 'MEMBER', 'COLLABORATOR']);
-          const isExternal = !internalAssociations.has(pullRequest.author_association);
+          const username = pullRequest.user?.login;
+          if (!username) {
+            core.setFailed('PR payload has no user.login');
+            return;
+          }
+          core.setOutput('username', username);
+
+    - id: generate-token
+      name: Generate an access token
+      uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 #v2
+      with:
+        app-id: ${{ vars.EXTERNAL_PR_LABELER_APP_ID }}
+        private-key: ${{ secrets.EXTERNAL_PR_LABELER_PK }}
+
+    - name: Check if author is an org member
+      id: association
+      uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd #v8.0.0
+      with:
+        github-token: ${{ steps.generate-token.outputs.token }}
+        script: |
+          const username = '${{ steps.pr_author.outputs.username }}';
+          let isExternal = false;
+          try {
+            await github.request('GET /orgs/{org}/members/{username}', {
+              org: context.repo.owner,
+              username,
+            });
+            // 204: user is a member
+            isExternal = false;
+          } catch (error) {
+            if (error.status === 404) {
+              // 404: user is not a member
+              isExternal = true;
+            } else {
+              throw error;
+            }
+          }
+
           core.setOutput('is_external', isExternal ? 'true' : 'false');
+
+    - name: Debug external classification
+      if: ${{ runner.debug == '1' }}
+      run: |
+        echo "PR author: ${{ steps.pr_author.outputs.username }}"
+        echo "is_external: ${{ steps.association.outputs.is_external }}"
 
   # Applies path-based labels from .github/labeler.yml.
   path-labeler:
@@ -82,7 +123,6 @@ jobs:
     needs: pr-metadata
     if: needs.pr-metadata.result == 'success' && needs.pr-metadata.outputs.is-external == 'true'
     permissions:
-      contents: read
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
@@ -109,7 +149,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       actions: read
-      contents: read
       pull-requests: write
     steps:
       - name: Download translation result artifact
