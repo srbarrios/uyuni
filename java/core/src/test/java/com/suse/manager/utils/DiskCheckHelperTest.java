@@ -32,7 +32,7 @@ public class DiskCheckHelperTest {
     public void testReturnsUndefinedWhenAnExceptionIsThrown() {
         final DiskCheckHelper diskCheckHelper = new DiskCheckHelper() {
             @Override
-            protected int invokeExternalScript() throws IOException {
+            protected int performCheck() throws IOException, InterruptedException {
                 throw new IOException("Fake unexpected exception during the execution of the script");
             }
         };
@@ -71,7 +71,7 @@ public class DiskCheckHelperTest {
         }
 
         @Override
-        protected int invokeExternalScript() {
+        protected int performCheck() throws IOException, InterruptedException {
             return scriptResult;
         }
     }
