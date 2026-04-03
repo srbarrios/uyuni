@@ -218,21 +218,26 @@ artifacts:
     repository: Uyuni_Other
   - artifact: salt-netapi-client
     repository: Uyuni
-  - artifact: simpleclient
-    package: prometheus-simpleclient-java
-    jar: simpleclient-[0-9.]+
+  - artifact: prometheus-metrics-core
+    package: prometheus-metrics-java-core
     repository: Uyuni_Other
-  - artifact: simpleclient_common
-    package: prometheus-simpleclient-java
+  - artifact: prometheus-metrics-config
+    package: prometheus-metrics-java-config
     repository: Uyuni_Other
-  - artifact: simpleclient_hibernate
-    package: prometheus-simpleclient-java
+  - artifact: prometheus-metrics-model
+    package: prometheus-metrics-java-model
     repository: Uyuni_Other
-  - artifact: simpleclient_httpserver
-    package: prometheus-simpleclient-java
+  - artifact: prometheus-metrics-exporter-common
+    package: prometheus-metrics-java-exporter-common
     repository: Uyuni_Other
-  - artifact: simpleclient_servlet
-    package: prometheus-simpleclient-java
+  - artifact: prometheus-metrics-exporter-httpserver
+    package: prometheus-metrics-java-exporter-httpserver
+    repository: Uyuni_Other
+  - artifact: prometheus-metrics-exporter-servlet-jakarta
+    package: prometheus-metrics-java-exporter-servlet-jakarta
+    repository: Uyuni_Other
+  - artifact: prometheus-metrics-exposition-textformats
+    package: prometheus-metrics-java-exposition-textformats
     repository: Uyuni_Other
   - artifact: simple-core
     # How comes that package is not noarch?

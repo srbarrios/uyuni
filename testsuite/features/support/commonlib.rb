@@ -46,32 +46,17 @@ def product
   raise NotImplementedError, 'Could not determine product'
 end
 
-# Returns the version of the product
-#
-# @return [String] The version number of the product being tested.
-def product_version
-  product_raw, code = get_target('server').run('rpm -q patterns-uyuni_server', check_errors: false)
-  m = product_raw.match(/patterns-uyuni_server-(.*)-.*/)
-  return m[1] if code.zero? && !m.nil?
-
-  product_raw, code = get_target('server').run('rpm -q patterns-suma_server', check_errors: false)
-  m = product_raw.match(/patterns-suma_server-(.*)-.*/)
-  return m[1] if code.zero? && !m.nil?
-
-  raise NotImplementedError, 'Could not determine product version'
-end
-
 # Retrieves the full product version using the 'venv-salt-call' command.
 #
 # @return [String, nil] The full product version if the command execution was successful and
 #   the output is not empty, otherwise nil.
 def product_version_full
   cmd = 'venv-salt-call --local grains.get product_version | tail -n 1'
-  out, code = get_target('server').run(cmd)
+  out, code = get_target('server').run(cmd, runs_in_container: false)
   out.strip if code.zero? && !out.nil?
 end
 
-# WARN: It's working for /24 mask, but couldn't not work properly with others
+# WARN: It's working for /24 mask, but couldn't work properly with others
 # Returns the reverse DNS lookup address for a given network address.
 #
 # @param net [String] The network address in the format "x.x.x.x".

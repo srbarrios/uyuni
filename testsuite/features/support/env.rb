@@ -631,6 +631,11 @@ Before('@uyuni') do
   skip_this_scenario unless product == 'Uyuni'
 end
 
+# do some tests only for head product builds
+Before('@head') do
+  skip_this_scenario unless product_version_full == 'head'
+end
+
 # do some tests only if we are using salt bundle
 Before('@salt_bundle') do
   skip_this_scenario unless $use_salt_bundle
