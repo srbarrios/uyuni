@@ -377,11 +377,20 @@ public class JobReturnEventMessageAction implements MessageAction {
                 .map(type -> type.equals(ActionFactory.TYPE_DIST_UPGRADE))
                 .orElse(false);
 
+       
         if (isDistUpgrade) {
             executionTime = Instant.now().plusSeconds(30);
         }
-
-        schedulePackageRefresh(scheduler, jobReturnEvent.getMinionId(), Date.from(executionTime));
+        
+        boolean isSles15To16Migration = action
+                .filter(a -> a instanceof DistUpgradeAction)
+                .map(a -> (DistUpgradeAction) a)
+                .map(DistUpgradeAction::isSles15To16Migration)
+                .orElse(false);
+        // No package refresh needed for SLES 15 -> 16 migration
+        if (!isSles15To16Migration) {
+            schedulePackageRefresh(scheduler, jobReturnEvent.getMinionId(), Date.from(executionTime));
+        }
     }
 
     private void updateHostWhenS390(MinionServer m) {
