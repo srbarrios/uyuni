@@ -88,6 +88,7 @@ import com.suse.manager.webui.services.iface.SaltApi;
 import com.suse.salt.netapi.calls.LocalCall;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -1611,6 +1612,34 @@ public class ServerFactoryTest extends BaseTestCaseWithUser {
         assertTrue(ServerFactory.isPtfUninstallationSupported(ptfFullSupport));
     }
 
+    @Test
+    @DisplayName("ServerFactory.lookupProxiesByOrg detects a proxy")
+    public void testLookupProxiesByOrgWithProxy() {
+        Server proxyServer = createTestServer(user, true,
+                ServerConstants.getServerGroupTypeSaltEntitled(), TYPE_SERVER_PROXY);
+        proxyServer.setHostname(HOSTNAME);
+        TestUtils.flushAndClearSession();
+
+        assertEquals(proxyServer, ServerFactory.lookupProxyServer(HOSTNAME).orElseThrow());
+
+        List<Server> proxyList = ServerFactory.lookupProxiesByOrg(user);
+        assertEquals(1, proxyList.size());
+        assertEquals(proxyServer, proxyList.get(0));
+    }
+
+    @Test
+    @DisplayName("ServerFactory.lookupProxiesByOrg avoid to detect normal minions")
+    public void testLookupProxiesByOrgWithMinion() {
+        Server normalMinion = createTestServer(user, true,
+                ServerConstants.getServerGroupTypeSaltEntitled(), TYPE_SERVER_MINION);
+        normalMinion.setHostname("my.minion.com");
+        TestUtils.flushAndClearSession();
+
+        assertTrue(ServerFactory.lookupProxyServer("my.minion.com").isEmpty());
+
+        List<Server> proxyList = ServerFactory.lookupProxiesByOrg(user);
+        assertEquals(0, proxyList.size());
+    }
 
 
     @Test
