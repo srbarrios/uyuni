@@ -137,6 +137,10 @@ public class DistUpgradeAction extends Action {
 
         minionSummaries.forEach((minionSummary -> {
             DistUpgradeActionDetails actionDetails = getDetails(minionSummary.getServerId());
+            if (actionDetails == null) {
+                LOG.error("No DistUpgradeActionDetails found for server: {}", minionSummary.getServerId());
+                return;
+            }
 
             Map<Boolean, List<Channel>> channelTaskMap = actionDetails
                 .getChannelTasks()
@@ -151,7 +155,7 @@ public class DistUpgradeAction extends Action {
 
 
             // Determine if this is specifically a SLES 15 SPx -> SLES 16.x migration
-            boolean isSLES15to16Migration = actionDetails != null && actionDetails.isSles15To16Migration();
+            boolean isSLES15to16Migration = actionDetails.isSles15To16Migration();
             List<Map<String, String>> sles16TargetChannelTokens = new ArrayList<>();
             getServerActions()
               .stream()
@@ -159,11 +163,11 @@ public class DistUpgradeAction extends Action {
               .flatMap(sa -> sa.getServer().asMinionServer().stream())
               .findFirst()
               .ifPresent(minion -> {
-                  if (!isSLES15to16Migration) {
-                      switchChannels(minion, subscribedChannels, unsubscribedChannels, false);
+                  if (isSLES15to16Migration) {
+                      sles16TargetChannelTokens.addAll(generateSles16Tokens(minion, subscribedChannels));
                   }
                   else {
-                      sles16TargetChannelTokens.addAll(generateSles16Tokens(minion, subscribedChannels));
+                      switchChannels(minion, subscribedChannels, unsubscribedChannels, false);
                   }
               });
             Map<String, Object> pillar = new HashMap<>();
@@ -202,7 +206,7 @@ public class DistUpgradeAction extends Action {
             String saltStateName = ApplyStatesEventMessage.DISTUPGRADE;
             if (isSLES15to16Migration) {
                 pillar.put("action_id", getId().toString());
-                saltStateName = "distupgrade.sles16";
+                saltStateName = ApplyStatesEventMessage.DISTUPGRADE_SLES16;
                 LOG.info("Using DMS-based migration state for SLES 15 SP7 -> SLES 16.0");
             }
 
@@ -315,6 +319,12 @@ public class DistUpgradeAction extends Action {
      * @param jsonResult the full state.apply result map from the sles16_verify state
      */
     private void handleVerificationResult(ServerAction serverAction, JsonElement jsonResult) {
+        if (ActionFactory.STATUS_COMPLETED.equals(serverAction.getStatus()) ||
+                ActionFactory.STATUS_FAILED.equals(serverAction.getStatus())) {
+            LOG.info("Verification result already processed for server: {}, skipping",
+                    serverAction.getServerId());
+            return;
+        }
         boolean migrationSucceeded = parseVerificationStatus(jsonResult);
         String resultMessage = extractVerificationMessage(jsonResult);
         LocalizationService ls = LocalizationService.getInstance();
@@ -370,8 +380,10 @@ public class DistUpgradeAction extends Action {
     private void applyDelayedChannelSwitch(ServerAction serverAction) {
         serverAction.getServer().asMinionServer().ifPresent(minion -> {
             DistUpgradeActionDetails details = getDetails(minion.getId());
-            if (details != null && !details.isDryRun()) {
-                LOG.info("Applying delayed channel switch for SLES 16 migration on server: {}", minion.getId());
+            if (details == null || details.isDryRun()) {
+                return;
+            }
+            LOG.info("Applying delayed channel switch for SLES 16 migration on server: {}", minion.getId());
                 Map<Boolean, List<Channel>> channelTaskMap = details
                     .getChannelTasks()
                     .stream()
@@ -385,7 +397,6 @@ public class DistUpgradeAction extends Action {
 
                 switchChannels(minion, subscribedChannels, unsubscribedChannels, true);
                 LOG.info("Delayed channel switch applied and channel state scheduled for server: {}", minion.getId());
-            }
         });
     }
 
@@ -429,6 +440,8 @@ public class DistUpgradeAction extends Action {
             }
             catch (TokenBuildingException e) {
                 LOG.error("Could not generate SLES16 migration token for channel: {}", channel.getLabel(), e);
+                throw new RuntimeException(
+                        "Failed to generate migration token for channel: " + channel.getLabel(), e);
             }
         });
         return tokens;
@@ -606,7 +619,8 @@ public class DistUpgradeAction extends Action {
         RequestContext requestContext = new RequestContext(request);
         Server server = requestContext.lookupAndBindServer();
 
-        boolean typeDistUpgradeDryRun = getDetails(server.getId()).isDryRun();
+        DistUpgradeActionDetails details = getDetails(server.getId());
+        boolean typeDistUpgradeDryRun = details != null && details.isDryRun();
         request.setAttribute("typeDistUpgradeDryRun", typeDistUpgradeDryRun);
 
         return typeDistUpgradeDryRun;

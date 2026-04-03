@@ -68,8 +68,6 @@ import java.util.stream.Stream;
  */
 public class JobReturnEventMessageAction implements MessageAction {
 
-    private static final String SLES16_VERIFY_STATE = "distupgrade.sles16_verify";
-
     private final SaltServerActionService saltServerActionService;
     private final SaltUtils saltUtils;
 
@@ -294,23 +292,22 @@ public class JobReturnEventMessageAction implements MessageAction {
             return false;
         }
 
-        List<?> funArgsList = (List<?>) jobReturnEvent.getData().getFunArgs();
-        if (funArgsList == null || funArgsList.isEmpty()) {
+        Object funArgs = jobReturnEvent.getData().getFunArgs();
+        if (!(funArgs instanceof List<?> funArgsList) || funArgsList.isEmpty()) {
             return false;
         }
 
         Object firstArg = funArgsList.get(0);
-
-        if (SLES16_VERIFY_STATE.equals(firstArg)) {
+        if (ApplyStatesEventMessage.DISTUPGRADE_SLES16_VERIFY.equals(firstArg)) {
             return true;
         }
         if (firstArg instanceof Map<?, ?> argMap) {
             Object mods = argMap.get("mods");
-            if (SLES16_VERIFY_STATE.equals(mods)) {
+            if (ApplyStatesEventMessage.DISTUPGRADE_SLES16_VERIFY.equals(mods)) {
                 return true;
             }
             else if (mods instanceof List<?> modsList) {
-                return modsList.contains(SLES16_VERIFY_STATE);
+                return modsList.contains(ApplyStatesEventMessage.DISTUPGRADE_SLES16_VERIFY);
             }
         }
 
@@ -377,11 +374,10 @@ public class JobReturnEventMessageAction implements MessageAction {
                 .map(type -> type.equals(ActionFactory.TYPE_DIST_UPGRADE))
                 .orElse(false);
 
-       
         if (isDistUpgrade) {
             executionTime = Instant.now().plusSeconds(30);
         }
-        
+
         boolean isSles15To16Migration = action
                 .filter(a -> a instanceof DistUpgradeAction)
                 .map(a -> (DistUpgradeAction) a)
