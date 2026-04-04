@@ -1286,3 +1286,10 @@ INSERT INTO access.accessGroupNamespace (group_id, namespace_id)
     )
     AND ns.access_mode = 'W'
 ON CONFLICT (group_id, namespace_id) DO NOTHING;
+
+-- New endpoint
+INSERT INTO access.accessGroupNamespace (group_id, namespace_id)
+    SELECT ag.id, ns.id
+    FROM access.accessGroup ag, access.namespace ns
+    WHERE ns.namespace = 'api.system.list_migration_targets_with_channels' AND ns.access_mode = 'R'
+    ON CONFLICT (group_id, namespace_id) DO NOTHING;
