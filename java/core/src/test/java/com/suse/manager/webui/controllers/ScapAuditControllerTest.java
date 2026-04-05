@@ -13,7 +13,7 @@
  * in this software or its documentation.
  */
 
-package com.suse.manager.webui.controllers.test;
+package com.suse.manager.webui.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -35,9 +35,6 @@ import com.redhat.rhn.domain.audit.XccdfRuleFixCustom;
 import com.redhat.rhn.testing.SparkTestUtils;
 import com.redhat.rhn.testing.TestUtils;
 
-import com.suse.manager.webui.controllers.ApplyRemediationJson;
-import com.suse.manager.webui.controllers.CustomRemediationJson;
-import com.suse.manager.webui.controllers.ScapAuditController;
 import com.suse.manager.webui.utils.gson.ResultJson;
 import com.suse.manager.webui.utils.gson.ScapPolicyJson;
 import com.suse.utils.Json;
@@ -91,7 +88,7 @@ public class ScapAuditControllerTest extends BaseControllerTestCase {
 
     private XccdfRuleFix createTestXccdfRuleFix(String benchmarkId, String ruleId) {
         XccdfRuleFix fix = new XccdfRuleFix(benchmarkId, ruleId, "remediation");
-        HibernateFactory.getSession().save(fix);
+        HibernateFactory.getSession().persist(fix);
         HibernateFactory.getSession().flush();
         return fix;
     }

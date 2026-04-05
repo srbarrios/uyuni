@@ -32,9 +32,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 
 /**
  * ScapFactory - the singleton class used to fetch and store
@@ -359,7 +359,7 @@ public class ScapFactory extends HibernateFactory {
      * @param xccdfRuleFix the XccdfRuleFix to save
      */
     public static void saveXccfRuleFix(XccdfRuleFix xccdfRuleFix) {
-        singleton.saveObject(xccdfRuleFix, true);
+        singleton.saveObject(xccdfRuleFix);
     }
 
     /**

@@ -89,7 +89,7 @@ public class UserInfo extends AbstractUserChild implements Serializable {
     private String webTheme;
 
     @Column(name = "beta_features_enabled", nullable = false)
-    @Type(type = "yes_no")
+    @Convert(converter = YesNoConverter.class)
     private boolean betaFeaturesEnabled;
 
     /**

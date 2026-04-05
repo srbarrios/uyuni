@@ -17,14 +17,15 @@ package com.redhat.rhn.domain.recurringactions.type;
 
 import com.redhat.rhn.domain.audit.ScapPolicy;
 
-import org.hibernate.annotations.Type;
+import org.hibernate.type.YesNoConverter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 /**
  * Recurring Action type for scap policy implementation
@@ -77,7 +78,7 @@ public class RecurringScapPolicy extends RecurringActionType {
      * @return testMode - if action is testMode
      */
     @Column(name = "test_mode")
-    @Type(type = "yes_no")
+    @Convert(converter = YesNoConverter.class)
     public boolean isTestMode() {
         return this.testMode;
     }

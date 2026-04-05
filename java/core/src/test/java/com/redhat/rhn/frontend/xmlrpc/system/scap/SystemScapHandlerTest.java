@@ -12,7 +12,7 @@
  * granted to use or replicate Red Hat trademarks that are incorporated
  * in this software or its documentation.
  */
-package com.redhat.rhn.frontend.xmlrpc.system.scap.test;
+package com.redhat.rhn.frontend.xmlrpc.system.scap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -27,10 +27,9 @@ import com.redhat.rhn.domain.audit.ScapFactory;
 import com.redhat.rhn.domain.audit.ScapPolicy;
 import com.redhat.rhn.domain.audit.TailoringFile;
 import com.redhat.rhn.domain.server.Server;
-import com.redhat.rhn.domain.server.test.ServerFactoryTest;
+import com.redhat.rhn.domain.server.ServerFactoryTest;
+import com.redhat.rhn.frontend.xmlrpc.BaseHandlerTestCase;
 import com.redhat.rhn.frontend.xmlrpc.TaskomaticApiException;
-import com.redhat.rhn.frontend.xmlrpc.system.scap.SystemScapHandler;
-import com.redhat.rhn.frontend.xmlrpc.test.BaseHandlerTestCase;
 import com.redhat.rhn.manager.action.ActionManager;
 import com.redhat.rhn.manager.system.SystemManager;
 import com.redhat.rhn.taskomatic.TaskomaticApi;

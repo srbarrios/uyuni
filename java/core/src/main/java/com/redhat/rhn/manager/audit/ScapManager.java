@@ -540,7 +540,7 @@ public class ScapManager extends BaseManager {
                 List<Profile> profiles = Optional.ofNullable(benchmark.getProfiles())
                         .orElse(Collections.emptyList());
                 if (profiles.isEmpty()) {
-                    log.error("Scap data stream misses profiles");
+                    LOGGER.error("Scap data stream misses profiles");
                     throw new RuntimeException("Scap data stream misses profiles");
                 }
                 return benchmark;

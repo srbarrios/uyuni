@@ -17,7 +17,7 @@ import org.apache.commons.fileupload2.core.DiskFileItem;
 import org.apache.commons.fileupload2.core.DiskFileItemFactory;
 import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.fileupload2.core.FileUploadException;
-import org.apache.commons.fileupload2.javax.JavaxServletFileUpload;
+import org.apache.commons.fileupload2.jakarta.servlet6.JakartaServletFileUpload;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -39,7 +39,7 @@ public class MultipartRequestUtil {
         DiskFileItemFactory fileItemFactory = DiskFileItemFactory.builder()
                 .setPath(SALT_FILE_GENERATION_TEMP_PATH)
                 .get();
-        return new JavaxServletFileUpload<>(fileItemFactory).parseRequest(request.raw());
+        return new JakartaServletFileUpload<>(fileItemFactory).parseRequest(request.raw());
     }
 
     /**
