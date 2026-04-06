@@ -3098,3 +3098,14 @@ INSERT INTO access.namespace (namespace, access_mode, description)
 INSERT INTO access.namespace (namespace, access_mode, description)
     VALUES ('api.proxy.backup_configuration', 'W', 'Saves the configuration of a proxy to the server for later conversion')
     ON CONFLICT (namespace, access_mode) DO NOTHING;
+
+INSERT INTO access.namespace (namespace, access_mode, description) VALUES 
+    ('api.system.scap.list_scap_content', 'R', 'Lists SCAP content for a given system'),
+    ('api.system.scap.list_policies', 'R', 'Lists SCAP policies for a given system'),
+    ('api.system.scap.list_tailoring_files', 'R', 'Lists SCAP tailoring files for a given system'),
+    ('api.system.scap.schedule_beta_xccdf_scan_custom', 'W', 'Schedules a custom XCCDF scan'),
+    ('api.system.scap.schedule_beta_xccdf_scan_with_policy', 'W', 'Schedules a XCCDF scan using a specific policy'),
+    ('audit.scap.management', 'R', 'View SCAP content, tailoring files, and policies'),
+    ('audit.scap.management', 'W', 'Create, edit, or delete SCAP content, tailoring files, and policies'),
+    ('audit.scap.execution', 'R', 'View SCAP scan results and remediation scripts'),
+    ('audit.scap.execution', 'W', 'Schedule SCAP scans and apply remediations');
