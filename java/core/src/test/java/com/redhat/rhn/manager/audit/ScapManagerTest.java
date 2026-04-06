@@ -430,10 +430,10 @@ public class ScapManagerTest extends JMockBaseTestCaseWithUser {
         ScapAction action = ActionManager.scheduleXccdfEval(user,
                 minion, "/usr/share/openscap/scap-yast2sec-xccdf.xml", "--profile Default", new Date());
         File resumeXsl = new File(TestUtils.findTestData(
-            "/com/redhat/rhn/manager/audit/test/openscap/suma-ref42-min-sles15/xccdf-resume.xslt.in")
+            "/com/redhat/rhn/manager/audit/openscap/suma-ref42-min-sles15/xccdf-resume.xslt.in")
           .getPath());
         InputStream resultsIn = TestUtils.findTestData(
-            "/com/redhat/rhn/manager/audit/test/openscap/suma-ref42-min-sles15/results.xml")
+            "/com/redhat/rhn/manager/audit/openscap/suma-ref42-min-sles15/results.xml")
           .openStream();
         XccdfTestResult result = ScapManager.xccdfEval(minion, action, 2, "", resultsIn, resumeXsl);
         assertNotNull(result);

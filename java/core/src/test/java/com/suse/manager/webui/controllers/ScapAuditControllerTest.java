@@ -243,9 +243,9 @@ public class ScapAuditControllerTest extends BaseControllerTestCase {
     public void testGetProfileList() throws Exception {
         ScapContent content = createTestScapContent();
         File testXccdfSource = new File(TestUtils.findTestData(
-          "/com/redhat/rhn/manager/audit/test/openscap/test-xccdf.xml").getPath());
+          "/com/redhat/rhn/manager/audit/openscap/test-xccdf.xml").getPath());
         File profileXslt = new File(TestUtils.findTestData(
-          "/com/redhat/rhn/manager/audit/test/openscap/xccdf-profiles.xslt.in").getPath());
+          "/com/redhat/rhn/manager/audit/openscap/xccdf-profiles.xslt.in").getPath());
         // 2. Point Config to the Temp Directory
         Config.get().setString(ConfigDefaults.SCAP_XCCDF_PROFILES_XSL, profileXslt.getPath());
         controller.setDirectories(testXccdfSource.getParent(), testXccdfSource.getParent());
