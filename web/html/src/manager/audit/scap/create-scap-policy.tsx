@@ -266,7 +266,7 @@ const ScapPolicy = (): JSX.Element => {
                   }}
                 />
                 <span className="fetch-remote-help">
-                  {t("This requires internet and a lot of memory, make sure this minion has enough memory available!")}
+                  {t("This requires internet access and significant memory. Ensure the target minion has sufficient available memory before applying it!")}
                 </span>
               </label>
             </div>
@@ -288,7 +288,7 @@ const ScapPolicy = (): JSX.Element => {
             )}
             <SubmitButton
               id="submit-btn"
-              className="btn-success"
+              className="btn-primary"
               icon={isEditMode ? "fa-save" : "fa-plus"}
               text={isEditMode ? t("Update") : t("Create")}
             />

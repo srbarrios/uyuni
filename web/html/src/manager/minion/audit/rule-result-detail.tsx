@@ -6,7 +6,7 @@ import SpaRenderer from "core/spa/spa-renderer";
 
 import { AceEditor } from "components/ace-editor";
 import { ActionSchedule } from "components/action-schedule";
-import { SubmitButton } from "components/buttons";
+import { Button, SubmitButton } from "components/buttons";
 import { Form } from "components/input/form/Form";
 import { Select } from "components/input/select/Select";
 import { ActionLink } from "components/links";
@@ -394,25 +394,20 @@ class RuleResultDetail extends Component<object, StateType> {
             : "Write a Salt state (YAML format) to remediate this rule"}
         </div>
         <div className="custom-remediation-actions" style={{ marginTop: "10px" }}>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={this.onSaveCustomRemediation}
+          <Button
+            className="btn-primary"
+            text={this.state.isSaving ? t("Saving...") : t("Save Custom Remediation")}
+            handler={this.onSaveCustomRemediation}
             disabled={this.state.isSaving || !this.state.customRemediation.trim()}
-          >
-            {this.state.isSaving ? "Saving..." : "Save Custom Remediation"}
-          </button>
+          />
           {/* Only show delete button if saved script type has content */}
           {((this.state.customScriptType === "bash" && this.state.savedRemediationBash) ||
             (this.state.customScriptType === "salt" && this.state.savedRemediationSalt)) && (
-            <button
-              type="button"
-              className="btn btn-danger"
-              onClick={this.onDeleteCustomRemediation}
-              style={{ marginLeft: "10px" }}
-            >
-              Delete Custom Remediation
-            </button>
+            <Button
+              className="btn-danger"
+              text={t("Delete Custom Remediation")}
+              handler={this.onDeleteCustomRemediation}
+            />
           )}
         </div>
       </div>
@@ -496,7 +491,7 @@ class RuleResultDetail extends Component<object, StateType> {
                 <div>
                   <SubmitButton
                     id="apply-btn"
-                    className="btn-success"
+                    className="btn-primary"
                     text={t("Apply Remediation")}
                     disabled={this.state.isInvalid}
                   />

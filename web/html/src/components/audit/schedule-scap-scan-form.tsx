@@ -4,6 +4,7 @@ import { ActionSchedule } from "components/action-schedule";
 import { LinkButton, SubmitButton } from "components/buttons";
 import { Form } from "components/input/form/Form";
 import { FormGroup } from "components/input/FormGroup";
+import { InputBase } from "components/input/InputBase";
 import { Label } from "components/input/Label";
 import { Select } from "components/input/select/Select";
 import { Text } from "components/input/text/Text";
@@ -154,7 +155,13 @@ export const ScheduleScapScanForm = ({
   };
 
   const renderButtons = () => (
-    <SubmitButton id="create-btn" className="btn-success" icon="fa-clock-o" text={t("Schedule")} disabled={isInvalid} />
+    <SubmitButton
+      id="create-btn"
+      className="btn-primary me-2"
+      icon="fa-clock-o"
+      text={t("Schedule")}
+      disabled={isInvalid}
+    />
   );
 
   return (
@@ -182,15 +189,24 @@ export const ScheduleScapScanForm = ({
             </div>
           </FormGroup>
 
-          <FormGroup>
-            <Label name={t("SCAP Content")} className="col-md-3" required />
-            <div className="col-md-6">
+          <InputBase
+            name="dataStreamName"
+            label={t("SCAP Content")}
+            required
+            labelClass="col-md-3"
+            divClass="col-md-6"
+            invalidHint={t("SCAP Content is required.")}
+            disabled={!!selectedScapPolicy}
+          >
+            {({ setValue, onBlur }) => (
               <Select
                 name="dataStreamName"
                 isClearable
                 value={model.dataStreamName}
                 disabled={!!selectedScapPolicy}
+                onBlur={onBlur}
                 onChange={(value) => {
+                  setValue("dataStreamName", value as string);
                   setModel((prev) => ({ ...prev, dataStreamName: value as string }));
                   if (value) {
                     getProfiles(ScapContentType.DataStream, value as string);
@@ -200,23 +216,34 @@ export const ScheduleScapScanForm = ({
                   .sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
                   .map((k) => ({ value: k.id, label: k.name }))}
               />
-            </div>
-          </FormGroup>
+            )}
+          </InputBase>
 
-          <FormGroup>
-            <Label name={t("XCCDF Profile")} className="col-md-3" required />
-            <div className="col-md-6">
+          <InputBase
+            name="xccdfProfileId"
+            label={t("XCCDF Profile")}
+            required
+            labelClass="col-md-3"
+            divClass="col-md-6"
+            invalidHint={t("XCCDF Profile is required.")}
+            disabled={!!selectedScapPolicy}
+          >
+            {({ setValue, onBlur }) => (
               <Select
                 name="xccdfProfileId"
                 placeholder={t("Select XCCDF profile...")}
                 value={model.xccdfProfileId}
                 disabled={!!selectedScapPolicy}
                 isClearable
-                onChange={(value) => setModel((prev) => ({ ...prev, xccdfProfileId: value as string }))}
+                onBlur={onBlur}
+                onChange={(value) => {
+                  setValue("xccdfProfileId", value as string);
+                  setModel((prev) => ({ ...prev, xccdfProfileId: value as string }));
+                }}
                 options={xccdfProfiles.map((k) => ({ value: k.id, label: k.title }))}
               />
-            </div>
-          </FormGroup>
+            )}
+          </InputBase>
 
           <FormGroup>
             <Label name={t("Tailoring File")} className="col-md-3" />

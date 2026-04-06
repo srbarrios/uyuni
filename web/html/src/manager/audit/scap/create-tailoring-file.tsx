@@ -133,7 +133,7 @@ const TailoringFile = (): JSX.Element => {
           <div className="col-md-offset-3 col-md-6">
             <SubmitButton
               id="upload-btn"
-              className="btn-success"
+              className="btn-primary"
               icon={isEdit ? "fa-edit" : "fa-plus"}
               text={t(isEdit ? "Update" : "Upload")}
               disabled={isInvalid}
