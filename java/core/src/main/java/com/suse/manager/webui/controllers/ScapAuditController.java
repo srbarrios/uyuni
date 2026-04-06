@@ -177,7 +177,7 @@ public class ScapAuditController {
                 withCsrfToken(withDocsLocale(withUser(this::scheduleAuditScanSsmView))),
                 jade);
 
-        post("manager/api/audit/schedule/create", withUser(this::scheduleAuditScan));
+        post("/manager/api/audit/schedule/create", withUser(this::scheduleAuditScan));
 
         //rules
 

@@ -33,8 +33,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 
 /**
  * XccdfRuleFixCustom entity representing org-specific custom remediation for XCCDF rules.
@@ -144,7 +142,6 @@ public class XccdfRuleFixCustom {
      * @return the created
      */
     @Column(name = "created")
-    @Temporal(TemporalType.TIMESTAMP)
     public Date getCreated() {
         return created;
     }
@@ -160,7 +157,6 @@ public class XccdfRuleFixCustom {
      * @return the modified
      */
     @Column(name = "modified")
-    @Temporal(TemporalType.TIMESTAMP)
     public Date getModified() {
         return modified;
     }
