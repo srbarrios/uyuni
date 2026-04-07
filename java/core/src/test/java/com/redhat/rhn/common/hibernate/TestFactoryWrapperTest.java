@@ -93,13 +93,13 @@ public class TestFactoryWrapperTest extends HibernateBaseTest {
         assertNull(TestFactory.lookupByFoobar(testInsert));
 
         // insert
-        TestInterface record = TestFactory.createTest();
-        record.setFoobar(testInsert);
-        TestFactory.save(record);
+        TestInterface testRecord = TestFactory.createTest();
+        testRecord.setFoobar(testInsert);
+        TestFactory.save(testRecord);
 
         // verify
-        assertTrue(record.getId() != 0L);
-        assertTrue(HibernateFactory.getSession().contains(record));
+        assertTrue(testRecord.getId() != 0L);
+        assertTrue(HibernateFactory.getSession().contains(testRecord));
     }
 
     /**
@@ -111,21 +111,21 @@ public class TestFactoryWrapperTest extends HibernateBaseTest {
         assertNull(TestFactory.lookupByFoobar(testReload));
 
         // insert the record
-        TestInterface record = TestFactory.createTest();
-        record.setFoobar(testReload);
-        TestFactory.save(record);
-        Long id = record.getId();
+        TestInterface testRecord = TestFactory.createTest();
+        testRecord.setFoobar(testReload);
+        TestFactory.save(testRecord);
+        Long id = testRecord.getId();
 
         // evict and confirm record is detached
-        TestUtils.flushAndEvict(record);
-        assertFalse(HibernateFactory.getSession().contains(record));
+        TestUtils.flushAndEvict(testRecord);
+        assertFalse(HibernateFactory.getSession().contains(testRecord));
         assertNotNull(id);
 
         // verify reload retrieves the same record but on a different instance
-        TestInterface recordReloaded = TestUtils.reload(record);
+        TestInterface recordReloaded = TestUtils.reload(testRecord);
         assertTrue(HibernateFactory.getSession().contains(recordReloaded));
         assertEquals(id, recordReloaded.getId());
-        assertTrue(record != recordReloaded);
+        assertTrue(testRecord != recordReloaded);
     }
 
     /**
