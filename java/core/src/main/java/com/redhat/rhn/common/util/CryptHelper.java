@@ -31,6 +31,7 @@ public class CryptHelper {
         "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static String md5prefix = "$1$";
     private static String sha256prefix = "$5$";
+    private static Random secureRandom = new SecureRandom();
 
     /**
      * CryptHelper
@@ -104,10 +105,9 @@ public class CryptHelper {
      */
     static String generateRandomSalt(Integer saltLength) {
         StringBuilder salt = new StringBuilder();
-        Random r = new SecureRandom();
 
         for (int i = 0; i < saltLength; i++) {
-            int rand = r.nextInt(b64t.length());
+            int rand = secureRandom.nextInt(b64t.length());
             salt.append(b64t.charAt(rand));
         }
 
