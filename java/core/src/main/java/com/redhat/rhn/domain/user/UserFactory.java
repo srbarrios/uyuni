@@ -44,7 +44,6 @@ import org.hibernate.type.StandardBasicTypes;
 
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -67,12 +66,10 @@ public class UserFactory extends HibernateFactory {
 
     private static List<RhnTimeZone> timeZoneList;
 
-    private static final Role[] IMPLIEDROLESARRAY = { RoleFactory.CHANNEL_ADMIN,
-            RoleFactory.CONFIG_ADMIN, RoleFactory.SYSTEM_GROUP_ADMIN,
-            RoleFactory.ACTIVATION_KEY_ADMIN, RoleFactory.IMAGE_ADMIN };
-
     /** List of Role objects that are applied if you are an Org_admin */
-    public static final List<Role> IMPLIEDROLES = Arrays.asList(IMPLIEDROLESARRAY);
+    public static final List<Role> IMPLIEDROLES = List.of(RoleFactory.CHANNEL_ADMIN,
+            RoleFactory.CONFIG_ADMIN, RoleFactory.SYSTEM_GROUP_ADMIN,
+            RoleFactory.ACTIVATION_KEY_ADMIN, RoleFactory.IMAGE_ADMIN);
 
     public static final State ENABLED = loadState("enabled");
     public static final State DISABLED = loadState("disabled");
