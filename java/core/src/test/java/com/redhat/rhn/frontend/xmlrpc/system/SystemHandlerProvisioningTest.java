@@ -123,8 +123,10 @@ public class SystemHandlerProvisioningTest extends BaseHandlerTestCase {
                 KickstartScheduleCommand.setTaskomaticApi(testApi);
         }
 
+        @Override
         @AfterEach
         public void tearDown() throws Exception {
+                super.tearDown();
                 KickstartScheduleCommand.setTaskomaticApi(new TaskomaticApi());
         }
 
