@@ -601,7 +601,8 @@ public class KickstartFactory extends HibernateFactory {
      */
     public static KickstartableTree lookupKickstartTreeByLabel(String label) {
         Session session = HibernateFactory.getSession();
-        return (KickstartableTree) session.createQuery("FROM KickstartableTree AS k WHERE k.label = :label")
+        return session.createQuery("FROM KickstartableTree AS k WHERE k.label = :label",
+                        KickstartableTree.class)
                 .setParameter(LABEL, label)
                 .uniqueResult();
     }

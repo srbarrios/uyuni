@@ -1,1 +1,1 @@
-- Remove deprecated named queries methods
+- Correct deprecated createQuery usages
