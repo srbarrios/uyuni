@@ -317,33 +317,27 @@ Before('@run_if_proxy_not_transactional_or_sles15sp7_minion') do
 end
 
 Before('@sle_minion') do
-  env_var_name = get_env_var_with_fallback('sle_minion', 'SLE15SP7_MINION')
-  skip_this_scenario unless ENV.key?(env_var_name)
+  skip_this_scenario unless ENV.key? ENV_VAR_BY_HOST['sle_minion']
 end
 
 Before('@rhlike_minion') do
-  env_var_name = get_env_var_with_fallback('rhlike_minion', 'ROCKY8_MINION')
-  skip_this_scenario unless ENV.key?(env_var_name)
+  skip_this_scenario unless ENV.key? ENV_VAR_BY_HOST['rhlike_minion']
 end
 
 Before('@deblike_minion') do
-  env_var_name = get_env_var_with_fallback('deblike_minion', 'UBUNTU2404_MINION')
-  skip_this_scenario unless ENV.key?(env_var_name)
+  skip_this_scenario unless ENV.key? ENV_VAR_BY_HOST['deblike_minion']
 end
 
 Before('@pxeboot_minion') do
-  mac_address = $pxeboot_mac || $sle15sp7_terminal_mac
-  skip_this_scenario unless mac_address
+  skip_this_scenario unless $pxeboot_mac
 end
 
 Before('@ssh_minion') do
-  env_var_name = get_env_var_with_fallback('ssh_minion', 'SLE15SP7_MINION')
-  skip_this_scenario unless ENV.key?(env_var_name)
+  skip_this_scenario unless ENV.key? ENV_VAR_BY_HOST['ssh_minion']
 end
 
 Before('@build_host') do
-  env_var_name = get_env_var_with_fallback('build_host', 'SLE15SP7_BUILDHOST')
-  skip_this_scenario unless ENV.key?(env_var_name)
+  skip_this_scenario unless ENV.key? ENV_VAR_BY_HOST['build_host']
 end
 
 Before('@alma8_minion') do
