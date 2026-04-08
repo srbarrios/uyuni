@@ -12122,23 +12122,23 @@ Per a esmenar aquesta situació, afegiu credencials SCC lt;a href""/rhn/admin/se
         <source>PXE Event Failed</source>
         <target state="translated">L'esdeveniment de PXE ha fallat</target>
       </trans-unit>
-    <trans-unit id="ARMHF Debian" xml:space="preserve">
+      <trans-unit id="ARMHF Debian" xml:space="preserve">
         <source>ARMHF Debian</source>
         <target>ARMHF Debian</target>
-      <target state="new"/>
-  </trans-unit>
+        <target state="new"/>
+      </trans-unit>
       <trans-unit id="diskcheckwarning" xml:space="preserve">
         <source>Disk Check</source>
-      <target state="new"/>
-  </trans-unit>
+        <target state="translated">Comprovació del disc</target>
+      </trans-unit>
       <trans-unit id="notification.diskcheck.summary" xml:space="preserve">
         <source>You are running out of space on your @@PRODUCT_NAME@@ {0}. This is {1}</source>
-      <target state="new"/>
-  </trans-unit>
+        <target state="translated">Us quedeu sense espai a @@PRODUCT_NAME@@ {0}. Això és {1}</target>
+      </trans-unit>
       <trans-unit id="notification.diskcheck.details" xml:space="preserve">
         <source>You are running out of space on your @@PRODUCT_NAME@@ {0}. This is {1}. If you run out of disk space, @@PRODUCT_NAME@@ will stop running, and this could lead to a loss of data. @@PRODUCT_NAME@@ will shutdown automatically.</source>
-      <target state="new"/>
-  </trans-unit>
-      </body>
+        <target state="translated">Us quedeu sense espai a @@PRODUCT_NAME@@ {0}. Això és {1}. Si us quedeu sense espai al disc, @@PRODUCT_NAME@@ deixarà de funcionar i això podria provocar una pèrdua de dades. @@PRODUCT_NAME@@ s'apagarà automàticament.</target>
+      </trans-unit>
+    </body>
   </file>
 </xliff>
