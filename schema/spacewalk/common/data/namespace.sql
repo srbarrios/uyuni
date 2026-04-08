@@ -3099,7 +3099,7 @@ INSERT INTO access.namespace (namespace, access_mode, description)
     VALUES ('api.proxy.backup_configuration', 'W', 'Saves the configuration of a proxy to the server for later conversion')
     ON CONFLICT (namespace, access_mode) DO NOTHING;
 
-INSERT INTO access.namespace (namespace, access_mode, description) VALUES 
+INSERT INTO access.namespace (namespace, access_mode, description) VALUES
     ('api.system.scap.list_scap_content', 'R', 'Lists SCAP content for a given system'),
     ('api.system.scap.list_policies', 'R', 'Lists SCAP policies for a given system'),
     ('api.system.scap.list_tailoring_files', 'R', 'Lists SCAP tailoring files for a given system'),

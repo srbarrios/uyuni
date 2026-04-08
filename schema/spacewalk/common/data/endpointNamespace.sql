@@ -9660,7 +9660,7 @@ INSERT INTO access.endpointNamespace (namespace_id, endpoint_id)
     AND ep.endpoint = '/manager/api/proxy/backupConfiguration' AND ep.http_method = 'POST'
     ON CONFLICT DO NOTHING;
 
--- XML-RPC System SCAP New API Endpoints 
+-- XML-RPC System SCAP New API Endpoints
 INSERT INTO access.endpointNamespace (namespace_id, endpoint_id)
     SELECT ns.id, ep.id FROM access.namespace ns, access.endpoint ep
     WHERE ns.namespace = 'api.system.scap.list_scap_content' AND ns.access_mode = 'R'
