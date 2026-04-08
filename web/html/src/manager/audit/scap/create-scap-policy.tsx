@@ -266,7 +266,9 @@ const ScapPolicy = (): JSX.Element => {
                   }}
                 />
                 <span className="fetch-remote-help">
-                  {t("This requires internet access and significant memory. Ensure the target minion has sufficient available memory before applying it!")}
+                  {t(
+                    "This requires internet access and significant memory. Ensure the target minion has sufficient available memory before applying it!"
+                  )}
                 </span>
               </label>
             </div>
