@@ -30,6 +30,7 @@ export const PoliciesPicker = ({
 }: PoliciesPickerProps): JSX.Element => {
   const [filter, setFilter] = useState("");
   const [searchResults, setSearchResults] = useState<Policy[]>([]);
+  const [selectedPolicyId, setSelectedPolicyId] = useState<number | null>(null);
   const [currentFilter, setCurrentFilter] = useState<string | null>(null);
   const [messages, setMessages] = useState<MessageType[]>([]);
 
@@ -44,34 +45,22 @@ export const PoliciesPicker = ({
     handleMessages([]);
   };
 
-  const getSortedList = (data: Policy[]) => {
-    const [assigned, unassigned] = _partition(data, (d) => d.assigned);
+  const getSortedList = (data: Policy[], assignedId: number | null) => {
+    const withAssignment = data.map((d) => ({ ...d, assigned: d.id === assignedId }));
+    const [assigned, unassigned] = _partition(withAssignment, (d) => d.assigned);
     return _sortBy(assigned, "position").concat(_sortBy(unassigned, (p) => p.policyName.toLowerCase()));
   };
 
   useEffect(() => {
     // Initial load
     Network.get(matchUrl()).then((data: Policy[]) => {
-      const sortedData = getSortedList(data);
-      setSearchResults(sortedData);
-      setCurrentFilter(""); // Initially filter is empty equivalent
+      const initialAssigned = data.find((d) => d.assigned);
+      const initialId = initialAssigned ? initialAssigned.id : null;
+      setSelectedPolicyId(initialId);
+      setSearchResults(getSortedList(data, initialId));
+      setCurrentFilter("");
     });
   }, []); // Only run on mount
-
-  const save = async (currentAssigned: Policy[]) => {
-    try {
-      const data = await saveRequest(currentAssigned);
-
-      const newSearchResults = searchResults.map((policy) => {
-        return data.find((p) => p.id === policy.id) || policy;
-      });
-
-      setSearchResults(getSortedList(newSearchResults));
-      handleMessages(MessagesUtils.info(t("Policy assignment has been saved.")));
-    } catch (error) {
-      handleMessages(MessagesUtils.error(t("An error occurred on save.")));
-    }
-  };
 
   const onSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFilter(event.target.value);
@@ -81,7 +70,7 @@ export const PoliciesPicker = ({
     if (filter !== currentFilter) {
       try {
         const data = await Network.get(matchUrl(filter));
-        setSearchResults(getSortedList(data));
+        setSearchResults(getSortedList(data, selectedPolicyId));
         setCurrentFilter(filter);
         clearMessages();
       } catch (error) {
@@ -91,14 +80,20 @@ export const PoliciesPicker = ({
   };
 
   const handleSelectionChange = (policyId: number) => {
-    const updatedPolicies = searchResults.map((policy) => ({
-      ...policy,
-      assigned: policy.id === policyId,
-    }));
+    setSelectedPolicyId(policyId);
+    setSearchResults((prev) => getSortedList(prev, policyId));
 
-    setSearchResults(updatedPolicies);
-    const assigned = updatedPolicies.filter((policy) => policy.assigned);
-    save(assigned);
+    const selectedPolicy = searchResults.find((p) => p.id === policyId);
+    if (selectedPolicy) {
+      const assigned = [{ ...selectedPolicy, assigned: true }];
+      saveRequest(assigned)
+        .then(() => {
+          handleMessages(MessagesUtils.info(t("Policy assignment has been saved.")));
+        })
+        .catch(() => {
+          handleMessages(MessagesUtils.error(t("An error occurred on save.")));
+        });
+    }
   };
 
   const renderTableBody = (): ReactNode => {
@@ -120,7 +115,9 @@ export const PoliciesPicker = ({
           <tr id={`${policy.id}-row`} key={policy.id}>
             <td>
               <i className="fa spacewalk-icon-manage-configuration-files" title={t("SCAP Policy")} />
-              {policy.policyName}
+              <a href={`/rhn/manager/audit/scap/policy/details/${policy.id}`} target="_blank" rel="noopener noreferrer">
+                {policy.policyName}
+              </a>
             </td>
             <td>{policy.dataStreamName}</td>
             <td>
