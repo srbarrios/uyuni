@@ -93,6 +93,7 @@ const TailoringFile = (): JSX.Element => {
     <TopPanel
       title={t(isEdit ? "Edit Tailoring File" : "Upload Tailoring File")}
       icon="spacewalk-icon-manage-configuration-files"
+      helpUrl="reference/audit/audit-scap-tailoring-files.html"
     >
       <Messages items={messages} />
       <Form

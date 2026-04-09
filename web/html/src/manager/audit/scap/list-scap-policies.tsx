@@ -36,7 +36,6 @@ declare global {
 
 const ScapPolicy = (): JSX.Element => {
   const [messages, setMessages] = useState<MessageType[]>([]);
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [selected, setSelected] = useState<ScapPolicyData | null>(null);
   const [scapPolicies, setScapPolicies] = useState<ScapPolicyData[]>(window.scapPolicies || []);
 
@@ -55,7 +54,6 @@ const ScapPolicy = (): JSX.Element => {
 
         setMessages(successMessage);
         setScapPolicies((prev) => prev.filter((p) => !idList.includes(p.id)));
-        setSelectedItems((prev) => prev.filter((id) => !idList.includes(id)));
         setSelected(null);
       } else {
         setMessages(MessageUtils.error(response.messages || [t("Failed to delete SCAP policy")]));
@@ -115,16 +113,18 @@ const ScapPolicy = (): JSX.Element => {
 
   return (
     <>
-      <TopPanel title={t("Scap Policies")} icon="spacewalk-icon-manage-configuration-files" button={<ActionButtons />}>
+      <TopPanel
+        title={t("Scap Policies")}
+        icon="spacewalk-icon-manage-configuration-files"
+        helpUrl="reference/audit/audit-scap-policies.html"
+        button={<ActionButtons />}
+      >
         <Messages items={messages} />
         <Table
           data={scapPolicies}
           identifier={(policy) => policy.id}
           initialSortColumnKey="id"
           searchField={<SearchField filter={searchFilter} />}
-          selectable
-          selectedItems={selectedItems}
-          onSelect={setSelectedItems}
         >
           <Column
             columnKey="name"

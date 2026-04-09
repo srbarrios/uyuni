@@ -34,7 +34,6 @@ declare global {
 
 const ScapContent = (): JSX.Element => {
   const [messages, setMessages] = useState<MessageType[]>([]);
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [selected, setSelected] = useState<ScapContentData | null>(null);
   const [scapContent, setScapContent] = useState<ScapContentData[]>(window.scapContent || []);
 
@@ -53,7 +52,6 @@ const ScapContent = (): JSX.Element => {
 
         setMessages(successMessage);
         setScapContent((prev) => prev.filter((c) => !idList.includes(c.id)));
-        setSelectedItems((prev) => prev.filter((id) => !idList.includes(id)));
         setSelected(null);
       } else {
         // Handle server-returned error messages
@@ -109,16 +107,18 @@ const ScapContent = (): JSX.Element => {
 
   return (
     <>
-      <TopPanel title={t("SCAP Content")} icon="spacewalk-icon-manage-configuration-files" button={<ActionButtons />}>
+      <TopPanel
+        title={t("SCAP Content")}
+        icon="spacewalk-icon-manage-configuration-files"
+        helpUrl="reference/audit/audit-scap-content.html"
+        button={<ActionButtons />}
+      >
         <Messages items={messages} />
         <Table
           data={scapContent}
           identifier={(content) => content.id}
           initialSortColumnKey="id"
           searchField={<SearchField filter={searchFilter} />}
-          selectable
-          selectedItems={selectedItems}
-          onSelect={setSelectedItems}
         >
           <Column
             columnKey="name"

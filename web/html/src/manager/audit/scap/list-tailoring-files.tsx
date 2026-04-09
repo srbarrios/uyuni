@@ -33,7 +33,6 @@ declare global {
 
 const TailoringFiles = (): JSX.Element => {
   const [messages, setMessages] = useState<MessageType[]>([]);
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [selected, setSelected] = useState<TailoringFileData | null>(null);
   const [tailoringFiles, setTailoringFiles] = useState<TailoringFileData[]>(window.tailoringFiles || []);
 
@@ -52,7 +51,6 @@ const TailoringFiles = (): JSX.Element => {
 
         setMessages(successMessage);
         setTailoringFiles((prev) => prev.filter((f) => !idList.includes(f.id)));
-        setSelectedItems((prev) => prev.filter((id) => !idList.includes(id)));
         setSelected(null);
       } else {
         setMessages(MessageUtils.error(response.messages || [t("Failed to delete tailoring file")]));
@@ -106,6 +104,7 @@ const TailoringFiles = (): JSX.Element => {
       <TopPanel
         title={t("Tailoring Files")}
         icon="spacewalk-icon-manage-configuration-files"
+        helpUrl="reference/audit/audit-scap-tailoring-files.html"
         button={<ActionButtons />}
       >
         <Messages items={messages} />
@@ -114,9 +113,6 @@ const TailoringFiles = (): JSX.Element => {
           identifier={(file) => file.id}
           initialSortColumnKey="id"
           searchField={<SearchField filter={searchFilter} />}
-          selectable
-          selectedItems={selectedItems}
-          onSelect={setSelectedItems}
         >
           <Column
             columnKey="name"

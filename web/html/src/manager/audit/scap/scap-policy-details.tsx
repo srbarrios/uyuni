@@ -138,6 +138,7 @@ const ScapPolicyDetails = ({ policyId, policyData }: { policyId: number; policyD
       <TopPanel
         title={policy.policyName}
         icon="spacewalk-icon-manage-configuration-files"
+        helpUrl="reference/audit/audit-scap-policies.html"
         button={
           <LinkButton
             href={ENDPOINTS.POLICIES_LIST}
