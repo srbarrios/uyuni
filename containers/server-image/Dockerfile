@@ -57,6 +57,7 @@ RUN zypper ref && zypper --non-interactive up && \
         prometheus-jmx_exporter-tomcat \
         prometheus-postgres_exporter \
         registry-formula \
+        rpm-ndb \
         saline-formula \
         salt-shaptools \
         saphanabootstrap-formula \
