@@ -158,7 +158,11 @@ const ScapPolicy = (): JSX.Element => {
   const title = isEditMode ? t("Edit Compliance Policy") : t("Create Compliance Policy");
 
   return (
-    <TopPanel title={title} icon="spacewalk-icon-manage-configuration-files">
+    <TopPanel
+      title={title}
+      icon="spacewalk-icon-manage-configuration-files"
+      helpUrl="reference/audit/audit-scap-policies.html"
+    >
       <Messages items={messages} />
       <Form model={model} className="scap-policy-form" onChange={setModel} onSubmit={onSubmit} formRef={formRef}>
         <Text name="policyName" label={t("Name")} required labelClass="col-md-3" divClass="col-md-6" />
@@ -172,10 +176,15 @@ const ScapPolicy = (): JSX.Element => {
               name="scapContentId"
               isClearable
               options={dataStreams}
-              value={model.scapContentId}
+              value={model.scapContentId ?? null}
               onChange={(value) => {
-                setModel({ ...model, scapContentId: value as number });
-                fetchProfiles("dataStream", value as number);
+                if (value) {
+                  setModel((prev) => ({ ...prev, scapContentId: value as number, xccdfProfileId: "" }));
+                  fetchProfiles("dataStream", value as number);
+                } else {
+                  setModel((prev) => ({ ...prev, scapContentId: undefined, xccdfProfileId: "" }));
+                  setXccdfProfiles([]);
+                }
               }}
             />
           </div>
@@ -185,12 +194,13 @@ const ScapPolicy = (): JSX.Element => {
           <Label name={t("XCCDF Profile")} className="col-md-3" required />
           <div className="col-md-6">
             <Select
+              key={`xccdf-${model.scapContentId ?? "none"}`}
               name="xccdfProfileId"
               isClearable
               options={xccdfProfiles.map((profile) => ({ value: profile.id, label: profile.title }))}
-              value={model.xccdfProfileId}
+              value={model.xccdfProfileId || null}
               onChange={(value) => {
-                setModel({ ...model, xccdfProfileId: value as string });
+                setModel((prev) => ({ ...prev, xccdfProfileId: value as string }));
               }}
             />
           </div>
@@ -203,10 +213,15 @@ const ScapPolicy = (): JSX.Element => {
               name="tailoringFile"
               isClearable
               options={tailoringFiles}
-              value={model.tailoringFile}
+              value={model.tailoringFile ?? null}
               onChange={(value) => {
-                setModel({ ...model, tailoringFile: value as number });
-                fetchProfiles("tailoringFile", value as number);
+                if (value) {
+                  setModel((prev) => ({ ...prev, tailoringFile: value as number, tailoringProfileId: "" }));
+                  fetchProfiles("tailoringFile", value as number);
+                } else {
+                  setModel((prev) => ({ ...prev, tailoringFile: undefined, tailoringProfileId: "" }));
+                  setTailoringFileProfiles([]);
+                }
               }}
             />
           </div>
@@ -216,12 +231,13 @@ const ScapPolicy = (): JSX.Element => {
           <Label name={t("Tailoring Profile")} className="col-md-3" />
           <div className="col-md-6">
             <Select
+              key={`tailoring-profile-${model.tailoringFile ?? "none"}`}
               name="tailoringProfileId"
               isClearable
               options={tailoringFileProfiles.map((profile) => ({ value: profile.id, label: profile.title }))}
-              value={model.tailoringProfileId}
+              value={model.tailoringProfileId || null}
               onChange={(value) => {
-                setModel({ ...model, tailoringProfileId: value as string });
+                setModel((prev) => ({ ...prev, tailoringProfileId: value as string }));
               }}
             />
           </div>
@@ -231,7 +247,7 @@ const ScapPolicy = (): JSX.Element => {
           <div className="col-md-6">
             <Text
               name="advancedArgs"
-              placeholder={t("e.g: --rule xccdf_org.ssgproject.content_rule_package_screen_installed --remediate")}
+              placeholder={t("e.g: --rule <rule_id> --remediate")}
               title={t("Additional command-line arguments for oscap")}
             />
           </div>

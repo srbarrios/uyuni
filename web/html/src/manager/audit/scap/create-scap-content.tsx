@@ -90,6 +90,7 @@ const ScapContentForm = (): JSX.Element => {
     <TopPanel
       title={t(isEdit ? "Edit SCAP Content" : "Upload SCAP Content")}
       icon="spacewalk-icon-manage-configuration-files"
+      helpUrl="reference/audit/audit-scap-content.html"
     >
       <Messages items={messages} />
       <Form

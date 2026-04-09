@@ -202,14 +202,17 @@ export const ScheduleScapScanForm = ({
               <Select
                 name="dataStreamName"
                 isClearable
-                value={model.dataStreamName}
+                value={model.dataStreamName || null}
                 disabled={!!selectedScapPolicy}
                 onBlur={onBlur}
                 onChange={(value) => {
                   setValue("dataStreamName", value as string);
-                  setModel((prev) => ({ ...prev, dataStreamName: value as string }));
                   if (value) {
+                    setModel((prev) => ({ ...prev, dataStreamName: value as string, xccdfProfileId: "" }));
                     getProfiles(ScapContentType.DataStream, value as string);
+                  } else {
+                    setModel((prev) => ({ ...prev, dataStreamName: "", xccdfProfileId: "" }));
+                    setXccdfProfiles([]);
                   }
                 }}
                 options={scapContentList
@@ -230,9 +233,10 @@ export const ScheduleScapScanForm = ({
           >
             {({ setValue, onBlur }) => (
               <Select
+                key={`xccdf-${model.dataStreamName ?? "none"}`}
                 name="xccdfProfileId"
                 placeholder={t("Select XCCDF profile...")}
-                value={model.xccdfProfileId}
+                value={model.xccdfProfileId || null}
                 disabled={!!selectedScapPolicy}
                 isClearable
                 onBlur={onBlur}
@@ -252,13 +256,16 @@ export const ScheduleScapScanForm = ({
                 name="tailoringFile"
                 placeholder={t("Select Tailoring file...")}
                 onChange={(value) => {
-                  setModel((prev) => ({ ...prev, tailoringFile: value as string }));
                   if (value) {
+                    setModel((prev) => ({ ...prev, tailoringFile: value as string, tailoringProfileID: "" }));
                     getProfiles(ScapContentType.TailoringFile, value as string);
+                  } else {
+                    setModel((prev) => ({ ...prev, tailoringFile: "", tailoringProfileID: "" }));
+                    setTailoringFileProfiles([]);
                   }
                 }}
                 isClearable
-                value={model.tailoringFile}
+                value={model.tailoringFile || null}
                 disabled={!!selectedScapPolicy}
                 options={tailoringFiles.map((k) => ({ value: k.id, label: k.name || "" }))}
               />
@@ -269,11 +276,12 @@ export const ScheduleScapScanForm = ({
             <Label name={t("Profile from Tailoring File")} className="col-md-3" />
             <div className="col-md-6">
               <Select
+                key={`tailoring-profile-${model.tailoringFile ?? "none"}`}
                 name="tailoringProfileID"
                 placeholder={t("Select profile...")}
                 onChange={(value) => setModel((prev) => ({ ...prev, tailoringProfileID: value as string }))}
                 isClearable
-                value={model.tailoringProfileID}
+                value={model.tailoringProfileID || null}
                 disabled={!!selectedScapPolicy}
                 options={tailoringFileProfiles.map((k) => ({ value: k.id, label: k.title }))}
               />
@@ -285,7 +293,7 @@ export const ScheduleScapScanForm = ({
             <div className="col-md-6">
               <Text
                 name="advancedArgs"
-                placeholder={t("e.g: --rule xccdf_org.ssgproject.content_rule_package_screen_installed --remediate")}
+                placeholder={t("e.g: --rule <rule_id> --remediate")}
                 title={t("Additional command-line arguments for oscap")}
               />
             </div>
