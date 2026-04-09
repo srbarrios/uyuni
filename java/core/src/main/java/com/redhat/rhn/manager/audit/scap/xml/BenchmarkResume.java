@@ -15,20 +15,19 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.List;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
-import java.util.List;
-
 /**
  * Bean used to unmarshall an intermediary SCAP report.
  */
 @XmlRootElement(name = "benchmark-resume")
 @XmlAccessorType(XmlAccessType.FIELD)
-@Root(name = "/", strict = false)
 public class BenchmarkResume {
 
     @XmlAttribute(required = true)
@@ -43,8 +42,9 @@ public class BenchmarkResume {
     @XmlElement(name = "TestResult", required = true)
     private TestResult testResult;
 
-    @ElementList(name = "rule", inline = true, required = false)
+    @XmlElement(name = "rule")
     private List<Rule> rules;
+
     /**
      * @return id to get
      */
@@ -101,10 +101,16 @@ public class BenchmarkResume {
         this.testResult = testResultIn;
     }
 
+    /**
+     * @return rules to get
+     */
     public List<Rule> getRules() {
         return rules;
     }
 
+    /**
+     * @param rulesIn to set
+     */
     public void setRules(List<Rule> rulesIn) {
         this.rules = rulesIn;
     }
@@ -147,4 +153,3 @@ public class BenchmarkResume {
             .toString();
     }
 }
-

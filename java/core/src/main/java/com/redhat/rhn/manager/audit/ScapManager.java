@@ -28,13 +28,6 @@ import com.redhat.rhn.domain.audit.ScapFactory;
 import com.redhat.rhn.domain.audit.XccdfBenchmark;
 import com.redhat.rhn.domain.audit.XccdfIdent;
 import com.redhat.rhn.domain.audit.XccdfProfile;
-import com.redhat.rhn.domain.audit.XccdfRuleResult;
-import com.redhat.rhn.domain.audit.XccdfRuleResultType;
-import com.redhat.rhn.domain.audit.XccdfTestResult;
-import com.redhat.rhn.domain.audit.ScapFactory;
-import com.redhat.rhn.domain.audit.XccdfBenchmark;
-import com.redhat.rhn.domain.audit.XccdfIdent;
-import com.redhat.rhn.domain.audit.XccdfProfile;
 import com.redhat.rhn.domain.audit.XccdfRuleFix;
 import com.redhat.rhn.domain.audit.XccdfRuleResult;
 import com.redhat.rhn.domain.audit.XccdfRuleResultType;
@@ -52,11 +45,6 @@ import com.redhat.rhn.manager.audit.scap.xml.BenchMark;
 import com.redhat.rhn.manager.audit.scap.xml.BenchmarkResume;
 import com.redhat.rhn.manager.audit.scap.xml.Profile;
 import com.redhat.rhn.manager.audit.scap.xml.Rule;
-import com.redhat.rhn.manager.audit.scap.xml.TestResult;
-import com.redhat.rhn.manager.audit.scap.xml.TestResultRuleResult;
-import com.redhat.rhn.manager.audit.scap.xml.TestResultRuleResultIdent;
-import com.redhat.rhn.manager.audit.scap.xml.BenchmarkResume;
-import com.redhat.rhn.manager.audit.scap.xml.Profile;
 import com.redhat.rhn.manager.audit.scap.xml.TestResult;
 import com.redhat.rhn.manager.audit.scap.xml.TestResultRuleResult;
 import com.redhat.rhn.manager.audit.scap.xml.TestResultRuleResultIdent;
@@ -78,13 +66,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.sql.Types;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -122,7 +103,6 @@ public class ScapManager extends BaseManager {
 
     private static final JAXBContext JAXB_CONTEXT = initializeJaxbContext();
 
-    private static final String XCCDF_PROFILES_XSL = "/usr/share/susemanager/scap/xccdf-profiles.xslt.in";
     /**
      * Returns the given system is scap enabled.
      * @param server The system for which to seach scap capability
@@ -536,7 +516,17 @@ public class ScapManager extends BaseManager {
             ByteArrayOutputStream memoryOut = new ByteArrayOutputStream();
             applyXsltTransformation(xccdfStream, xsltStream, memoryOut);
             try (InputStream resultStream = new ByteArrayInputStream(memoryOut.toByteArray())) {
-                BenchMark benchmark = createXmlPersister().read(BenchMark.class, resultStream);
+                XMLInputFactory inputFactory = XMLInputFactory.newFactory();
+                inputFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+                inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+                XMLStreamReader streamReader = inputFactory.createXMLStreamReader(resultStream);
+                BenchMark benchmark;
+                try {
+                    benchmark = (BenchMark) JAXB_CONTEXT.createUnmarshaller().unmarshal(streamReader);
+                }
+                finally {
+                    streamReader.close();
+                }
                 List<Profile> profiles = Optional.ofNullable(benchmark.getProfiles())
                         .orElse(Collections.emptyList());
                 if (profiles.isEmpty()) {
@@ -545,7 +535,8 @@ public class ScapManager extends BaseManager {
                 }
                 return benchmark;
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Scap xccdf eval failed", e);
             throw new RuntimeException("Scap xccdf eval failed", e);
         }
@@ -587,12 +578,24 @@ public class ScapManager extends BaseManager {
                                                   InputStream resumeXml) {
         ScapFactory.clearTestResult(server.getId(), action.getId());
         try {
-            BenchmarkResume resume = createXmlPersister()
-                    .read(BenchmarkResume.class, resumeXml);
-            Profile profile = Optional.ofNullable(resume.getProfile()).orElse(
-                    new Profile("None",
-                            "No profile selected. Using defaults.",
-                            ""));
+            XMLInputFactory inputFactory = XMLInputFactory.newFactory();
+
+            // Disable external entities to prevent XXE
+            inputFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+            inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+
+            XMLStreamReader streamReader = inputFactory.createXMLStreamReader(resumeXml);
+            BenchmarkResume resume;
+
+            try {
+                resume = (BenchmarkResume) JAXB_CONTEXT.createUnmarshaller().unmarshal(streamReader);
+            }
+            finally {
+                streamReader.close();
+            }
+
+            Profile profile = Optional.ofNullable(resume.getProfile())
+                .orElse(new Profile("None", "No profile selected. Using defaults.", ""));
             TestResult testResults = resume.getTestResult();
             if (testResults == null) {
                 LOGGER.error("Scap report misses profile or testresult element");
@@ -755,7 +758,7 @@ public class ScapManager extends BaseManager {
 
     private static JAXBContext initializeJaxbContext() {
         try {
-            return JAXBContext.newInstance(BenchmarkResume.class);
+            return JAXBContext.newInstance(BenchmarkResume.class, BenchMark.class);
         }
         catch (JAXBException e) {
             throw new RhnRuntimeException("Unable to initialize JAXB context", e);
