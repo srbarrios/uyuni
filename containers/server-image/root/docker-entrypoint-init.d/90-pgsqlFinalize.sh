@@ -1,10 +1,13 @@
-#!/bin/sh
-query="\set QUIET 1\n
-\pset tuples_only\n
+#!/bin/bash
+# Fail on unset variables
+set -u
+
+query="\set QUIET 1
+\pset tuples_only
 SELECT c.collversion <> pg_collation_actual_version(c.oid) reindex
 FROM pg_collation as c, pg_database as d
 WHERE c.collname = d.datcollate AND d.datname = '$MANAGER_DB_NAME';"
-if [ "$(echo -e $query | spacewalk-sql --select-mode - | xargs)" != "f" ]; then
+if [ "$(printf '%s' "$query" | spacewalk-sql --select-mode - | xargs)" != "f" ]; then
   # Reindexing may not be needed for every collation change, but better be on the safe side.
   echo "Reindexing database. This may take a while, please do not cancel it!"
   productdb=$(sed -n "s/^\s*db_name\s*=\s*\([^ ]*\)\s*$/\1/p" /etc/rhn/rhn.conf)

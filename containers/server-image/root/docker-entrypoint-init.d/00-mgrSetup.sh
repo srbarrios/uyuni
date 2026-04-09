@@ -112,7 +112,7 @@ EOF
 
 setup_spacewalk() {
   # Deploy the SSL certificates
-  if [ "${container}" = "oci" ]; then
+  if [ "${container:="unknown"}" = "oci" ]; then
     /usr/bin/spacewalk-setup-httpd --no-ssl
   else
     /usr/bin/spacewalk-setup-httpd
@@ -164,9 +164,15 @@ scc-pass = ${SCC_PASS}
     sed '/<IfDefine SSL/,/<\/IfDefine SSL/d' -i /etc/apache2/listen.conf
   fi
 
-  /usr/bin/spacewalk-setup --clear-db ${PARAM_CC} --answer-file=/root/spacewalk-answers
+  /usr/bin/spacewalk-setup --clear-db "${PARAM_CC}" --answer-file=/root/spacewalk-answers
   SWRET="${?}"
-  if [ "x" = "x${MANAGER_MAIL_FROM}" ]; then
+  # rm /root/spacewalk-answers
+  if [ "${SWRET}" != "0" ]; then
+    echo "ERROR: spacewalk-setup failed" >&2
+    exit 1
+  fi
+
+  if [ -z "${MANAGER_MAIL_FROM}" ]; then
     MANAGER_MAIL_FROM="${PRODUCT_NAME} (${UYUNI_HOSTNAME}) <root@${UYUNI_HOSTNAME}>"
   fi
   if ! grep "^web.default_mail_from" /etc/rhn/rhn.conf > /dev/null; then
@@ -175,12 +181,6 @@ scc-pass = ${SCC_PASS}
 
   # The CA needs to be added to the database for Kickstart use.
   /usr/bin/rhn-ssl-dbstore --ca-cert /etc/pki/trust/anchors/LOCAL-RHN-ORG-TRUSTED-SSL-CERT
-
-  # rm /root/spacewalk-answers
-  if [ "${SWRET}" != "0" ]; then
-    echo "ERROR: spacewalk-setup failed" >&2
-    exit 1
-  fi
 }
 
 setup_admin_user() {
@@ -261,7 +261,4 @@ setup_db_postgres
 setup_reportdb
 setup_spacewalk
 setup_admin_user
-
 touch ${MANAGER_COMPLETE}
-
-exit 0

@@ -1,5 +1,5 @@
 #!/bin/bash
-if test "$container" != "oci"; then
+if [ "${container:=unknown}" != "oci" ]; then
     echo "Skipped"
     exit 0
 fi

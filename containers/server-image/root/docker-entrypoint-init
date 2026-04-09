@@ -1,8 +1,10 @@
 #!/usr/bin/bash
+# Fail is any init script fails
+set -e
 
-for f in `ls /docker-entrypoint-init.d/*.sh | sort`; do
+for f in $(find /docker-entrypoint-init.d/ -type f -name  '*.sh' | sort); do
     echo "Executing $f..."
-    bash $f
+    bash "$f"
 done
 
 # This needs to be last for systemd to become PID1
