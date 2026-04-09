@@ -111,7 +111,7 @@
         <dependency org="suse" name="velocity-engine-core" rev="2.4"/>
         <dependency org="suse" name="jetty-util" rev="9.4.58" />
         <dependency org="checkstyle" name="checkstyle" rev="10.12.7" transitive="false">
-          <artifact name="all" type="jar" url="https://github.com/checkstyle/checkstyle/releases/download/checkstyle-10.12.7/checkstyle-10.12.7-all.jar"/>
+          <artifact name="zz-checkstyle-all" type="jar" url="https://github.com/checkstyle/checkstyle/releases/download/checkstyle-10.12.7/checkstyle-10.12.7-all.jar"/>
         </dependency>
         <dependency org="suse" name="hamcrest" rev="3.0" transitive="false"/>
         <dependency org="suse" name="junit" rev="4.13.2" transitive="false"/>
