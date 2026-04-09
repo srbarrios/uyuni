@@ -393,8 +393,10 @@ public class CVEAuditManagerOVAL {
             ovalRoot.setTests(ovalResources.getTests());
             ovalRoot.setObjects(ovalResources.getObjects());
             ovalRoot.setStates(ovalResources.getStates());
+            ovalRoot.setOsFamily(product.getOsFamily());
+            ovalRoot.setOsVersion(product.getOsVersion());
 
-            OVALCleaner.cleanup(ovalRoot, product.getOsFamily(), product.getOsVersion());
+            OVALCleaner.cleanup(ovalRoot);
             OVALCachingFactory.savePlatformsVulnerablePackages(ovalRoot);
         });
     }

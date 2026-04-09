@@ -564,7 +564,9 @@ public class CVEAuditManagerOVALTest extends RhnBaseTestCase {
     }
 
     private static void extractAndSaveVulnerablePackages(OvalRootType rootType) {
-        OVALCleaner.cleanup(rootType, OsFamily.LEAP, "15.4");
+        rootType.setOsFamily(OsFamily.LEAP);
+        rootType.setOsVersion("15.4");
+        OVALCleaner.cleanup(rootType);
         OVALCachingFactory.savePlatformsVulnerablePackages(rootType);
 
         TestUtils.flushSession();
