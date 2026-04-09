@@ -44,7 +44,10 @@ import com.redhat.rhn.domain.audit.ScriptType;
 import com.redhat.rhn.domain.audit.TailoringFile;
 import com.redhat.rhn.domain.audit.XccdfRuleFix;
 import com.redhat.rhn.domain.audit.XccdfRuleFixCustom;
+import com.redhat.rhn.domain.rhnpackage.PackageFactory;
+import com.redhat.rhn.domain.server.MinionServer;
 import com.redhat.rhn.domain.server.Server;
+import com.redhat.rhn.domain.server.ServerConstants;
 import com.redhat.rhn.domain.server.ServerFactory;
 import com.redhat.rhn.domain.user.User;
 import com.redhat.rhn.frontend.dto.XccdfRuleResultDto;
@@ -108,6 +111,11 @@ public class ScapAuditController {
     private final TaskomaticApi taskomaticApi = new TaskomaticApi();
     private String tailoringFilesDir = "/srv/susemanager/scap/tailoring-files/";
     private String scapContentDir = "/srv/susemanager/scap/ssg/content";
+
+    private static final String OPENSCAP_SUSE_PKG = "openscap-utils";
+    private static final String OPENSCAP_REDHAT_PKG = "openscap-scanner";
+    private static final String OPENSCAP_DEBIAN_PKG = "openscap-utils";
+    private static final String OPENSCAP_DEBIAN_LEGACY_PKG = "libopenscap8";
     private static final String REMEDIATION_ACTION_PREFIX = "SCAP Remediation: ";
 
     /**
@@ -583,6 +591,8 @@ public class ScapAuditController {
             policyData.put("policyName", policy.getPolicyName());
             policyData.put("description", policy.getDescription());
             policyData.put("scapContentId", policy.getScapContent() != null ? policy.getScapContent().getId() : null);
+            policyData.put("dataStreamName", policy.getScapContent() != null ?
+                    policy.getScapContent().getName() : null);
             policyData.put("xccdfProfileId", policy.getXccdfProfileId());
             policyData.put("tailoringProfileId", policy.getTailoringProfileId());
             policyData.put("ovalFiles", policy.getOvalFiles());
@@ -1200,6 +1210,11 @@ public class ScapAuditController {
         jsData.put("serverId", server.getId());
         jsData.put("entityType", "server");
 
+        // Check if openscap is installed on the target system
+        Map<String, Object> scapCheck = checkScapEnablement(server, user);
+        jsData.put("scapEnabled", scapCheck.get("scapEnabled"));
+        jsData.put("requiredPackage", scapCheck.get("requiredPackage"));
+
         Map<String, Object> data = new HashMap<>();
         data.put("scheduleDataJson", Json.GSON.toJson(jsData));
 
@@ -1664,5 +1679,71 @@ public class ScapAuditController {
      */
     private String sanitizeFileName(String input) {
         return input.replaceAll("[^a-zA-Z0-9._-]", "_");
+    }
+
+    /**
+     * Check if OpenSCAP is enabled on the given server by verifying the required package is installed.
+     * Mirrors the logic from {@link com.redhat.rhn.frontend.action.systems.audit.ScapSetupAction}.
+     *
+     * @param server the server to check
+     * @param user the authorized user
+     * @return a map with "scapEnabled" (boolean) and "requiredPackage" (String)
+     */
+    Map<String, Object> checkScapEnablement(Server server, User user) {
+        Map<String, Object> result = new HashMap<>();
+        boolean enabled;
+        String requiredPackage;
+
+        Optional<MinionServer> minionOpt = server.asMinionServer();
+        if (minionOpt.isPresent()) {
+            MinionServer minion = minionOpt.get();
+            switch (minion.getOsFamily()) {
+                case ServerConstants.OS_FAMILY_SUSE:
+                    requiredPackage = OPENSCAP_SUSE_PKG;
+                    break;
+                case ServerConstants.OS_FAMILY_DEBIAN:
+                    requiredPackage = getRequiredDebianPackage(minion.getOs(), minion.getRelease());
+                    break;
+                default:
+                    requiredPackage = OPENSCAP_REDHAT_PKG;
+            }
+            enabled = PackageFactory.lookupByNameAndServer(requiredPackage, server) != null;
+        }
+        else {
+            enabled = ScapManager.isScapEnabled(server, user);
+            requiredPackage = "";
+        }
+
+        result.put("scapEnabled", enabled);
+        result.put("requiredPackage", requiredPackage);
+        return result;
+    }
+
+    /**
+     * Determines the required OpenSCAP package name for Debian-family systems.
+     *
+     * @param os the OS name (e.g. "Ubuntu", "Debian")
+     * @param release the OS release version
+     * @return the package name
+     */
+    static String getRequiredDebianPackage(String os, String release) {
+        try {
+            switch (os) {
+                case ServerConstants.UBUNTU:
+                    int ubuntuVersion = Integer.parseInt(
+                            org.apache.commons.lang3.StringUtils.substringBefore(release, "."));
+                    return ubuntuVersion <= 22 ? OPENSCAP_DEBIAN_LEGACY_PKG : OPENSCAP_DEBIAN_PKG;
+                case ServerConstants.DEBIAN:
+                    int debianVersion = Integer.parseInt(release);
+                    return debianVersion <= 11 ? OPENSCAP_DEBIAN_LEGACY_PKG : OPENSCAP_DEBIAN_PKG;
+                default:
+                    LOG.warn("Unable to identify os {}. Assuming default Debian package.", os);
+                    return OPENSCAP_DEBIAN_PKG;
+            }
+        }
+        catch (NumberFormatException ex) {
+            LOG.warn("The release number {} of {} is not parseable. Assuming default Debian package.", release, os);
+            return OPENSCAP_DEBIAN_PKG;
+        }
     }
 }

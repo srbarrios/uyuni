@@ -32,6 +32,9 @@ import com.redhat.rhn.domain.audit.ScriptType;
 import com.redhat.rhn.domain.audit.TailoringFile;
 import com.redhat.rhn.domain.audit.XccdfRuleFix;
 import com.redhat.rhn.domain.audit.XccdfRuleFixCustom;
+import com.redhat.rhn.domain.server.MinionServer;
+import com.redhat.rhn.domain.server.MinionServerFactoryTest;
+import com.redhat.rhn.domain.server.ServerConstants;
 import com.redhat.rhn.testing.SparkTestUtils;
 import com.redhat.rhn.testing.TestUtils;
 
@@ -600,5 +603,99 @@ public class ScapAuditControllerTest extends BaseControllerTestCase {
         String error = controller.validateRemediationBody(body);
         assertNotNull(error);
         assertTrue(error.contains("Invalid script type"));
+    }
+
+    // ========== checkScapEnablement Tests ==========
+
+    @Test
+    public void testCheckScapEnablementSuseMinion() throws Exception {
+        MinionServer minion = MinionServerFactoryTest.createTestMinionServer(user);
+        minion.setOsFamily(ServerConstants.OS_FAMILY_SUSE);
+        HibernateFactory.getSession().flush();
+
+        Map<String, Object> result = controller.checkScapEnablement(minion, user);
+
+        assertNotNull(result);
+        assertFalse((Boolean) result.get("scapEnabled"),
+                "Should be disabled when openscap-utils is not installed");
+        assertEquals("openscap-utils", result.get("requiredPackage"));
+    }
+
+    @Test
+    public void testCheckScapEnablementRedHatMinion() throws Exception {
+        MinionServer minion = MinionServerFactoryTest.createTestMinionServer(user);
+        minion.setOsFamily(ServerConstants.OS_FAMILY_REDHAT);
+        HibernateFactory.getSession().flush();
+
+        Map<String, Object> result = controller.checkScapEnablement(minion, user);
+
+        assertNotNull(result);
+        assertFalse((Boolean) result.get("scapEnabled"),
+                "Should be disabled when openscap-scanner is not installed");
+        assertEquals("openscap-scanner", result.get("requiredPackage"));
+    }
+
+    @Test
+    public void testCheckScapEnablementDebianMinion() throws Exception {
+        MinionServer minion = MinionServerFactoryTest.createTestMinionServer(user);
+        minion.setOsFamily(ServerConstants.OS_FAMILY_DEBIAN);
+        minion.setOs(ServerConstants.UBUNTU);
+        minion.setRelease("24.04");
+        HibernateFactory.getSession().flush();
+
+        Map<String, Object> result = controller.checkScapEnablement(minion, user);
+
+        assertNotNull(result);
+        assertFalse((Boolean) result.get("scapEnabled"),
+                "Should be disabled when openscap package is not installed");
+        assertEquals("openscap-utils", result.get("requiredPackage"));
+    }
+
+    @Test
+    public void testCheckScapEnablementDebianLegacyMinion() throws Exception {
+        MinionServer minion = MinionServerFactoryTest.createTestMinionServer(user);
+        minion.setOsFamily(ServerConstants.OS_FAMILY_DEBIAN);
+        minion.setOs(ServerConstants.UBUNTU);
+        minion.setRelease("20.04");
+        HibernateFactory.getSession().flush();
+
+        Map<String, Object> result = controller.checkScapEnablement(minion, user);
+
+        assertNotNull(result);
+        assertFalse((Boolean) result.get("scapEnabled"),
+                "Should be disabled when libopenscap8 is not installed");
+        assertEquals("libopenscap8", result.get("requiredPackage"));
+    }
+
+    // ========== getRequiredDebianPackage Tests ==========
+
+    @Test
+    public void testGetRequiredDebianPackageUbuntuModern() {
+        String pkg = ScapAuditController.getRequiredDebianPackage(ServerConstants.UBUNTU, "24.04");
+        assertEquals("openscap-utils", pkg);
+    }
+
+    @Test
+    public void testGetRequiredDebianPackageUbuntuLegacy() {
+        String pkg = ScapAuditController.getRequiredDebianPackage(ServerConstants.UBUNTU, "22.04");
+        assertEquals("libopenscap8", pkg);
+    }
+
+    @Test
+    public void testGetRequiredDebianPackageUbuntuBoundary() {
+        // Ubuntu 22 should use legacy package
+        String pkg = ScapAuditController.getRequiredDebianPackage(ServerConstants.UBUNTU, "22.10");
+        assertEquals("libopenscap8", pkg);
+    }
+
+    @Test
+    public void testGetRequiredDebianPackageDebianModern() {
+        String pkg = ScapAuditController.getRequiredDebianPackage(ServerConstants.DEBIAN, "12");
+        assertEquals("openscap-utils", pkg);
+    }
+    @Test
+    public void testGetRequiredDebianPackageDebianLegacy() {
+        String pkg = ScapAuditController.getRequiredDebianPackage(ServerConstants.DEBIAN, "11");
+        assertEquals("libopenscap8", pkg);
     }
 }
