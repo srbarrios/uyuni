@@ -273,10 +273,9 @@ spec:
         - -x
         - -c
         - |2
-          # Fill he empty volumes
+          # Fill the empty volumes
           for vol in /var/lib/cobbler \
                  /var/lib/salt \
-                 /var/lib/pgsql \
                  /var/cache \
                  /var/log \
                  /srv/salt \
