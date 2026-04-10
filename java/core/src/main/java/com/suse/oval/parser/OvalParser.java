@@ -33,7 +33,6 @@ import com.suse.oval.ovaltypes.LogicOperatorType;
 import com.suse.oval.ovaltypes.MetadataType;
 import com.suse.oval.ovaltypes.ObjectType;
 import com.suse.oval.ovaltypes.OperationEnumeration;
-import com.suse.oval.ovaltypes.OvalRootType;
 import com.suse.oval.ovaltypes.StateType;
 import com.suse.oval.ovaltypes.TestType;
 import com.suse.oval.ovaltypes.VersionType;
@@ -52,8 +51,6 @@ import org.codehaus.stax2.evt.XMLEvent2;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -74,33 +71,6 @@ public class OvalParser {
     private static final List<String> TEST_TYPES = List.of("rpminfo_test", "dpkginfo_test");
     private static final List<String> OBJECT_TYPES = List.of("rpminfo_object", "dpkginfo_object");
     private static final List<String> STATE_TYPES = List.of("rpminfo_state", "dpkginfo_state");
-
-    /**
-     * Parse the given OVAL file
-     *
-     * @param ovalFileURL the OVAL file to parse
-     * @return the parsed OVAL encapsulated in an {@link OvalRootType} object.
-     * */
-    public OvalRootType parse(URL ovalFileURL) throws OvalParserException {
-        File ovalFile;
-        try {
-            ovalFile = new File(ovalFileURL.toURI());
-        }
-        catch (URISyntaxException e) {
-            throw new OvalParserException("Bad OVAL file path: " + ovalFileURL, e);
-        }
-
-        List<DefinitionType> allDefinitions = parseAllDefinitions(ovalFile);
-        OVALResources ovalResources = parseResources(ovalFile);
-
-        OvalRootType ovalRootType = new OvalRootType();
-        ovalRootType.setDefinitions(allDefinitions);
-        ovalRootType.setObjects(ovalResources.getObjects());
-        ovalRootType.setStates(ovalResources.getStates());
-        ovalRootType.setTests(ovalResources.getTests());
-
-        return ovalRootType;
-    }
 
     /**
      * Parses the given OVAL file in bulks. For every bulk parsed, it calls {@link OVALDefinitionsBulkHandler#handle}.
@@ -149,19 +119,7 @@ public class OvalParser {
                     ovalFile.getAbsolutePath(), e);
         }
     }
-    /**
-     * Utility method to parse all OVAL definitions at once instead of in bulks. To be used in testing.
-     *
-     * @param ovalFile an XML file containing OVAL definitions to be parsed.
-     * @return all OVAL definitions in {@code ovalFile}
-     * */
-    public List<DefinitionType> parseAllDefinitions(File ovalFile) {
-        List<DefinitionType> allDefinitions = new ArrayList<>();
 
-        parseDefinitionsInBulk(ovalFile, allDefinitions::addAll);
-
-        return allDefinitions;
-    }
     /**
      * Parses the list of objects, states and tests from the given {@code ovalFile}.
      *
