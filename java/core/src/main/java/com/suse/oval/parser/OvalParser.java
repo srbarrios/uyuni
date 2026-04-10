@@ -15,6 +15,7 @@
 
 package com.suse.oval.parser;
 
+import com.redhat.rhn.common.conf.ConfigDefaults;
 import com.redhat.rhn.domain.rhnpackage.PackageType;
 
 import com.suse.oval.exceptions.OvalParserException;
@@ -65,7 +66,6 @@ import javax.xml.stream.events.StartElement;
  * The Oval Parser is responsible for parsing OVAL(Open Vulnerability and Assessment Language) documents
  */
 public class OvalParser {
-    public static final int DEFINITIONS_BULK_SIZE = 500;
 
     private static final Logger LOG = LogManager.getLogger(OvalParser.class);
     private static final List<String> TEST_TYPES = List.of("rpminfo_test", "dpkginfo_test");
@@ -99,7 +99,7 @@ public class OvalParser {
                     DefinitionType definitionType = parseDefinitionType(nextEvent.asStartElement(), reader);
                     definitions.add(definitionType);
 
-                    if (definitions.size() == DEFINITIONS_BULK_SIZE) {
+                    if (definitions.size() == ConfigDefaults.get().getOvalDefinitionsBulkSize()) {
                         bulkHandler.handle(definitions);
                         definitions = new ArrayList<>();
                     }
