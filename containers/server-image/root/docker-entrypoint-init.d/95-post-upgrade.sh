@@ -1,4 +1,8 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 SUSE LLC
+#
+# SPDX-License-Identifier: GPL-2.0-Only
+
 sed -i 's/cobbler\.host.*/cobbler\.host = localhost/' /etc/rhn/rhn.conf;
 if [ -f /etc/cobbler/settings.d/zz-uyuni.settings ] && \
     grep -q uyuni_authentication_endpoint /etc/cobbler/settings.d/zz-uyuni.settings; then

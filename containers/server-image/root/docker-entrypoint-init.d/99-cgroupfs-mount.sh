@@ -1,4 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 SUSE LLC
+#
+# SPDX-License-Identifier: GPL-2.0-Only
+
 if [ "${container:=unknown}" != "oci" ]; then
     echo "Skipped"
     exit 0

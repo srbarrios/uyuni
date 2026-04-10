@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 SUSE LLC
+#
+# SPDX-License-Identifier: GPL-2.0-Only
 
 : "${UYUNI_HOSTNAME:=}"
 
@@ -27,9 +30,10 @@
 
 : "${MANAGER_ENABLE_TFTP:=n}"
 
+. /usr/lib/entrypoint-lib.sh
+
 DEFAULT_RHN_CONF="/usr/share/rhn/config-defaults/rhn.conf"
 TMPDIR="/var/spacewalk/tmp"
-MANAGER_COMPLETE="/root/.MANAGER_SETUP_COMPLETE"
 
 run_sql() {
   local DBNAME="${1}"
@@ -248,17 +252,10 @@ setup_product_name() {
   fi
 }
 
-check_current_installation() {
-  if [ -e "${MANAGER_COMPLETE}" ]; then
-    echo "Server appears to be already configured. Installation options may be ignored."
-    exit 0
-  fi
-}
-
 check_current_installation
 setup_product_name
 setup_db_postgres
 setup_reportdb
 setup_spacewalk
 setup_admin_user
-touch ${MANAGER_COMPLETE}
+mark_installation_complete
