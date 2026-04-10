@@ -1259,3 +1259,30 @@ INSERT INTO access.accessGroupNamespace
         'api.virtualhostmanager.list_virtual_host_managers'
     )
     ON CONFLICT DO NOTHING;
+
+-- Namespace: audit.scap.management and audit.scap.execution
+-- Permit to all
+INSERT INTO access.accessGroupNamespace (group_id, namespace_id)
+    SELECT ag.id, ns.id FROM access.accessGroup ag, access.namespace ns
+    WHERE ns.namespace IN ('audit.scap.management', 'audit.scap.execution')
+ON CONFLICT (group_id, namespace_id) DO NOTHING;
+
+-- New SCAP XML-RPC API Permissions
+INSERT INTO access.accessGroupNamespace (group_id, namespace_id)
+    SELECT ag.id, ns.id FROM access.accessGroup ag, access.namespace ns
+    WHERE ns.namespace IN (
+        'api.system.scap.list_scap_content',
+        'api.system.scap.list_policies',
+        'api.system.scap.list_tailoring_files'
+    )
+    AND ns.access_mode = 'R'
+ON CONFLICT (group_id, namespace_id) DO NOTHING;
+
+INSERT INTO access.accessGroupNamespace (group_id, namespace_id)
+    SELECT ag.id, ns.id FROM access.accessGroup ag, access.namespace ns
+    WHERE ns.namespace IN (
+        'api.system.scap.schedule_beta_xccdf_scan_custom',
+        'api.system.scap.schedule_beta_xccdf_scan_with_policy'
+    )
+    AND ns.access_mode = 'W'
+ON CONFLICT (group_id, namespace_id) DO NOTHING;

@@ -15,6 +15,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.List;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -39,6 +41,9 @@ public class BenchmarkResume {
 
     @XmlElement(name = "TestResult", required = true)
     private TestResult testResult;
+
+    @XmlElement(name = "rule")
+    private List<Rule> rules;
 
     /**
      * @return id to get
@@ -96,6 +101,20 @@ public class BenchmarkResume {
         this.testResult = testResultIn;
     }
 
+    /**
+     * @return rules to get
+     */
+    public List<Rule> getRules() {
+        return rules;
+    }
+
+    /**
+     * @param rulesIn to set
+     */
+    public void setRules(List<Rule> rulesIn) {
+        this.rules = rulesIn;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -134,4 +153,3 @@ public class BenchmarkResume {
             .toString();
     }
 }
-
