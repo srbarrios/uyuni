@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-03 14:32+0200\n"
-"PO-Revision-Date: 2026-03-16 18:04+0000\n"
+"PO-Revision-Date: 2026-04-08 19:04+0000\n"
 "Last-Translator: Ferdinand Galko <galko.ferdinand@gmail.com>\n"
 "Language-Team: Slovak <https://l10n.opensuse.org/projects/uyuni/web/sk/>\n"
 "Language: sk\n"
@@ -3783,20 +3783,16 @@ msgid "Rule"
 msgstr "Pravidlo"
 
 #: ../html/src/manager/content-management/list-filters/list-filters.tsx:77
-#, fuzzy
-#| msgid "Image profile has been deleted."
 msgid "Filter has been deleted."
-msgstr "Profil obrazu bol vymazaný."
+msgstr "Filter bol vymazaný."
 
 #: ../html/src/manager/content-management/list-filters/list-filters.tsx:93
 msgid "Some of the selected filters are used in projects and can not be deleted."
 msgstr "Niektoré z vybraných filtrov sa používajú v projektoch a nemožno ich vymazať."
 
 #: ../html/src/manager/content-management/list-filters/list-filters.tsx:102
-#, fuzzy
-#| msgid "Image profiles have been deleted."
 msgid "Filter have been deleted."
-msgstr "Profily obrazov boli vymazané."
+msgstr "Filtre boli vymazané."
 
 #: ../html/src/manager/content-management/list-filters/list-filters.tsx:137
 msgid "Create Filter"
@@ -3823,16 +3819,12 @@ msgid "Edit Filter"
 msgstr "Upraviť filter"
 
 #: ../html/src/manager/content-management/list-filters/list-filters.tsx:242
-#, fuzzy
-#| msgid "Delete Cluster"
 msgid "Delete Filter"
-msgstr "Vymazať klaster"
+msgstr "Vymazať filter"
 
 #: ../html/src/manager/content-management/list-filters/list-filters.tsx:245
-#, fuzzy
-#| msgid "Are you sure you want to delete profile"
 msgid "Are you sure you want to delete the filter"
-msgstr "Naozaj chcete vymazať profil"
+msgstr "Naozaj chcete vymazať filter"
 
 #: ../html/src/manager/content-management/list-filters/list-filters.tsx:254
 #, fuzzy

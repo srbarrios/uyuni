@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-03 14:32+0200\n"
-"PO-Revision-Date: 2026-03-24 11:04+0000\n"
+"PO-Revision-Date: 2026-04-08 16:04+0000\n"
 "Last-Translator: David Medina <medipas@gmail.com>\n"
 "Language-Team: Catalan <https://l10n.opensuse.org/projects/uyuni/web/ca/>\n"
 "Language: ca\n"
@@ -3783,20 +3783,16 @@ msgid "Rule"
 msgstr "Regla"
 
 #: ../html/src/manager/content-management/list-filters/list-filters.tsx:77
-#, fuzzy
-#| msgid "Image profile has been deleted."
 msgid "Filter has been deleted."
-msgstr "S'ha eliminat el perfil de la imatge."
+msgstr "S'ha suprimit el filtre."
 
 #: ../html/src/manager/content-management/list-filters/list-filters.tsx:93
 msgid "Some of the selected filters are used in projects and can not be deleted."
 msgstr "Alguns dels filtres seleccionats s'utilitzen en projectes i no es poden suprimir."
 
 #: ../html/src/manager/content-management/list-filters/list-filters.tsx:102
-#, fuzzy
-#| msgid "Image profiles have been deleted."
 msgid "Filter have been deleted."
-msgstr "S'han eliminat els perfils d'imatge."
+msgstr "S'ha suprimit el filtre."
 
 #: ../html/src/manager/content-management/list-filters/list-filters.tsx:137
 msgid "Create Filter"
@@ -3823,34 +3819,24 @@ msgid "Edit Filter"
 msgstr "Edita el filtre"
 
 #: ../html/src/manager/content-management/list-filters/list-filters.tsx:242
-#, fuzzy
-#| msgid "Create Filter"
 msgid "Delete Filter"
-msgstr "Crea un filtre"
+msgstr "Suprimeix el filtre"
 
 #: ../html/src/manager/content-management/list-filters/list-filters.tsx:245
-#, fuzzy
-#| msgid "Are you sure you want to delete profile"
 msgid "Are you sure you want to delete the filter"
-msgstr "Esteu segur que voleu suprimir el perfil"
+msgstr "Segur que voleu suprimir el filtre?"
 
 #: ../html/src/manager/content-management/list-filters/list-filters.tsx:254
-#, fuzzy
-#| msgid "Delete Selected Profile(s)"
 msgid "Delete Selected Filter(s)"
-msgstr "Suprimeix el/s perfil/s seleccionat/s"
+msgstr "Suprimeix els filtres seleccionats"
 
 #: ../html/src/manager/content-management/list-filters/list-filters.tsx:258
-#, fuzzy
-#| msgid "Are you sure you want to delete the selected item?"
 msgid "Are you sure you want to delete the selected filter?"
-msgstr "Esteu segur que voleu suprimir l'element seleccionat?"
+msgstr "Segur que voleu suprimir el filtre seleccionat?"
 
 #: ../html/src/manager/content-management/list-filters/list-filters.tsx:259
-#, fuzzy
-#| msgid "Are you sure you want to delete selected profiles? ({count} profiles selected)"
 msgid "Are you sure you want to delete selected filters? ({count} filters selected)"
-msgstr "Esteu segur que voleu suprimir els perfils seleccionats? ({count} perfils seleccionats)"
+msgstr "Segur que voleu suprimir els filtres seleccionats? ({count} filtre/s seleccionat/s)"
 
 #: ../html/src/manager/content-management/list-filters/templates/index.tsx:32
 msgid "Live patching based on a specific system"
@@ -5061,50 +5047,36 @@ msgid "A schema upgrade is required. Please upgrade your schema at your earliest
 msgstr "Es requereix una actualització de l'esquema. Actualitzeu el vostre esquema com més aviat millor per rebre les últimes correccions d'errors i evitar possibles problemes."
 
 #: ../html/src/manager/login/messages.tsx:27
-#, fuzzy
-#| msgid "Unable to validate the disk space availability. Please contact your system admistrator if this problem persists."
 msgid "Unable to validate the disk space availability on Server. Please contact your system administrator if this problem persists."
-msgstr "No s'ha pogut validar la disponibilitat d'espai del disc. Si us plau, poseu-vos en contacte amb l'administrador del sistema si aquest problema persisteix."
+msgstr "No es pot validar la disponibilitat d'espai de disc al servidor. Poseu-vos en contacte amb l'administrador del sistema si aquest problema persisteix."
 
 #: ../html/src/manager/login/messages.tsx:32
 msgid "Some important directories are missing. Please contact your system administrator to review the configuration."
 msgstr "Falten alguns directoris importants. Si us plau, poseu-vos en contacte amb l'administrador del sistema per revisar la configuració."
 
 #: ../html/src/manager/login/messages.tsx:37
-#, fuzzy
-#| msgid "The available disk space on the server is running low. Please contact your system administrator to add more disk space."
 msgid "The available disk space for the server is low. To prevent an automatic shutdown via health check, please contact your system administrator immediately to allocate additional space."
-msgstr "L'espai de disc disponible en el servidor està funcionant baix. Poseu-vos en contacte amb l'administrador del sistema per afegir més espai al disc."
+msgstr "L'espai de disc disponible per al servidor és baix. Per evitar que s'apagui automàticament mitjançant una comprovació d'estat, poseu-vos en contacte immediatament amb l'administrador del sistema per assignar espai addicional."
 
 #: ../html/src/manager/login/messages.tsx:42
-#, fuzzy
-#| msgid "The available disk space on the server is critically low. Please contact your system administrator to add more disk space."
 msgid "The available disk space for the server is critically low. To prevent an automatic shutdown via health check, please contact your system administrator immediately to allocate additional space."
-msgstr "L'espai de disc disponible al servidor és críticament baix. Poseu-vos en contacte amb l'administrador del sistema per afegir més espai al disc."
+msgstr "L'espai de disc disponible per al servidor és críticament baix. Per evitar un apagament automàtic mitjançant una comprovació d'estat, poseu-vos en contacte immediatament amb l'administrador del sistema per assignar espai addicional."
 
 #: ../html/src/manager/login/messages.tsx:59
-#, fuzzy
-#| msgid "Unable to validate the disk space availability. Please contact your system admistrator if this problem persists."
 msgid "Unable to validate the disk space availability on Database. Please contact your system administrator if this problem persists."
-msgstr "No s'ha pogut validar la disponibilitat d'espai del disc. Si us plau, poseu-vos en contacte amb l'administrador del sistema si aquest problema persisteix."
+msgstr "No es pot validar la disponibilitat d'espai de disc a la base de dades. Poseu-vos en contacte amb l'administrador del sistema si aquest problema persisteix."
 
 #: ../html/src/manager/login/messages.tsx:64
-#, fuzzy
-#| msgid "Some important directories are missing. Please contact your system administrator to review the configuration."
 msgid "Some important directories are missing on database. Please contact your system administrator to review the configuration."
-msgstr "Falten alguns directoris importants. Si us plau, poseu-vos en contacte amb l'administrador del sistema per revisar la configuració."
+msgstr "Falten alguns directoris importants a la base de dades. Poseu-vos en contacte amb l'administrador del sistema per revisar la configuració."
 
 #: ../html/src/manager/login/messages.tsx:69
-#, fuzzy
-#| msgid "The available disk space on the server is running low. Please contact your system administrator to add more disk space."
 msgid "The available disk space for the database is low. To prevent an automatic shutdown via health check, please contact your system administrator immediately to allocate additional space."
-msgstr "L'espai de disc disponible en el servidor està funcionant baix. Poseu-vos en contacte amb l'administrador del sistema per afegir més espai al disc."
+msgstr "L'espai de disc disponible per a la base de dades és baix. Per evitar una apagada automàtica mitjançant una comprovació d'estat, poseu-vos en contacte immediatament amb l'administrador del sistema per assignar espai addicional."
 
 #: ../html/src/manager/login/messages.tsx:74
-#, fuzzy
-#| msgid "The available disk space on the server is critically low. Please contact your system administrator to add more disk space."
 msgid "The available disk space for the database is critically low. To prevent an automatic shutdown via health check, please contact your system administrator immediately to allocate additional space."
-msgstr "L'espai de disc disponible al servidor és críticament baix. Poseu-vos en contacte amb l'administrador del sistema per afegir més espai al disc."
+msgstr "L'espai de disc disponible per a la base de dades és críticament baix. Per evitar una apagada automàtica mitjançant una comprovació d'estat, poseu-vos en contacte immediatament amb l'administrador del sistema per assignar espai addicional."
 
 #: ../html/src/manager/login/messages.tsx:89
 msgid "SUSE Multi-Linux Manager PAYG instances must forward registration data to SCC when credentials are provided. Data will be sent independently of the configuration setting. To hide this warning please set 'forward_registration = 1' in rhn.conf."
