@@ -51,8 +51,8 @@ public class MinionReportDBPillarGenerator extends MinionPillarGeneratorBase {
         String reportDBUser = "grafana_" + minion.getId();
         String reportDBPass = RandomStringUtils.secure().nextAlphanumeric(12);
         ConnectionManager localRcm = ConnectionManagerFactory.localReportingConnectionManager();
+        ReportDbHibernateFactory localRh = new ReportDbHibernateFactory(localRcm);
         try {
-            ReportDbHibernateFactory localRh = new ReportDbHibernateFactory(localRcm);
             ReportDBHelper dbHelper = ReportDBHelper.INSTANCE;
 
             pillar.add("reportdb_name", reportDBName);
@@ -64,13 +64,17 @@ public class MinionReportDBPillarGenerator extends MinionPillarGeneratorBase {
             else {
                 dbHelper.createDBUser(localRh.getSession(), reportDBName, reportDBUser, reportDBPass);
             }
-            localRcm.commitTransaction();
+            localRh.commitTransaction();
         }
         catch (Exception e) {
             LOG.error("Setting user/password failed", e);
             pillar.getPillar().clear();
             minion.getPillars().remove(pillar);
-            localRcm.rollbackTransaction();
+            localRh.rollbackTransaction();
+        }
+        finally {
+            localRh.closeSession();
+            localRh.closeSessionFactory();
         }
 
         return Optional.of(pillar);
@@ -80,14 +84,14 @@ public class MinionReportDBPillarGenerator extends MinionPillarGeneratorBase {
     public void removePillar(MinionServer minion) {
         minion.getPillarByCategory(CATEGORY).ifPresent(pillar -> {
             ConnectionManager localRcm = ConnectionManagerFactory.localReportingConnectionManager();
+            ReportDbHibernateFactory localRh = new ReportDbHibernateFactory(localRcm);
             try {
-                ReportDbHibernateFactory localRh = new ReportDbHibernateFactory(localRcm);
                 ReportDBHelper dbHelper = ReportDBHelper.INSTANCE;
                 try {
                     String username = (String)pillar.getPillarValue("reportdb_user");
                     if (dbHelper.hasDBUser(localRh.getSession(), username)) {
                         dbHelper.dropDBUser(localRh.getSession(), username);
-                        localRcm.commitTransaction();
+                        localRh.commitTransaction();
                     }
                     else {
                         LOG.warn("DB User '{}' does not exist", username);
@@ -101,7 +105,11 @@ public class MinionReportDBPillarGenerator extends MinionPillarGeneratorBase {
             }
             catch (Exception e) {
                 LOG.error("Removing user failed", e);
-                localRcm.rollbackTransaction();
+                localRh.rollbackTransaction();
+            }
+            finally {
+                localRh.closeSession();
+                localRh.closeSessionFactory();
             }
         });
     }
