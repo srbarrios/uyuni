@@ -1,11 +1,42 @@
-#!/usr/bin/bash
-# Fail is any init script fails
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 SUSE LLC
+#
+# SPDX-License-Identifier: GPL-2.0-Only
+
+# Fail if any init script fails
 set -e
 
 for f in $(find /docker-entrypoint-init.d/ -type f -name  '*.sh' | sort); do
     echo "Executing $f..."
     bash "$f"
 done
+
+# Unset all of our installation variables so they are not exposed
+unset UYUNI_HOSTNAME
+unset MANAGER_USER
+unset MANAGER_PASS
+unset MANAGER_DB_HOST
+unset MANAGER_DB_PORT
+unset MANAGER_DB_NAME
+unset MANAGER_DB_CA_CERT
+unset EXTERNALDB_PROVIDER
+unset REPORT_DB_USER
+unset REPORT_DB_PASS
+unset REPORT_DB_HOST
+unset REPORT_DB_PORT
+unset REPORT_DB_NAME
+unset REPORT_DB_CA_CERT
+unset ORG_NAME
+unset ADMIN_USER
+unset ADMIN_PASS
+unset ADMIN_FIRST_NAME
+unset ADMIN_LAST_NAME
+unset MANAGER_ADMIN_EMAIL
+unset MANAGER_MAIL_FROM
+unset SCC_USER
+unset SCC_PASS
+unset ISS_PARENT
+unset MANAGER_ENABLE_TFTP
 
 # This needs to be last for systemd to become PID1
 exec /usr/lib/systemd/systemd

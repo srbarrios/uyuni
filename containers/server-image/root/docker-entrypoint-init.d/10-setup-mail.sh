@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2026 SUSE LLC
 #
 # SPDX-License-Identifier: GPL-2.0-Only
+set -e
 
-# Setup should fail if UYUNI_HOSTNAME is not set
-set -eu
-postconf -e "myhostname=${UYUNI_HOSTNAME}"
+# Update postfix hostname only when hostname is provided
+[ -n "$UYUNI_HOSTNAME" ] && postconf -e "myhostname=${UYUNI_HOSTNAME}"

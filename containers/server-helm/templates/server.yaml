@@ -28,8 +28,8 @@ spec:
         - name: TZ
           value: {{ .Values.timezone | default "Etc/UTC" }}
 {{- if and .Values.server.mirror (or .Values.server.mirror.claimName .Values.server.mirror.hostPath) }}
-          - name: MIRROR_PATH
-            value: /mirror
+        - name: MIRROR_PATH
+          value: /mirror
 {{- end }}
         - name: ADMIN_USER
           valueFrom:
@@ -275,6 +275,7 @@ spec:
         - |2
           # Fill the empty volumes
           for vol in /var/lib/cobbler \
+                 /var/lib/rhn/search \
                  /var/lib/salt \
                  /var/cache \
                  /var/log \

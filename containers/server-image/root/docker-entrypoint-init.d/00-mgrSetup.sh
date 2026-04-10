@@ -3,14 +3,26 @@
 #
 # SPDX-License-Identifier: GPL-2.0-Only
 
-: "${UYUNI_HOSTNAME:=}"
+. /usr/lib/entrypoint-lib.sh
 
+# Abort early as with configured system we might not have mandatory variables that are checked later
+check_current_installation
+
+# Mandatory variables
+: "${UYUNI_HOSTNAME}"
+: "${MANAGER_PASS}"
+: "${REPORT_DB_PASS}"
+: "${ADMIN_PASS}"
+
+# Optional variables
+: "${MANAGER_USER:=spacewalk}"
 : "${MANAGER_DB_HOST:=db}"
 : "${MANAGER_DB_PORT:=5432}"
 : "${MANAGER_DB_NAME:=susemanager}"
 : "${MANAGER_DB_CA_CERT:=/etc/pki/trust/anchors/DB-RHN-ORG-TRUSTED-SSL-CERT}"
 : "${EXTERNALDB_PROVIDER:=}"
 
+: "${REPORT_DB_USER:=pythia_susemanager}"
 : "${REPORT_DB_HOST:=reportdb}"
 : "${REPORT_DB_PORT:=5432}"
 : "${REPORT_DB_NAME:=reportdb}"
@@ -18,19 +30,16 @@
 
 : "${ORG_NAME:=SUSE Test}"
 : "${ADMIN_USER:=admin}"
-: "${ADMIN_PASS:=admin}"
 : "${ADMIN_FIRST_NAME:=Admin}"
 : "${ADMIN_LAST_NAME:=Admin}"
-: "${MANAGER_ADMIN_EMAIL:=a@b.com}"
-: "${MANAGER_MAIL_FROM:=a@b.com}"
+: "${MANAGER_ADMIN_EMAIL:=root@${UYUNI_HOSTNAME}}"
+: "${MANAGER_MAIL_FROM:=notify@${UYUNI_HOSTNAME}}"
 
 : "${SCC_USER:=}"
 : "${SCC_PASS:=}"
 : "${ISS_PARENT:=}"
 
 : "${MANAGER_ENABLE_TFTP:=n}"
-
-. /usr/lib/entrypoint-lib.sh
 
 DEFAULT_RHN_CONF="/usr/share/rhn/config-defaults/rhn.conf"
 TMPDIR="/var/spacewalk/tmp"
@@ -99,7 +108,7 @@ setup_db_postgres() {
 
     echo "Populating the database"
     PGPASSWORD="${MANAGER_PASS}" PGOPTIONS='--client-min-messages=error -c standard_conforming_strings=on' \
-        psql -U "${MANAGER_USER}" -p "${MANAGER_DB_PORT}" -d "${MANAGER_DB_NAME}" -h "${MANAGER_DB_HOST}" -v ON_STOP_ERROR=ON -q -b /dev/null < /usr/share/susemanager/db/postgres/main.sql 2>&1
+        psql -U "${MANAGER_USER}" -p "${MANAGER_DB_PORT}" -d "${MANAGER_DB_NAME}" -h "${MANAGER_DB_HOST}" -v ON_STOP_ERROR=ON -q -b < /usr/share/susemanager/db/postgres/main.sql > /dev/null 2>&1
 
     # Some tools in the setup call spacewalk-sql and require the db to be defined in rhn.conf at an early stage
     cat >> /etc/rhn/rhn.conf << EOF 2> /dev/null
@@ -164,7 +173,7 @@ scc-pass = ${SCC_PASS}
         sed '/<IfDefine SSL/,/<\/IfDefine SSL/d' -i /etc/apache2/listen.conf
     fi
 
-    /usr/bin/spacewalk-setup --clear-db "${PARAM_CC}" --answer-file=/root/spacewalk-answers
+    /usr/bin/spacewalk-setup --clear-db ${PARAM_CC:-} --answer-file=/root/spacewalk-answers
     SWRET="${?}"
     # rm /root/spacewalk-answers
     if [ "${SWRET}" != "0" ]; then
@@ -242,12 +251,11 @@ setup_product_name() {
         done < "${DEFAULT_RHN_CONF}"
     fi
 
-    if [ -z "${PRODUCT_NAME}" ]; then
+    if [ -z "${PRODUCT_NAME:-}" ]; then
         PRODUCT_NAME="Uyuni"
     fi
 }
 
-check_current_installation
 setup_product_name
 setup_db_postgres
 setup_reportdb

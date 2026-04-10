@@ -15,5 +15,5 @@ check_current_installation() {
 }
 
 mark_installation_complete() {
-    touch ${MANAGER_COMPLETE}
+    touch "${MANAGER_COMPLETE}"
 }

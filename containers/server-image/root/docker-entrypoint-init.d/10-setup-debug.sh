@@ -19,7 +19,7 @@ if [ "${DEBUG_JAVA}" = "true" ]; then
     fi
 else
     echo "Removing Java debug options"
-    sed -i '/Xrunjdwp/d' /etc/tomcat/conf.d/remote_debug.conf
-    sed -i '/Xrunjdwp/d' /etc/rhn/taskomatic.conf
-    sed -i '/Xrunjdwp/d' /etc/rhn/rhn_search_daemon.conf
+    sed -i '/Xrunjdwp/d' /etc/tomcat/conf.d/remote_debug.conf 2> /dev/null || :
+    sed -i '/Xrunjdwp/d' /etc/rhn/taskomatic.conf 2> /dev/null || :
+    sed -i '/Xrunjdwp/d' /etc/rhn/rhn_search_daemon.conf 2> /dev/null || :
 fi
