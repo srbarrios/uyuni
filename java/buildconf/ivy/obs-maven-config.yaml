@@ -243,9 +243,6 @@ artifacts:
     # How comes that package is not noarch?
     arch: x86_64
     repository: Uyuni_Other
-  - artifact: simplexml
-    jar: simplexml\.jar
-    repository: Uyuni_Other
   - artifact: sitemesh
     repository: Uyuni
   - artifact: slf4j-api
@@ -270,17 +267,6 @@ artifacts:
   - artifact: woodstox-core-asl
     package: woodstox
     repository: Uyuni_Other
-  - artifact: xalan
-    package: xalan-j2
-    jar: xalan-j2\.jar
-    repository: Leap_sle
-  - artifact: serializer
-    package: xalan-j2
-    jar: xalan-j2-serializer\.jar
-    repository: Leap_sle
-  - artifact: xercesImpl
-    package: xerces-j2
-    repository: Leap
   - artifact: xmlsec
     repository: Uyuni_Other
   - artifact: velocity-engine-core

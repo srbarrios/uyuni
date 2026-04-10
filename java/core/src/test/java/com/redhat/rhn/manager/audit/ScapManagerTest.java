@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017--2021 SUSE LLC
+ * Copyright (c) 2017--2026 SUSE LLC
  *
  * This software is licensed to you under the GNU General Public License,
  * version 2 (GPLv2). There is NO WARRANTY for this software, express or
@@ -7,19 +7,15 @@
  * FOR A PARTICULAR PURPOSE. You should have received a copy of GPLv2
  * along with this software; if not, see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- *
- * Red Hat trademarks are not licensed under GPLv2. No permission is
- * granted to use or replicate Red Hat trademarks that are incorporated
- * in this software or its documentation.
  */
 package com.redhat.rhn.manager.audit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import com.redhat.rhn.common.hibernate.HibernateFactory;
 import com.redhat.rhn.domain.action.Action;
@@ -29,6 +25,8 @@ import com.redhat.rhn.domain.audit.XccdfTestResult;
 import com.redhat.rhn.domain.server.MinionServer;
 import com.redhat.rhn.domain.server.MinionServerFactoryTest;
 import com.redhat.rhn.manager.action.ActionManager;
+import com.redhat.rhn.manager.audit.scap.xml.BenchmarkResume;
+import com.redhat.rhn.manager.audit.scap.xml.TestResultRuleResult;
 import com.redhat.rhn.manager.system.SystemManager;
 import com.redhat.rhn.taskomatic.TaskomaticApi;
 import com.redhat.rhn.testing.JMockBaseTestCaseWithUser;
@@ -43,11 +41,12 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import jakarta.xml.bind.JAXBContext;
 
 /**
  * Test for {@link ScapManager}
@@ -120,11 +119,12 @@ public class ScapManagerTest extends JMockBaseTestCaseWithUser {
         assertEquals("xccdf_org.ssgproject.content_profile_cis_suse_test", result.getProfile().getIdentifier());
         assertEquals("Tailored profile", result.getProfile().getTitle());
         assertRuleResults(result, "pass",
-                Arrays.asList(
+                List.of(
                     "xccdf_org.ssgproject.content_rule_rpm_verify_ownership",
                     "xccdf_org.ssgproject.content_rule_ensure_suse_gpgkey_installed",
                     "CCE-85796-1"
-                ));
+                )
+        );
     }
 
     @Test
@@ -141,75 +141,80 @@ public class ScapManagerTest extends JMockBaseTestCaseWithUser {
 
         ScapAction action = ActionManager.scheduleXccdfEval(user,
                 minion, "/usr/share/openscap/scap-yast2sec-xccdf.xml", "--profile Default", new Date());
-        String resume = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<benchmark-resume xmlns:cdf=\"http://checklists.nist.gov/xccdf/1.1\" " +
-                "xmlns:xccdf_12=\"http://checklists.nist.gov/xccdf/1.2\" " +
-                "id=\"SUSE-Security-Benchmark-YaST2\" version=\"1\">\n" +
-                "  <profile title=\"Default vanilla kernel hardening\" id=\"Default\" description=\"\"/>\n" +
-                "  <TestResult id=\"xccdf_org.open-scap_testresult_Default\" start-time=\"2017-02-14T15:22:39\" " +
-                "end-time=\"2017-02-14T15:22:39\">\n" +
-                "    <pass>\n" +
-                "      <rr id=\"rule-sysctl-ipv4-forward\">\n" +
-                "          <ident system=\"SYSTEM\">IDENT1</ident>\n" +
-                "          <ident system=\"SYSTEM\">IDENT2</ident>\n" +
-                "      </rr>\n" +
-                "      <rr id=\"rule-sysctl-ipv4-tcpsyncookies\"/>\n" +
-                "      <rr id=\"rule-sysctl-ipv6-all-forward\"/>\n" +
-                "      <rr id=\"rule-sysctl-ipv6-default-forward\"/>\n" +
-                "      <rr id=\"rule-pwd-maxdays\"/>\n" +
-                "      <rr id=\"rule-pwd-mindays\"/>\n" +
-                "      <rr id=\"rule-pwd-warnage\"/>\n" +
-                "      <rr id=\"rule-authc-faildelay\"/>\n" +
-                "      <rr id=\"rule-authc-faildelayexist\"/>\n" +
-                "      <rr id=\"rule-usermgmt-uidmin\"/>\n" +
-                "      <rr id=\"rule-usermgmt-uidmax\"/>\n" +
-                "      <rr id=\"rule-usermgmt-gidmin\"/>\n" +
-                "      <rr id=\"rule-usermgmt-gidmax\"/>\n" +
-                "    </pass>\n" +
-                "    <fail>\n" +
-                "      <rr id=\"rule-kernel-syncookies\"/>\n" +
-                "      <rr id=\"rule-pwd-minlen\"/>\n" +
-                "      <rr id=\"rule-pwd-remember\"/>\n" +
-                "      <rr id=\"rule-authc-xdmcp-remote\"/>\n" +
-                "      <rr id=\"rule-authc-xdmcp-root\"/>\n" +
-                "      <rr id=\"rule-misc-sysrq\"/>\n" +
-                "      <rr id=\"rule-misc-hashalgo_md5\"/>\n" +
-                "      <rr id=\"rule-misc-hashalgo_des\"/>\n" +
-                "      <rr id=\"rule-misc-perm-check\"/>\n" +
-                "      <rr id=\"rule-misc-sig-check\"/>\n" +
-                "      <rr id=\"rule-srvc-dhcpd-chroot\"/>\n" +
-                "      <rr id=\"rule-srvc-dhcpd-uid\"/>\n" +
-                "      <rr id=\"rule-srvc-dhcpd6-chroot\"/>\n" +
-                "      <rr id=\"rule-srvc-dhcpd6-uid\"/>\n" +
-                "      <rr id=\"rule-srvc-update-restart\"/>\n" +
-                "      <rr id=\"rule-srvc-remove-stop\"/>\n" +
-                "    </fail>\n" +
-                "    <error>\n" +
-                "      <rr id=\"rule-kernel-syncookies\"/>\n" +
-                "    </error>\n" +
-                "    <unknown>\n" +
-                "      <rr id=\"rule-kernel-syncookies\"/>\n" +
-                "    </unknown>\n" +
-                "    <notapplicable>\n" +
-                "      <rr id=\"rule-kernel-syncookies\"/>\n" +
-                "    </notapplicable>\n" +
-                "    <notchecked>\n" +
-                "      <rr id=\"rule-kernel-syncookies\"/>\n" +
-                "    </notchecked>\n" +
-                "    <notselected>\n" +
-                "      <rr id=\"rule-kernel-syncookies\"/>\n" +
-                "    </notselected>\n" +
-                "    <informational>\n" +
-                "      <rr id=\"rule-kernel-syncookies\"/>\n" +
-                "    </informational>\n" +
-                "    <fixed>\n" +
-                "      <rr id=\"rule-kernel-syncookies\"/>\n" +
-                "    </fixed>\n" +
-                "  </TestResult>\n" +
-                "</benchmark-resume>\n";
+        String resume = """
+                        <?xml version="1.0" encoding="UTF-8"?>
+                        <benchmark-resume xmlns:cdf="http://checklists.nist.gov/xccdf/1.1"
+                                            xmlns:xccdf_12="http://checklists.nist.gov/xccdf/1.2"
+                                            id="SUSE-Security-Benchmark-YaST2" version="1">
+                          <profile title="Default vanilla kernel hardening" id="Default" description=""/>
+                          <TestResult id="xccdf_org.open-scap_testresult_Default"
+                                        start-time="2017-02-14T15:22:39" end-time="2017-02-14T15:22:39">
+                            <pass>
+                              <rr id="rule-sysctl-ipv4-forward">
+                                  <ident system="SYSTEM">IDENT1</ident>
+                                  <ident system="SYSTEM">IDENT2</ident>
+                              </rr>
+                              <rr id="rule-sysctl-ipv4-tcpsyncookies"/>
+                              <rr id="rule-sysctl-ipv6-all-forward"/>
+                              <rr id="rule-sysctl-ipv6-default-forward"/>
+                              <rr id="rule-pwd-maxdays"/>
+                              <rr id="rule-pwd-mindays"/>
+                              <rr id="rule-pwd-warnage"/>
+                              <rr id="rule-authc-faildelay"/>
+                              <rr id="rule-authc-faildelayexist"/>
+                              <rr id="rule-usermgmt-uidmin"/>
+                              <rr id="rule-usermgmt-uidmax"/>
+                              <rr id="rule-usermgmt-gidmin"/>
+                              <rr id="rule-usermgmt-gidmax"/>
+                            </pass>
+                            <fail>
+                              <rr id="rule-kernel-syncookies"/>
+                              <rr id="rule-pwd-minlen"/>
+                              <rr id="rule-pwd-remember"/>
+                              <rr id="rule-authc-xdmcp-remote"/>
+                              <rr id="rule-authc-xdmcp-root"/>
+                              <rr id="rule-misc-sysrq"/>
+                              <rr id="rule-misc-hashalgo_md5"/>
+                              <rr id="rule-misc-hashalgo_des"/>
+                              <rr id="rule-misc-perm-check"/>
+                              <rr id="rule-misc-sig-check"/>
+                              <rr id="rule-srvc-dhcpd-chroot"/>
+                              <rr id="rule-srvc-dhcpd-uid"/>
+                              <rr id="rule-srvc-dhcpd6-chroot"/>
+                              <rr id="rule-srvc-dhcpd6-uid"/>
+                              <rr id="rule-srvc-update-restart"/>
+                              <rr id="rule-srvc-remove-stop"/>
+                            </fail>
+                            <error>
+                              <rr id="rule-kernel-syncookies"/>
+                            </error>
+                            <unknown>
+                              <rr id="rule-kernel-syncookies"/>
+                            </unknown>
+                            <notapplicable>
+                              <rr id="rule-kernel-syncookies"/>
+                            </notapplicable>
+                            <notchecked>
+                              <rr id="rule-kernel-syncookies"/>
+                            </notchecked>
+                            <notselected>
+                              <rr id="rule-kernel-syncookies"/>
+                            </notselected>
+                            <informational>
+                              <rr id="rule-kernel-syncookies"/>
+                            </informational>
+                            <fixed>
+                              <rr id="rule-kernel-syncookies"/>
+                            </fixed>
+                          </TestResult>
+                        </benchmark-resume>
+                        """;
 
-        XccdfTestResult result = ScapManager.xccdfEvalResume(minion, action, 2, "",
-                new ByteArrayInputStream(resume.getBytes(StandardCharsets.UTF_8)));
+        XccdfTestResult result;
+
+        try (InputStream sourceStream = new ByteArrayInputStream(resume.getBytes(StandardCharsets.UTF_8))) {
+            result = ScapManager.xccdfEvalResume(minion, action, 2, "", sourceStream);
+        }
 
         result = HibernateFactory.getSession().find(XccdfTestResult.class, result.getId());
         assertNotNull(result);
@@ -225,7 +230,7 @@ public class ScapManagerTest extends JMockBaseTestCaseWithUser {
         assertFalse(result.getResults().isEmpty());
 
         assertRuleResults(result, "pass",
-                Arrays.asList(
+                List.of(
                     "rule-sysctl-ipv4-forward",
                     "IDENT1",
                     "IDENT2",
@@ -241,10 +246,11 @@ public class ScapManagerTest extends JMockBaseTestCaseWithUser {
                     "rule-usermgmt-uidmax",
                     "rule-usermgmt-gidmin",
                     "rule-usermgmt-gidmax"
-        ));
+                )
+        );
 
         assertRuleResults(result, "fail",
-                Arrays.asList(
+                List.of(
                     "rule-kernel-syncookies",
                     "rule-pwd-minlen",
                     "rule-pwd-remember",
@@ -261,35 +267,71 @@ public class ScapManagerTest extends JMockBaseTestCaseWithUser {
                     "rule-srvc-dhcpd6-uid",
                     "rule-srvc-update-restart",
                     "rule-srvc-remove-stop"
-                ));
-        assertRuleResults(result, "error",
-                Arrays.asList(
-                    "rule-kernel-syncookies"
-                ));
-        assertRuleResults(result, "unknown",
-                Arrays.asList(
-                        "rule-kernel-syncookies"
-                ));
-        assertRuleResults(result, "notapplicable",
-                Arrays.asList(
-                        "rule-kernel-syncookies"
-                ));
-        assertRuleResults(result, "notchecked",
-                Arrays.asList(
-                        "rule-kernel-syncookies"
-                ));
-        assertRuleResults(result, "notselected",
-                Arrays.asList(
-                        "rule-kernel-syncookies"
-                ));
-        assertRuleResults(result, "informational",
-                Arrays.asList(
-                        "rule-kernel-syncookies"
-                ));
-        assertRuleResults(result, "fixed",
-                Arrays.asList(
-                        "rule-kernel-syncookies"
-                ));
+                )
+        );
+
+        assertRuleResults(result, "error", List.of("rule-kernel-syncookies"));
+        assertRuleResults(result, "unknown", List.of("rule-kernel-syncookies"));
+        assertRuleResults(result, "notapplicable", List.of("rule-kernel-syncookies"));
+        assertRuleResults(result, "notchecked", List.of("rule-kernel-syncookies"));
+        assertRuleResults(result, "notselected", List.of("rule-kernel-syncookies"));
+        assertRuleResults(result, "informational", List.of("rule-kernel-syncookies"));
+        assertRuleResults(result, "fixed", List.of("rule-kernel-syncookies"));
+    }
+
+    @Test
+    public void testBenchmarkResumeUnmarshallsRuleResultIdents() throws Exception {
+
+        String resume = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <benchmark-resume id="benchmark-id" version="1">
+              <profile title="Default" id="Default" description=""/>
+              <TestResult id="xccdf_org.open-scap_testresult_Default"
+                            start-time="2017-02-14T15:22:39" end-time="2017-02-14T15:22:39">
+                <pass>
+                  <rr id="rule-sysctl-ipv4-forward">
+                    <ident system="SYSTEM">IDENT1</ident>
+                    <ident system="abc"></ident>
+                    <ident system="def" />
+                    <ident system="ghi">   </ident>
+                  </rr>
+                </pass>
+                <fail/>
+                <error/>
+                <unknown/>
+                <notapplicable/>
+                <notchecked/>
+                <notselected/>
+                <informational/>
+                <fixed/>
+              </TestResult>
+            </benchmark-resume>
+            """;
+
+        BenchmarkResume benchmarkResume;
+
+        try (InputStream sourceStream = new ByteArrayInputStream(resume.getBytes(StandardCharsets.UTF_8))) {
+            benchmarkResume = (BenchmarkResume) JAXBContext.newInstance(BenchmarkResume.class)
+                    .createUnmarshaller()
+                    .unmarshal(sourceStream);
+        }
+
+        assertNotNull(benchmarkResume.getTestResult());
+        assertNotNull(benchmarkResume.getTestResult().getPass());
+        assertEquals(1, benchmarkResume.getTestResult().getPass().size());
+
+        TestResultRuleResult passedRule = benchmarkResume.getTestResult().getPass().get(0);
+        assertEquals("rule-sysctl-ipv4-forward", passedRule.getId());
+        assertNotNull(passedRule.getIdents());
+        assertEquals(4, passedRule.getIdents().size());
+        assertEquals("SYSTEM", passedRule.getIdents().get(0).getSystem());
+        assertEquals("IDENT1", passedRule.getIdents().get(0).getText());
+        assertEquals("abc", passedRule.getIdents().get(1).getSystem());
+        assertNull(passedRule.getIdents().get(1).getText());
+        assertEquals("def", passedRule.getIdents().get(2).getSystem());
+        assertNull(passedRule.getIdents().get(2).getText());
+        assertEquals("ghi", passedRule.getIdents().get(3).getSystem());
+        assertEquals("   ", passedRule.getIdents().get(3).getText());
     }
 
     @Test
@@ -371,15 +413,9 @@ public class ScapManagerTest extends JMockBaseTestCaseWithUser {
         InputStream resultsIn = TestUtils.findTestData(
                 "/com/redhat/rhn/manager/audit/openscap/minionsles12sp1.test.local/results_malformed.xml")
                 .openStream();
-        try {
-            ScapManager.xccdfEval(minion, action, 2, "", resultsIn, resumeXsl);
-            fail("Expected exception");
-        }
-        catch (Exception e) {
-            assertInstanceOf(RuntimeException.class, e);
-        }
-    }
 
+        assertThrows(RuntimeException.class, () -> ScapManager.xccdfEval(minion, action, 2, "", resultsIn, resumeXsl));
+    }
 }
 
 

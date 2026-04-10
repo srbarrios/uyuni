@@ -140,7 +140,6 @@ BuildRequires:  quartz
 BuildRequires:  redstone-xmlrpc
 BuildRequires:  salt-netapi-client >= 1.0.0
 BuildRequires:  simple-core
-BuildRequires:  simplexml
 BuildRequires:  sitemesh
 BuildRequires:  snakeyaml >= 1.33
 BuildRequires:  spark-core
@@ -150,7 +149,6 @@ BuildRequires:  tomcat11
 BuildRequires:  tomcat11-lib
 BuildRequires:  uyuni-base-server
 BuildRequires:  woodstox
-BuildRequires:  xalan-j2
 BuildRequires:  xmlsec
 BuildRequires:  (google-gson >= 2.2.4 with google-gson < 2.10.0)
 BuildRequires:  mvn(org.apache.velocity:velocity-engine-core) >= 2.2
@@ -229,7 +227,6 @@ Requires:       redstone-xmlrpc
 Requires:       salt-netapi-client >= 1.0.0
 Requires:       tomcat11-servlet-6_1-api
 Requires:       simple-core
-Requires:       simplexml
 Requires:       sitemesh
 Requires:       snakeyaml >= 1.33
 Requires:       spacewalk-branding
@@ -244,8 +241,6 @@ Requires:       susemanager-docs_en
 Requires:       system-lock-formula
 Requires:       tomcat11-lib
 Requires:       woodstox
-Requires:       xalan-j2 >= 2.6.0
-Requires:       xerces-j2
 Requires:       xmlsec
 Requires:       (/sbin/unix2_chkpwd or /usr/sbin/unix2_chkpwd)
 Requires:       (google-gson >= 2.2.4 with google-gson < 2.10.0)
@@ -385,8 +380,6 @@ Requires:       simple-core
 Requires:       spacewalk-java-config
 Requires:       spacewalk-java-jdbc
 Requires:       spacewalk-java-lib = %{version}
-Requires:       xalan-j2 >= 2.6.0
-Requires:       xerces-j2
 Requires:       (/sbin/unix2_chkpwd or /usr/sbin/unix2_chkpwd)
 Requires:       mvn(org.hibernate.orm:hibernate-c3p0) >= 7
 Requires:       mvn(org.hibernate.orm:hibernate-core) >= 7
