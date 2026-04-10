@@ -122,14 +122,10 @@ setup_spacewalk() {
         /usr/bin/spacewalk-setup-httpd
     fi
     /usr/sbin/update-ca-certificates
-    /usr/bin/rhn-ssl-dbstore --ca-cert /etc/pki/trust/anchors/LOCAL-RHN-ORG-TRUSTED-SSL-CERT
 
     if [ ! -f /srv/susemanager/salt/images/rhn-org-trusted-ssl-cert-osimage-1.0-1.noarch.rpm ]; then
         /usr/sbin/mgr-package-rpm-certificate-osimage
     fi
-
-    ln -sf /etc/pki/trust/anchors/ca.crt /etc/pki/trust/anchors/LOCAL-RHN-ORG-TRUSTED-SSL-CERT
-    ln -sf /etc/pki/trust/anchors/ca.crt /srv/www/htdocs/pub/RHN-ORG-TRUSTED-SSL-CERT
 
     echo "admin-email = ${MANAGER_ADMIN_EMAIL}
 ssl-config-sslvhost = Y
