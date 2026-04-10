@@ -49,7 +49,7 @@ public class MinionReportDBPillarGenerator extends MinionPillarGeneratorBase {
         pillar.getPillar().clear();
         String reportDBName = Config.get().getString(ConfigDefaults.REPORT_DB_NAME, "reportdb");
         String reportDBUser = "grafana_" + minion.getId();
-        String reportDBPass = RandomStringUtils.secure().nextAlphanumeric(12);
+        String reportDBPass = RandomStringUtils.secure().nextAlphanumeric(20);
         ConnectionManager localRcm = ConnectionManagerFactory.localReportingConnectionManager();
         ReportDbHibernateFactory localRh = new ReportDbHibernateFactory(localRcm);
         try {
