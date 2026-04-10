@@ -700,6 +700,8 @@ public class AnnotationRegistry {
             SCCSubscription.class,
             ScapAction.class,
             ScapActionDetails.class,
+            ScapContent.class,
+            ScapPolicy.class,
             ScriptAction.class,
             ScriptActionDetails.class,
             ScriptResult.class,
@@ -746,6 +748,7 @@ public class AnnotationRegistry {
             SUSEProductExtension.class,
             SUSEProductUpgrade.class,
             SystemMigration.class,
+            TailoringFile.class,
             Task.class,
             TaskoBunch.class,
             TaskoRun.class,
@@ -788,10 +791,7 @@ public class AnnotationRegistry {
             XccdfRuleResultType.class,
             WebSessionImpl.class,
             XccdfTestResult.class,
-            WebEndpoint.class,
-            ScapContent.class,
-            ScapPolicy.class,
-            TailoringFile.class
+            WebEndpoint.class
     );
 
     /**
