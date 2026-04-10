@@ -6,6 +6,7 @@ require 'yaml'
 require 'nokogiri'
 require 'timeout'
 require 'rubygems'
+require_relative 'kubernetes'
 require_relative 'constants'
 require_relative 'api_test'
 
@@ -33,16 +34,24 @@ end
 def product
   return $product unless $product.nil?
 
-  _product_raw, code = get_target('server').run('rpm -q patterns-uyuni_server', check_errors: false)
-  if code.zero?
-    $product = 'Uyuni'
-    return 'Uyuni'
+  patterns = { 'patterns-uyuni_server' => 'Uyuni', 'patterns-suma_server' => 'SUSE Manager' }
+  server = get_target('server')
+
+  # If running RKE2, first check inside the pod
+  if running_rke2?
+    pod = get_pod_name('server', 'server')
+    patterns.each do |pattern, name|
+      _out, code = server.run_local("kubectl exec -n uyuni #{pod} -- rpm -q #{pattern}", check_errors: false)
+      return $product = name if code.zero?
+    end
   end
-  _product_raw, code = get_target('server').run('rpm -q patterns-suma_server', check_errors: false)
-  if code.zero?
-    $product = 'SUSE Manager'
-    return 'SUSE Manager'
+
+  # Check on the host or using traditional containerization (mgrctl)
+  patterns.each do |pattern, name|
+    _out, code = server.run("rpm -q #{pattern}", check_errors: false)
+    return $product = name if code.zero?
   end
+
   raise NotImplementedError, 'Could not determine product'
 end
 
