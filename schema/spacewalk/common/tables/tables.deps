@@ -290,8 +290,8 @@ web_user_personal_info             :: web_contact web_user_prefix
 suseScapContent                    ::
 suseScapTailoringFile              :: web_customer
 suseScapPolicy                     :: suseScapContent suseScapTailoringFile web_customer
-suseXccdfRulefix                   ::
-suseXccdfRuleFixCustom             :: suseXccdfRulefix web_customer web_contact
+suseXccdfRuleFix                   ::
+suseXccdfRuleFixCustom             :: suseXccdfRuleFix web_customer web_contact
 rhnActionScap                      :: rhnAction suseScapPolicy
 rhnXccdfIdent                      :: rhnXccdfIdentSystem
 rhnXccdfRuleresult                 :: rhnXccdfTestresult rhnXccdfIdent rhnXccdfRuleresultType
