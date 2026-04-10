@@ -906,6 +906,9 @@ INSERT INTO access.namespace (namespace, access_mode, description)
     VALUES ('api.admin.payg.set_details', 'W', 'Updates the details of a ssh connection data')
     ON CONFLICT (namespace, access_mode) DO NOTHING;
 INSERT INTO access.namespace (namespace, access_mode, description)
+    VALUES ('api.admin.ssh.remove_known_host', 'W', 'Remove host from known list.')
+    ON CONFLICT (namespace, access_mode) DO NOTHING;
+INSERT INTO access.namespace (namespace, access_mode, description)
     VALUES ('api.ansible.create_ansible_path', 'W', 'Create ansible path')
     ON CONFLICT (namespace, access_mode) DO NOTHING;
 INSERT INTO access.namespace (namespace, access_mode, description)
