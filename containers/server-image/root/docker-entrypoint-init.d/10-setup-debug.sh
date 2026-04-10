@@ -6,7 +6,7 @@
 
 if [ "${DEBUG_JAVA}" = "true" ]; then
     echo "Setting up Java debug options"
-    # Note: $JAVA_OPTS inside single quotes is NOT expanded here. 
+    # Note: $JAVA_OPTS inside single quotes is NOT expanded here.
     # It assumes the target file is a shell script that will source this line later.
     if [ ! -f /etc/tomcat/conf.d/remote_debug.conf ] || ! grep -q 'Xrunjdwp' /etc/tomcat/conf.d/remote_debug.conf; then
         echo 'JAVA_OPTS=" $JAVA_OPTS -Xdebug -Xrunjdwp:transport=dt_socket,address=*:8003,server=y,suspend=n" ' >> /etc/tomcat/conf.d/remote_debug.conf
@@ -22,4 +22,4 @@ else
     sed -i '/Xrunjdwp/d' /etc/tomcat/conf.d/remote_debug.conf
     sed -i '/Xrunjdwp/d' /etc/rhn/taskomatic.conf
     sed -i '/Xrunjdwp/d' /etc/rhn/rhn_search_daemon.conf
-  fi
+fi

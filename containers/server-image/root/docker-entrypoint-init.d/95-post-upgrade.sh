@@ -3,23 +3,22 @@
 #
 # SPDX-License-Identifier: GPL-2.0-Only
 
-sed -i 's/cobbler\.host.*/cobbler\.host = localhost/' /etc/rhn/rhn.conf;
-if [ -f /etc/cobbler/settings.d/zz-uyuni.settings ] && \
+sed -i 's/cobbler\.host.*/cobbler\.host = localhost/' /etc/rhn/rhn.conf
+if [ -f /etc/cobbler/settings.d/zz-uyuni.settings ] &&
     grep -q uyuni_authentication_endpoint /etc/cobbler/settings.d/zz-uyuni.settings; then
-	sed -i 's/uyuni_authentication_endpoint.*/uyuni_authentication_endpoint: http:\/\/localhost/' \
+    sed -i 's/uyuni_authentication_endpoint.*/uyuni_authentication_endpoint: http:\/\/localhost/' \
         /etc/cobbler/settings.d/zz-uyuni.settings
 else
-	echo 'uyuni_authentication_endpoint: "http://localhost"' >> /etc/cobbler/settings.d/zz-uyuni.settings
+    echo 'uyuni_authentication_endpoint: "http://localhost"' >> /etc/cobbler/settings.d/zz-uyuni.settings
 fi
 
 if grep -q pam_auth_service /etc/rhn/rhn.conf; then
-	sed -i 's/pam_auth_service.*/pam_auth_service = susemanager/' /etc/rhn/rhn.conf
+    sed -i 's/pam_auth_service.*/pam_auth_service = susemanager/' /etc/rhn/rhn.conf
 else
-	echo 'pam_auth_service = susemanager' >> /etc/rhn/rhn.conf
+    echo 'pam_auth_service = susemanager' >> /etc/rhn/rhn.conf
 fi
 
 if [ -e /etc/sysconfig/prometheus-postgres_exporter/systemd/60-server.conf ]; then
-        sed -i 's/\/etc\/postgres_exporter\//\/etc\/sysconfig\/prometheus-postgres_exporter\//' \
+    sed -i 's/\/etc\/postgres_exporter\//\/etc\/sysconfig\/prometheus-postgres_exporter\//' \
         /etc/sysconfig/prometheus-postgres_exporter/systemd/60-server.conf
 fi
-
