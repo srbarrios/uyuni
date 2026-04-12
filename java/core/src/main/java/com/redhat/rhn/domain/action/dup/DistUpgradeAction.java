@@ -257,7 +257,7 @@ public class DistUpgradeAction extends Action {
           serverAction.getStatus() == ActionFactory.STATUS_COMPLETED) {
             serverAction.setStatusPickedUp();
             serverAction.setCompletionTime(null);
-            LOG.info("SLES 16: reset action to In Progress on server {} — waiting for post-reconnect verification.",
+            LOG.info("SLES 16: reset action to In Progress on server {} - waiting for post-reconnect verification.",
               serverId);
             return;
         }

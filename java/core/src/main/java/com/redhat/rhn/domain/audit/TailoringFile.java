@@ -109,7 +109,7 @@ public class TailoringFile extends BaseDomainHelper {
     /**
      * Gets the display filename (original filename without org ID and name prefix).
      * This method extracts the original filename from the unique filename format:
-     * {orgId}_{sanitizedName}_{originalFilename} → {originalFilename}
+     * {orgId}_{sanitizedName}_{originalFilename} to {originalFilename}
      *
      * @return the original filename for display purposes
      */
