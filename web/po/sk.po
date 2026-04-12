@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-03 14:32+0200\n"
-"PO-Revision-Date: 2026-04-08 19:04+0000\n"
+"PO-Revision-Date: 2026-04-12 21:04+0000\n"
 "Last-Translator: Ferdinand Galko <galko.ferdinand@gmail.com>\n"
 "Language-Team: Slovak <https://l10n.opensuse.org/projects/uyuni/web/sk/>\n"
 "Language: sk\n"
@@ -3827,22 +3827,16 @@ msgid "Are you sure you want to delete the filter"
 msgstr "Naozaj chcete vymazať filter"
 
 #: ../html/src/manager/content-management/list-filters/list-filters.tsx:254
-#, fuzzy
-#| msgid "Delete Selected Profile(s)"
 msgid "Delete Selected Filter(s)"
-msgstr "Vymazať vybrané profil(y)"
+msgstr "Vymazať vybraný(é) filter(re)"
 
 #: ../html/src/manager/content-management/list-filters/list-filters.tsx:258
-#, fuzzy
-#| msgid "Are you sure you want to delete the selected item?"
 msgid "Are you sure you want to delete the selected filter?"
-msgstr "Naozaj chcete zmazať vybranú položku?"
+msgstr "Naozaj chcete vymazať vybraný filter?"
 
 #: ../html/src/manager/content-management/list-filters/list-filters.tsx:259
-#, fuzzy
-#| msgid "Are you sure you want to delete selected profiles? ({count} profiles selected)"
 msgid "Are you sure you want to delete selected filters? ({count} filters selected)"
-msgstr "Naozaj chcete vymazať vybrané profily? ({count} vybraných profilov)"
+msgstr "Naozaj chcete vymazať vybrané filtre? ({count} vybraných filtrov)"
 
 #: ../html/src/manager/content-management/list-filters/templates/index.tsx:32
 msgid "Live patching based on a specific system"
@@ -5053,50 +5047,36 @@ msgid "A schema upgrade is required. Please upgrade your schema at your earliest
 msgstr "Vyžaduje sa zvýšenie verzie schémy. Zvýšte verziu svojej schémy hneď, ako sa vám to bude hodiť, aby ste dostávali najnovšie opravy chýb a vyhli sa potenciálnym problémom."
 
 #: ../html/src/manager/login/messages.tsx:27
-#, fuzzy
-#| msgid "Unable to validate the disk space availability. Please contact your system admistrator if this problem persists."
 msgid "Unable to validate the disk space availability on Server. Please contact your system administrator if this problem persists."
-msgstr "Nie je možné overiť dostupnosť miesta na disku. Prosím, kontaktujte svojho systémového administrátora, ak tento problém pretrváva."
+msgstr "Nie je možné overiť dostupnosť miesta na disku na serveri. Prosím, kontaktujte svojho systémového administrátora, ak tento problém pretrváva."
 
 #: ../html/src/manager/login/messages.tsx:32
 msgid "Some important directories are missing. Please contact your system administrator to review the configuration."
 msgstr "Chýbajú niektoré dôležité adresáre. Prosím, kontaktujte svojho systémového administrátora, aby skontroloval konfiguráciu."
 
 #: ../html/src/manager/login/messages.tsx:37
-#, fuzzy
-#| msgid "The available disk space on the server is running low. Please contact your system administrator to add more disk space."
 msgid "The available disk space for the server is low. To prevent an automatic shutdown via health check, please contact your system administrator immediately to allocate additional space."
-msgstr "Dostupné miesto na disku na serveri je nedostatočné. Prosím, kontaktuje svojho systémového administrátora, aby pridal viac miesta na disku."
+msgstr "Dostupné miesto na disku pre server je nedostatočné. Aby sa zabránilo automatickému vypnutiu v dôsledku kontroly stavu, okamžite kontaktujte vášho systémového administrátora o pridelenie ďalšieho miesta."
 
 #: ../html/src/manager/login/messages.tsx:42
-#, fuzzy
-#| msgid "The available disk space on the server is critically low. Please contact your system administrator to add more disk space."
 msgid "The available disk space for the server is critically low. To prevent an automatic shutdown via health check, please contact your system administrator immediately to allocate additional space."
-msgstr "Dostupné miesto na disku na serveri je kriticky nízke. Prosíme, kontaktuje svojho systémového administrátora, aby pridal viac miesta na disku."
+msgstr "Dostupné miesto na disku pre server je kriticky nedostatočné. Aby sa zabránilo automatickému vypnutiu v dôsledku kontroly stavu, okamžite kontaktujte vášho systémového administrátora o pridelenie ďalšieho miesta."
 
 #: ../html/src/manager/login/messages.tsx:59
-#, fuzzy
-#| msgid "Unable to validate the disk space availability. Please contact your system admistrator if this problem persists."
 msgid "Unable to validate the disk space availability on Database. Please contact your system administrator if this problem persists."
-msgstr "Nie je možné overiť dostupnosť miesta na disku. Prosím, kontaktujte svojho systémového administrátora, ak tento problém pretrváva."
+msgstr "Nie je možné overiť dostupnosť miesta na disku v databáze. Prosím, kontaktujte svojho systémového administrátora, ak tento problém pretrváva."
 
 #: ../html/src/manager/login/messages.tsx:64
-#, fuzzy
-#| msgid "Some important directories are missing. Please contact your system administrator to review the configuration."
 msgid "Some important directories are missing on database. Please contact your system administrator to review the configuration."
-msgstr "Chýbajú niektoré dôležité adresáre. Prosím, kontaktujte svojho systémového administrátora, aby skontroloval konfiguráciu."
+msgstr "Chýbajú niektoré dôležité adresáre v databáze. Prosím, kontaktujte svojho systémového administrátora, aby skontroloval konfiguráciu."
 
 #: ../html/src/manager/login/messages.tsx:69
-#, fuzzy
-#| msgid "The available disk space on the server is running low. Please contact your system administrator to add more disk space."
 msgid "The available disk space for the database is low. To prevent an automatic shutdown via health check, please contact your system administrator immediately to allocate additional space."
-msgstr "Dostupné miesto na disku na serveri je nedostatočné. Prosím, kontaktuje svojho systémového administrátora, aby pridal viac miesta na disku."
+msgstr "Dostupné miesto na disku pre databázu je nedostatočné. Aby sa zabránilo automatickému vypnutiu v dôsledku kontroly stavu, okamžite kontaktujte vášho systémového administrátora o pridelenie ďalšieho miesta."
 
 #: ../html/src/manager/login/messages.tsx:74
-#, fuzzy
-#| msgid "The available disk space on the server is critically low. Please contact your system administrator to add more disk space."
 msgid "The available disk space for the database is critically low. To prevent an automatic shutdown via health check, please contact your system administrator immediately to allocate additional space."
-msgstr "Dostupné miesto na disku na serveri je kriticky nízke. Prosíme, kontaktuje svojho systémového administrátora, aby pridal viac miesta na disku."
+msgstr "Dostupné miesto na disku pre databázu je kriticky nedostatočné. Aby sa zabránilo automatickému vypnutiu v dôsledku kontroly stavu, okamžite kontaktujte vášho systémového administrátora o pridelenie ďalšieho miesta."
 
 #: ../html/src/manager/login/messages.tsx:89
 msgid "SUSE Multi-Linux Manager PAYG instances must forward registration data to SCC when credentials are provided. Data will be sent independently of the configuration setting. To hide this warning please set 'forward_registration = 1' in rhn.conf."
