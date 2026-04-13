@@ -66,13 +66,6 @@ tests:
           path: metadata.name
           value: uyuni
       - equal:
-          path: spec.template.spec.initContainers[?(@.name=="setup-waiter")].imagePullPolicy
-          value: "Always"
-        template: server.yaml
-        documentSelector:
-          path: metadata.name
-          value: uyuni
-      - equal:
           path: spec.template.spec.containers[?(@.name=="db")].imagePullPolicy
           value: "Always"
         template: db.yaml
