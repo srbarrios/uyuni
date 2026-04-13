@@ -1,6 +1,6 @@
 #!/bin/bash
 set -o pipefail
-MANAGER_COMPLETE="/root/.MANAGER_SETUP_COMPLETE"
+MANAGER_COMPLETE="/var/spacewalk/.MANAGER_SETUP_COMPLETE"
 
 check_manager_login() {
     local attempts=2
