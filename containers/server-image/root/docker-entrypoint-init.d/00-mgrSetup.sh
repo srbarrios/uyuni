@@ -239,6 +239,9 @@ setup_admin_user() {
             exit 1
         fi
         echo "Admin creation complete"
+
+        /usr/sbin/start_apache2 -k stop
+        su -s /usr/bin/sh -g tomcat -G www -G susemanager tomcat /usr/lib/tomcat/server stop
     fi
 }
 
