@@ -40,7 +40,7 @@ public class InputValidatorTest  {
 
     private static final String HOST_ERROR_MESSAGE = "Invalid host name.";
     private static final String USER_ERROR_MESSAGE = "Non-valid user. Allowed characters" +
-            " are: letters, numbers, '.', '\\', '-' and '_'";
+            " are: letters, numbers, '.', '\\', '-', '_' and '@'";
     private static final String PORT_ERROR_MESSAGE = "Port must be a number within range" +
             " 1-65535.";
 
