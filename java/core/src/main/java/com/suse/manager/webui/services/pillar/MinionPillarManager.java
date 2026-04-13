@@ -133,7 +133,6 @@ public class MinionPillarManager {
         groupMembershipPillarGenerator.generatePillarData(minion);
         virtualizationPillarGenerator.generatePillarData(minion);
         customInfoPillarGenerator.generatePillarData(minion);
-        reportDBPillarGenerator.generatePillarData(minion);
     }
 
     /**
