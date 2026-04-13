@@ -5,4 +5,6 @@
 set -e
 
 # Update postfix hostname only when hostname is provided
-[ -n "$UYUNI_HOSTNAME" ] && postconf -e "myhostname=${UYUNI_HOSTNAME}"
+if [ -n "$UYUNI_HOSTNAME" ]; then
+    postconf -e "myhostname=${UYUNI_HOSTNAME}"
+fi
