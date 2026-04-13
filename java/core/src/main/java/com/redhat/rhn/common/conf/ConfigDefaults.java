@@ -244,6 +244,8 @@ public class ConfigDefaults {
 
     public static final String CVE_AUDIT_ENABLE_OVAL_METADATA = "java.cve_audit.enable_oval_metadata";
 
+    public static final String OVAL_DEFINITIONS_BULK_SIZE = "java.oval_definitions_bulk_size";
+
     /**
      * SCAP XCCDF profiles XSL transformation file path
      */
@@ -1303,6 +1305,13 @@ public class ConfigDefaults {
      * */
     public boolean isOvalEnabledForCveAudit() {
         return Config.get().getBoolean(CVE_AUDIT_ENABLE_OVAL_METADATA, false);
+    }
+
+    /**
+     * @return the number of OVAL definitions to be parsed in bulk.
+     */
+    public int getOvalDefinitionsBulkSize() {
+        return Config.get().getInt(OVAL_DEFINITIONS_BULK_SIZE, 500);
     }
 
     /**
