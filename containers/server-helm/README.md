@@ -122,7 +122,7 @@ Here is a list of the ports to map:
 
 
 Exposing the `tftp` service has to be done differently due to the way TFTP protocol is working.
-Either use the host network using the `tftp.hostnetwork` value or configure a load balancer for the `tftp` service.
+Either use the host network using the `tftp.hostNetwork` value or configure a load balancer for the `tftp` service.
 Note that not all load balancers will work: `serviceLB` implementation is not compatible with TFTP protocol, while MetalLB works.
 
 ### Ingress vs Gateway API
