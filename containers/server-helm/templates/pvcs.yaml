@@ -9,7 +9,6 @@
 {{ include "uyuni.pvc" (dict "root" . "name" "etc-systemd-multi"   "volume" (index .Values.volumes "etc-systemd-multi")   "defaultSize" "1Mi"   "accessMode" "ReadWriteOnce") }}
 {{ include "uyuni.pvc" (dict "root" . "name" "etc-systemd-sockets" "volume" (index .Values.volumes "etc-systemd-sockets") "defaultSize" "1Mi"   "accessMode" "ReadWriteOnce") }}
 {{ include "uyuni.pvc" (dict "root" . "name" "etc-tomcat"          "volume" (index .Values.volumes "etc-tomcat")          "defaultSize" "1Mi"   "accessMode" "ReadWriteOnce") }}
-{{ include "uyuni.pvc" (dict "root" . "name" "root"                "volume" (index .Values.volumes "root")                "defaultSize" "1Mi"   "accessMode" "ReadWriteOnce") }}
 {{ include "uyuni.pvc" (dict "root" . "name" "run-salt-master"     "volume" (index .Values.volumes "run-salt-master")     "defaultSize" "10Mi"  "accessMode" "ReadWriteOnce") }}
 {{ include "uyuni.pvc" (dict "root" . "name" "srv-formulametadata" "volume" (index .Values.volumes "srv-formulametadata") "defaultSize" "10Mi"  "accessMode" "ReadWriteOnce") }}
 {{ include "uyuni.pvc" (dict "root" . "name" "srv-pillar"          "volume" (index .Values.volumes "srv-pillar")          "defaultSize" "10Mi"  "accessMode" "ReadWriteOnce") }}

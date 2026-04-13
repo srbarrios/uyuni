@@ -211,8 +211,6 @@ spec:
           name: srv-susemanager
         - mountPath: /srv/spacewalk
           name: srv-spacewalk
-        - mountPath: /root
-          name: root
         - mountPath: /etc/pki/trust/anchors/
           name: ca-certs
         - mountPath: /run/salt/master
@@ -286,7 +284,6 @@ spec:
                  /srv/pillar \
                  /srv/susemanager \
                  /srv/spacewalk \
-                 /root \
                  /etc/apache2 \
                  /etc/rhn \
                  /etc/systemd/system/multi-user.target.wants \
@@ -334,8 +331,6 @@ spec:
             name: srv-susemanager
           - mountPath: /mnt/srv/spacewalk
             name: srv-spacewalk
-          - mountPath: /mnt/root
-            name: root
           - mountPath: /mnt/etc/pki/trust/anchors/
             name: ca-certs
           - mountPath: /mnt/run/salt/master
@@ -463,9 +458,6 @@ spec:
       - name: srv-spacewalk
         persistentVolumeClaim:
           claimName: srv-spacewalk
-      - name: root
-        persistentVolumeClaim:
-          claimName: root
       - name: ca-certs
         persistentVolumeClaim:
           claimName: ca-certs
