@@ -176,7 +176,7 @@ mgrchannels_install_products:
 {%- if grains.get('__suse_reserved_saltutil_states_support', False) %}
       - saltutil: sync_states
 {%- else %}
-      - mgrcompat: sync_states
+      - module: sync_states
 {%- endif %}
 {%- if salt['pillar.get']('susemanager:distupgrade', False) %}
       - spmigration

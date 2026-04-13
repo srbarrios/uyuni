@@ -1,10 +1,10 @@
 node_exporter_service:
-  mgrcompat.module_run:
+  module.run:
     - name: service.status
     - m_name: "prometheus-node_exporter.service"
 
 postgres_exporter_service:
-  mgrcompat.module_run:
+  module.run:
     - name: service.status
     - m_name: "prometheus-postgres_exporter.service"
 
@@ -30,7 +30,7 @@ migrate_taskomatic_jmx_config:
     - onlyif: test -f /etc/sysconfig/taskomatic/systemd/jmx.conf -a ! -f /etc/rhn/taskomatic.conf.d/taskomatic_jmx.conf
 
 jmx_tomcat_java_config:
-  mgrcompat.module_run:
+  module.run:
     - name: file.search
     - path: /etc/tomcat/conf.d/tomcat_jmx.conf
     - pattern: "jmx_prometheus_javaagent.jar=5556"
@@ -38,7 +38,7 @@ jmx_tomcat_java_config:
       - cmd: migrate_tomcat_jmx_config
 
 jmx_taskomatic_java_config:
-  mgrcompat.module_run:
+  module.run:
     - name: file.search
     - path: /etc/rhn/taskomatic.conf.d/taskomatic_jmx.conf
     - pattern: "jmx_prometheus_javaagent.jar=5557"
