@@ -43,6 +43,6 @@ if [ -f "$MANAGER_COMPLETE" ]; then
         exit 1
     fi
 else
-    echo "Setup file not found yet. Skipping app checks, disk is healthy."
-    exit 0
+    echo "Healthcheck failed: setup file not found. Skipping app checks, disk is healthy."
+    exit 1
 fi
