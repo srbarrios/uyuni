@@ -19,5 +19,7 @@ server_id=${1}
 rm -rfv /tmp/testing/server-logs/${server_id}
 mkdir -p /tmp/testing/server-logs/${server_id}
 sudo -i journalctl > /tmp/testing/server-logs/${server_id}/journalctl.log && chmod 644 /tmp/testing/server-logs/${server_id}/journalctl.log
+# prevent supportconfig exit code 1 on missing logger bsc#1245667
+$PODMAN_CMD exec server bash -c "ln -s /usr/bin/echo /usr/bin/logger"
 $PODMAN_CMD exec server bash -c "supportconfig -R /tmp/server-logs/${server_id} && chmod 644 /tmp/server-logs/${server_id}/*.txz*"
 
