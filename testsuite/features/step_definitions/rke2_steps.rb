@@ -1,7 +1,7 @@
 # Copyright 2026 SUSE LLC
 # Licensed under the terms of the MIT license.
 
-Given('the first-time setup job is successful') do
+Given('The first-time setup job is successful') do
   # Check the job status via JSON
   cmd = "kubectl get jobs -n uyuni -l app.kubernetes.io/component=server-setup -o jsonpath='{.items[0].status.succeeded}'"
   status, code = get_target('server').run_local(cmd)
@@ -17,7 +17,7 @@ Then('the setup marker file should exist on "server"') do
   raise 'Server setup marker file does not exist' unless status.include? 'EXISTS'
 end
 
-Given(/^the Kubernetes cluster is ready on "(.*)"$/) do |target|
+Given(/^The Kubernetes cluster is ready on "(.*)"$/) do |target|
   _out, code = get_target(target).run_local('kubectl get nodes && kubectl get namespace uyuni')
   raise "Kubernetes cluster is not ready or uyuni namespace is missing on #{target}" unless code.zero?
 end
