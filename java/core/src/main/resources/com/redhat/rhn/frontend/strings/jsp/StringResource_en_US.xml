@@ -1183,6 +1183,24 @@
           <context context-type="sourcefile">/rhn/users/UserPreferences</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="preferences.jsp.betafeatures" xml:space="preserve">
+        <source> Enable beta features</source>
+        <context-group name="ctx">
+          <context context-type="sourcefile">/rhn/users/UserPreferences</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="preferences.jsp.betaheader" xml:space="preserve">
+        <source>Beta Features</source>
+        <context-group name="ctx">
+          <context context-type="sourcefile">/rhn/users/UserPreferences</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="preferences.jsp.betadescription" xml:space="preserve">
+        <source>Beta features are experimental and may not be fully tested. Enable this option to access new functionality that is still under development. Use with caution in production environments.</source>
+        <context-group name="ctx">
+          <context context-type="sourcefile">/rhn/users/UserPreferences</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="preferences.jsp.listsize" xml:space="preserve">
         <source>@@PRODUCT_NAME@@ List Page Size</source>
         <context-group name="ctx">
@@ -12729,6 +12747,12 @@ the &lt;strong&gt;@@ENTERPRISE_LINUX_NAME@@ System Administration Guide.&lt;/str
         </trans-unit>
         <trans-unit id="system.audit.xccdfdetails.jsp.result">
           <source>Result</source>
+        <context-group name="ctx">
+          <context context-type="sourcefile">Detailed view of SCAP XCCDF scan</context>
+        </context-group>
+        </trans-unit>
+        <trans-unit id="system.audit.xccdfdetails.jsp.action">
+          <source>Action</source>
         <context-group name="ctx">
           <context context-type="sourcefile">Detailed view of SCAP XCCDF scan</context>
         </context-group>
@@ -24824,6 +24848,27 @@ given channel.</source>
       </trans-unit>
       <trans-unit id="spmigration.jsp.allow.vendor.change">
         <source>Allow Vendor Change</source>
+      </trans-unit>
+      <trans-unit id="spmigration.sles16.preflight.title" xml:space="preserve">
+        <source>Before Migrating to SLES 16 — Please ensure</source>
+      </trans-unit>
+      <trans-unit id="spmigration.sles16.preflight.patch.title" xml:space="preserve">
+        <source>System is fully up to date</source>
+      </trans-unit>
+      <trans-unit id="spmigration.sles16.preflight.diskspace.title" xml:space="preserve">
+        <source>Sufficient disk space is available</source>
+      </trans-unit>
+      <trans-unit id="spmigration.sles16.preflight.ssh.title" xml:space="preserve">
+        <source>Ensure SSH key-based access is available for at least one user. If root login is required, create /etc/ssh/sshd_config.d/50-permit-root-login.conf with: PermitRootLogin yes</source>
+      </trans-unit>
+      <trans-unit id="spmigration.sles16.preflight.kvmguests.title" xml:space="preserve">
+        <source>KVM guests are shut down (if applicable)</source>
+      </trans-unit>
+      <trans-unit id="spmigration.sles16.preflight.network.title" xml:space="preserve">
+        <source>Network configuration will be migrated from wicked to NetworkManager</source>
+      </trans-unit>
+      <trans-unit id="spmigration.sles16.preflight.selinux.title" xml:space="preserve">
+        <source>AppArmor profiles will be migrated to SELinux</source>
       </trans-unit>
       <trans-unit id="spmigration.jsp.error.targetProductSelectedEmpty" xml:space="preserve">
         <source>Please select one target product to migrate</source>

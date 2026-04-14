@@ -366,7 +366,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -465,7 +464,6 @@
         <dependency>
             <groupId>org.codehaus.woodstox</groupId>
             <artifactId>stax2-api</artifactId>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.codehaus.woodstox</groupId>

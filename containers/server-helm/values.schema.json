@@ -129,7 +129,6 @@
         "etc-systemd-multi": { "$ref": "#/definitions/volumeConfig" },
         "etc-systemd-sockets": { "$ref": "#/definitions/volumeConfig" },
         "etc-tomcat": { "$ref": "#/definitions/volumeConfig" },
-        "root": { "$ref": "#/definitions/volumeConfig" },
         "run-salt-master": { "$ref": "#/definitions/volumeConfig" },
         "srv-formulametadata": { "$ref": "#/definitions/volumeConfig" },
         "srv-pillar": { "$ref": "#/definitions/volumeConfig" },

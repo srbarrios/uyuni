@@ -40,8 +40,8 @@ import com.redhat.rhn.testing.TestUtils;
 import com.suse.oval.OVALCachingFactory;
 import com.suse.oval.OVALCleaner;
 import com.suse.oval.OsFamily;
-import com.suse.oval.OvalParser;
 import com.suse.oval.ovaltypes.OvalRootType;
+import com.suse.oval.parser.OvalTestUtils;
 
 import org.junit.jupiter.api.Test;
 
@@ -56,11 +56,10 @@ import java.util.stream.Collectors;
 // TODO: Test for when patch status is unknown
 public class CVEAuditManagerOVALTest extends RhnBaseTestCase {
     public static final String CPE_OPENSUSE_LEAP_15_4 = "cpe:/o:opensuse:leap:15.4";
-    private OvalParser ovalParser = new OvalParser();
 
     @Test
     void testDoAuditSystemNotAffected() throws Exception {
-        OvalRootType ovalRoot = ovalParser.parse(TestUtils
+        OvalRootType ovalRoot = OvalTestUtils.parse(TestUtils
                 .findTestData("/com/redhat/rhn/manager/audit/oval/oval-def-1.xml"));
 
         Cve cve = createTestCve("CVE-2022-2991");
@@ -95,7 +94,7 @@ public class CVEAuditManagerOVALTest extends RhnBaseTestCase {
      */
     @Test
     void testDoAuditSystemNotAffectedWhenOSIsAffected() throws Exception {
-        OvalRootType ovalRoot = ovalParser.parse(TestUtils
+        OvalRootType ovalRoot = OvalTestUtils.parse(TestUtils
                 .findTestData("/com/redhat/rhn/manager/audit/oval/oval-def-1.xml"));
 
         Cve cve = createTestCve("CVE-2022-2991");
@@ -124,7 +123,7 @@ public class CVEAuditManagerOVALTest extends RhnBaseTestCase {
 
     @Test
     void testDoAuditSystemPatched() throws Exception {
-        OvalRootType ovalRoot = ovalParser.parse(TestUtils
+        OvalRootType ovalRoot = OvalTestUtils.parse(TestUtils
                 .findTestData("/com/redhat/rhn/manager/audit/oval/oval-def-1.xml"));
 
         Cve cve = createTestCve("CVE-2022-2991");
@@ -158,7 +157,7 @@ public class CVEAuditManagerOVALTest extends RhnBaseTestCase {
 
     @Test
     void testDoAuditSystemAffectedFullPatchAvailable() throws Exception {
-        OvalRootType ovalRoot = ovalParser.parse(TestUtils
+        OvalRootType ovalRoot = OvalTestUtils.parse(TestUtils
                 .findTestData("/com/redhat/rhn/manager/audit/oval/oval-def-1.xml"));
 
         Cve cve = createTestCve("CVE-2022-2991");
@@ -197,7 +196,7 @@ public class CVEAuditManagerOVALTest extends RhnBaseTestCase {
 
     @Test
     void testDoAuditSystemAffectedPatchUnavailable() throws Exception {
-        OvalRootType ovalRoot = ovalParser.parse(TestUtils
+        OvalRootType ovalRoot = OvalTestUtils.parse(TestUtils
                 .findTestData("/com/redhat/rhn/manager/audit/oval/oval-def-2.xml"));
 
         Cve cve = createTestCve("CVE-2008-2934");
@@ -231,7 +230,7 @@ public class CVEAuditManagerOVALTest extends RhnBaseTestCase {
 
     @Test
     void testDoAuditSystemAffectedPartialPatchAvailable() throws Exception {
-        OvalRootType ovalRoot = ovalParser.parse(TestUtils
+        OvalRootType ovalRoot = OvalTestUtils.parse(TestUtils
                 .findTestData("/com/redhat/rhn/manager/audit/oval/oval-def-3.xml"));
 
         Cve cve = createTestCve("CVE-2008-2934");
@@ -274,7 +273,7 @@ public class CVEAuditManagerOVALTest extends RhnBaseTestCase {
 
     @Test
     void testDoAuditSystemAffectedPartialPatchAvailableFalsePositive() throws Exception {
-        OvalRootType ovalRoot = ovalParser.parse(TestUtils
+        OvalRootType ovalRoot = OvalTestUtils.parse(TestUtils
                 .findTestData("/com/redhat/rhn/manager/audit/oval/oval-def-3.xml"));
 
         Cve cve = createTestCve("CVE-2008-2934");
@@ -316,7 +315,7 @@ public class CVEAuditManagerOVALTest extends RhnBaseTestCase {
 
     @Test
     void testDoAuditSystemAffectedPatchInapplicable() throws Exception {
-        OvalRootType ovalRoot = ovalParser.parse(TestUtils
+        OvalRootType ovalRoot = OvalTestUtils.parse(TestUtils
                 .findTestData("/com/redhat/rhn/manager/audit/oval/oval-def-1.xml"));
 
         Cve cve = createTestCve("CVE-2022-2991");
@@ -363,7 +362,7 @@ public class CVEAuditManagerOVALTest extends RhnBaseTestCase {
 
     @Test
     void testDoAuditSystemAffectedPatchInapplicableSuccessorProduct() throws Exception {
-        OvalRootType ovalRoot = ovalParser.parse(TestUtils
+        OvalRootType ovalRoot = OvalTestUtils.parse(TestUtils
                 .findTestData("/com/redhat/rhn/manager/audit/oval/oval-def-1.xml"));
 
         Cve cve = createTestCve("CVE-2022-2991");
@@ -419,7 +418,7 @@ public class CVEAuditManagerOVALTest extends RhnBaseTestCase {
      */
     @Test
     public void testDoAuditSystemPatchedWithIrrelevantErrata() throws Exception {
-        OvalRootType ovalRoot = ovalParser.parse(TestUtils
+        OvalRootType ovalRoot = OvalTestUtils.parse(TestUtils
                 .findTestData("/com/redhat/rhn/manager/audit/oval/oval-def-1.xml"));
 
         Cve cve = createTestCve("CVE-2022-2991");
@@ -455,7 +454,7 @@ public class CVEAuditManagerOVALTest extends RhnBaseTestCase {
 
     @Test
     void testDoAuditSystemAffectedPatchUnavailableInUyuni() throws Exception {
-        OvalRootType ovalRoot = ovalParser.parse(TestUtils
+        OvalRootType ovalRoot = OvalTestUtils.parse(TestUtils
                 .findTestData("/com/redhat/rhn/manager/audit/oval/oval-def-1.xml"));
 
         Cve cve = createTestCve("CVE-2022-2991");
@@ -504,7 +503,7 @@ public class CVEAuditManagerOVALTest extends RhnBaseTestCase {
     public void testListSystemsByPatchStatusKnownCVE() throws IOException, ClassNotFoundException {
         User user = createTestUser();
 
-        OvalRootType ovalRoot = ovalParser.parse(TestUtils
+        OvalRootType ovalRoot = OvalTestUtils.parse(TestUtils
                 .findTestData("/com/redhat/rhn/manager/audit/oval/oval-def-1.xml"));
 
         Cve knownCve = createTestCve("CVE-2022-2991");
@@ -517,7 +516,7 @@ public class CVEAuditManagerOVALTest extends RhnBaseTestCase {
 
     @Test
     public void testListSystemsByPatchStatusAffectedPatchInapplicable() throws Exception {
-        OvalRootType ovalRoot = ovalParser.parse(TestUtils
+        OvalRootType ovalRoot = OvalTestUtils.parse(TestUtils
                 .findTestData("/com/redhat/rhn/manager/audit/oval/oval-def-1.xml"));
 
         Cve cve = createTestCve("CVE-2022-2991");
@@ -564,7 +563,9 @@ public class CVEAuditManagerOVALTest extends RhnBaseTestCase {
     }
 
     private static void extractAndSaveVulnerablePackages(OvalRootType rootType) {
-        OVALCleaner.cleanup(rootType, OsFamily.LEAP, "15.4");
+        rootType.setOsFamily(OsFamily.LEAP);
+        rootType.setOsVersion("15.4");
+        OVALCleaner.cleanup(rootType);
         OVALCachingFactory.savePlatformsVulnerablePackages(rootType);
 
         TestUtils.flushSession();

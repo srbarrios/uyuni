@@ -39,7 +39,6 @@ The following persistent volume claims will be created and will need to be bound
 - `etc-systemd-multi`: (default size: 1Mi)
 - `etc-systemd-sockets`: (default size: 1Mi)
 - `etc-tomcat`: (default size: 1Mi)
-- `root`: (default size: 1Mi)
 - `run-salt-master`: (default size: 10Mi)
 - `srv-formulametadata`: (default size: 10Mi)
 - `srv-pillar`: (default size: 10Mi)
@@ -122,7 +121,7 @@ Here is a list of the ports to map:
 
 
 Exposing the `tftp` service has to be done differently due to the way TFTP protocol is working.
-Either use the host network using the `tftp.hostnetwork` value or configure a load balancer for the `tftp` service.
+Either use the host network using the `tftp.hostNetwork` value or configure a load balancer for the `tftp` service.
 Note that not all load balancers will work: `serviceLB` implementation is not compatible with TFTP protocol, while MetalLB works.
 
 ### Ingress vs Gateway API

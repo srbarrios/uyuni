@@ -398,6 +398,24 @@
           <context context-type="sourcefile">Navigation Menu</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="SCAP Policies" xml:space="preserve">
+        <source>SCAP Policies</source>
+        <context-group name="ctx">
+          <context context-type="sourcefile">Navigation Menu</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="SCAP Content" xml:space="preserve">
+        <source>SCAP Content</source>
+        <context-group name="ctx">
+          <context context-type="sourcefile">Navigation Menu</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="Tailoring Files" xml:space="preserve">
+        <source>Tailoring Files</source>
+        <context-group name="ctx">
+          <context context-type="sourcefile">Navigation Menu</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="XCCDF Diff" xml:space="preserve">
         <source>XCCDF Diff</source>
         <context-group name="ctx">
@@ -8851,6 +8869,17 @@ Alternatively, you will want to download &lt;strong&gt;Incremental Channel Conte
       </trans-unit>
       <trans-unit id="distupgrade.upgrade" xml:space="preserve">
         <source>Product Migration</source>
+      </trans-unit>
+      <trans-unit id="distupgrade.sles16.migration.success" xml:space="preserve">
+        <source>SLES 16 migration completed successfully.{0}</source>
+      </trans-unit>
+      <trans-unit id="distupgrade.sles16.migration.success.post_steps" xml:space="preserve">
+        <source>Recommended post-migration steps:
+- Check for orphaned/unneeded packages: zypper packages --orphaned --unneeded
+- Check for updated config files: find /etc/ -name '*.rpmnew' -o -name '*.rpmsave'</source>
+      </trans-unit>
+      <trans-unit id="distupgrade.sles16.migration.failed" xml:space="preserve">
+        <source>SLES 16 migration failed or result not found.{0}</source>
       </trans-unit>
       <trans-unit id="spmigration.message.scheduled" xml:space="preserve">
         <source>This system is &lt;a href="/rhn/systems/details/history/Event.do?sid={0}&amp;aid={1}"&gt;scheduled&lt;/a&gt; to be migrated to &lt;strong&gt;{2}&lt;/strong&gt;.</source>

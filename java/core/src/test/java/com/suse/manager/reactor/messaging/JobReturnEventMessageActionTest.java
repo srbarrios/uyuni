@@ -31,8 +31,11 @@ import com.redhat.rhn.domain.action.Action;
 import com.redhat.rhn.domain.action.ActionFactory;
 import com.redhat.rhn.domain.action.ActionFactoryTest;
 import com.redhat.rhn.domain.action.channel.SubscribeChannelsAction;
+import com.redhat.rhn.domain.action.dup.DistUpgradeAction;
+import com.redhat.rhn.domain.action.dup.DistUpgradeActionDetails;
 import com.redhat.rhn.domain.action.rhnpackage.PackageAction;
 import com.redhat.rhn.domain.action.salt.ApplyStatesAction;
+import com.redhat.rhn.domain.action.salt.ApplyStatesActionDetails;
 import com.redhat.rhn.domain.action.salt.build.ImageBuildAction;
 import com.redhat.rhn.domain.action.salt.inspect.ImageInspectAction;
 import com.redhat.rhn.domain.action.scap.ScapAction;
@@ -48,8 +51,12 @@ import com.redhat.rhn.domain.image.ImageInfo;
 import com.redhat.rhn.domain.image.ImageInfoFactory;
 import com.redhat.rhn.domain.image.ImageProfile;
 import com.redhat.rhn.domain.image.ImageStore;
+import com.redhat.rhn.domain.product.ReleaseStage;
+import com.redhat.rhn.domain.product.SUSEProduct;
 import com.redhat.rhn.domain.product.SUSEProductTestUtils;
+import com.redhat.rhn.domain.product.SUSEProductUpgrade;
 import com.redhat.rhn.domain.rhnpackage.Package;
+import com.redhat.rhn.domain.rhnpackage.PackageFactory;
 import com.redhat.rhn.domain.rhnpackage.PackageNameTest;
 import com.redhat.rhn.domain.server.InstalledPackage;
 import com.redhat.rhn.domain.server.MinionServer;
@@ -119,6 +126,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -2383,5 +2391,87 @@ public class JobReturnEventMessageActionTest extends JMockBaseTestCaseWithUser {
 
         assertDoesNotThrow(() ->
                 saltUtils.updateServerAction(saDiff, 0L, true, "", dummyJsonResult, dummyFunction, null));
+    }
+
+    @Test
+    public void testSles16VerifyJobReturnIsProcessedWithoutError() throws Exception {
+        // Setup: Create minion and migration scenario
+        MinionServer minion = MinionServerFactoryTest.createTestMinionServer(user);
+        ServerFactory.save(minion);
+        ServerAction migrationServerAction = setupSles16MigrationScenario(minion);
+        ApplyStatesAction verificationAction = createSles16VerificationAction(minion);
+        // Execute: Process the verification job return event
+        Map<String, String> placeholders = new HashMap<>();
+        placeholders.put("192.168.101.240", minion.getMinionId());
+        Optional<JobReturnEvent> event = JobReturnEvent.parse(
+                getJobReturnEvent("sles16.verify.job.return.json", verificationAction.getId(), placeholders));
+        assertTrue(event.isPresent(), "sles16 verify fixture must parse cleanly");
+        JobReturnEventMessage message = new JobReturnEventMessage(event.get());
+        JobReturnEventMessageAction messageAction = new JobReturnEventMessageAction(saltServerActionService, saltUtils);
+
+        assertDoesNotThrow(() -> messageAction.execute(message),
+                "Sles16 verify job return must be handled without throwing");
+        // Verify: Check migration action was updated correctly
+        TestUtils.flushSession(); // Flush to ensure we read the actual persisted state
+        assertEquals(ActionFactory.STATUS_COMPLETED, migrationServerAction.getStatus(),
+                "Migration action should be COMPLETED after successful verification");
+        assertTrue(migrationServerAction.getResultMsg().contains("SLES 16 migration completed successfully"),
+                "Result message should reflect success. Actual: " + migrationServerAction.getResultMsg());
+    }
+
+    /**
+     * Creates SUSE product for SLES with the given version.
+     */
+    private SUSEProduct createSlesProduct(String version, long productIdOffset, String friendlyName) {
+        Random random = new Random();
+        SUSEProduct product = new SUSEProduct("sles");
+        product.setVersion(version);
+        product.setBase(true);
+        product.setArch(PackageFactory.lookupPackageArchByLabel("x86_64"));
+        product.setProductId(random.nextInt(999999) + productIdOffset);
+        product.setFriendlyName(friendlyName);
+        product.setReleaseStage(ReleaseStage.released);
+        TestUtils.saveAndFlush(product);
+        return product;
+    }
+
+    /**
+     * Sets up a SLES 15 -> 16 migration scenario with a DistUpgradeAction in "picked up" status.
+     * Returns the ServerAction that will be updated when verification completes.
+     */
+    private ServerAction setupSles16MigrationScenario(MinionServer minion) throws Exception {
+        // Create source and target products
+        SUSEProduct sles15 = createSlesProduct("15.7", 1000000L, "SLES 15 SP7");
+        SUSEProduct sles16 = createSlesProduct("16.0", 2000000L, "SLES 16.0");
+        // Create DistUpgradeAction
+        DistUpgradeAction dupAction = (DistUpgradeAction) ActionFactoryTest.createAction(user,
+                ActionFactory.TYPE_DIST_UPGRADE);
+        dupAction.setDetailsMap(new HashMap<>());
+        DistUpgradeActionDetails details = new DistUpgradeActionDetails();
+        details.setServer(minion);
+        details.addProductUpgrade(new SUSEProductUpgrade(sles15, sles16));
+        dupAction.setDetails(details);
+        ServerAction sa = ActionFactoryTest.createServerAction(minion, dupAction);
+        sa.setStatusPickedUp(); // Simulate migration in progress, waiting for verification
+        dupAction.addServerAction(sa);
+        ActionFactory.save(dupAction);
+        TestUtils.flushSession();
+        return sa;
+    }
+
+    /**
+     * Creates an ApplyStatesAction for the sles16_verify state.
+     */
+    private ApplyStatesAction createSles16VerificationAction(MinionServer minion) throws Exception {
+        ApplyStatesAction applyStatesAction = (ApplyStatesAction) ActionFactoryTest.createAction(user,
+                ActionFactory.TYPE_APPLY_STATES);
+        ApplyStatesActionDetails asDetails = new ApplyStatesActionDetails();
+        asDetails.setMods(List.of("distupgrade.sles16_verify"));
+        asDetails.setTest(false);
+        applyStatesAction.setDetails(asDetails);
+        ServerAction vsa = ActionFactoryTest.createServerAction(minion, applyStatesAction);
+        applyStatesAction.addServerAction(vsa);
+        ActionFactory.save(applyStatesAction);
+        return applyStatesAction;
     }
 }
