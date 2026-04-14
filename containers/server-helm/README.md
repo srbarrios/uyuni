@@ -112,9 +112,6 @@ Here is a list of the ports to map:
 | TCP      | 5432  | reportdb     | 5432         |                                                  |
 | TCP      | 4505  | salt         | 4505         |                                                  |
 | TCP      | 4506  | salt         | 4506         |                                                  |
-| TCP      | 25151 | cobbler      | 25151        |                                                  |
-| TCP      | 9100  | tomcat       | 9100         |                                                  |
-| TCP      | 9187  | db           | 9187         | Not if installed with `enableMonitoring = false` |
 | TCP      | 8001  | taskomatic   | 8001         | Only if installed with `exposeJavaDebug = true`  |
 | TCP      | 8002  | search       | 8002         | Only if installed with `exposeJavaDebug = true`  |
 | TCP      | 8003  | tomcat       | 8003         | Only if installed with `exposeJavaDebug = true`  |
