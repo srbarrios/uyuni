@@ -133,7 +133,8 @@ $PODMAN_CMD run --cap-add AUDIT_CONTROL \
     -v ${src_dir}/client:/client \
     -v ${src_dir}/susemanager-utils:/susemanager-utils \
     -v ${src_dir}/susemanager:/susemanager \
-    -v ${src_dir}/containers/server-image/root/docker-entrypoint-init.d/00-mgrSetup.sh:/docker-entrypoint-init.d/00-mgrSetup.sh \
+    -v ${src_dir}/containers/server-image/root/docker-entrypoint-init.d:/docker-entrypoint-init.d \
+    -v ${src_dir}/containers/server-image/root/usr/lib/entrypoint-lib.sh:/usr/lib/entrypoint-lib.sh \
     -v ${src_dir}/spacewalk/setup/share/tomcat_java_opts.conf:/etc/tomcat/conf.d/tomcat_java_opts.conf \
     -v ${src_dir}/spacewalk/setup/share/tomcat_java_opts_suse.conf:/etc/tomcat/conf.d/tomcat_java_opts_suse.conf \
     -v ${src_dir}/java/conf/default/rhn_taskomatic_daemon.conf:/usr/share/rhn/config-defaults/rhn_taskomatic_daemon.conf \
@@ -153,7 +154,7 @@ $PODMAN_CMD run --cap-add AUDIT_CONTROL \
     --secret uyuni-cert,type=mount,target=/etc/pki/tls/certs/spacewalk.crt \
     --secret uyuni-key,type=mount,target=/etc/pki/tls/private/spacewalk.key \
     --secret uyuni-db-ca,type=mount,target=/etc/pki/trust/anchors/DB-RHN-ORG-TRUSTED-SSL-CERT \
-    -e UYUNI_FQDN="server"  \
+    -e UYUNI_HOSTNAME="server"  \
     -e MANAGER_ADMIN_EMAIL="a@b.com"  \
     -e MANAGER_MAIL_FROM="a@b.com"  \
     -e MANAGER_ENABLE_TFTP="n"  \

@@ -39,7 +39,6 @@ The following persistent volume claims will be created and will need to be bound
 - `etc-systemd-multi`: (default size: 1Mi)
 - `etc-systemd-sockets`: (default size: 1Mi)
 - `etc-tomcat`: (default size: 1Mi)
-- `root`: (default size: 1Mi)
 - `run-salt-master`: (default size: 10Mi)
 - `srv-formulametadata`: (default size: 10Mi)
 - `srv-pillar`: (default size: 10Mi)
