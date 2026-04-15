@@ -39,7 +39,7 @@ class VmInfoSlsResultTest extends MockObjectTestCase {
     /**
      * Test the scenario where state result is false (virt.vm_info module not available, e.g., libvirtd not installed)
      * This reflects as the following example:
-     * mgrcompat_|-mgr_virt_profile_|-virt.vm_info_|-module_run": {
+     * module_|-mgr_virt_profile_|-virt.vm_info_|-run": {
      * "id": "mgr_virt_profile",
      * "run_num": ...,
      * "sls": "hardware.virtprofile",

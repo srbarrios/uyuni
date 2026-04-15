@@ -1,0 +1,2 @@
+- Replace using mgrcompat.module_run with module.run salt calls
+  as mgrcompat.module_run is not required anymore.
