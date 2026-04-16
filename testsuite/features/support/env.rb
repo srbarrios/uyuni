@@ -70,6 +70,7 @@ DEFAULT_TIMEOUT = ENV['DEFAULT_TIMEOUT'] ? ENV['DEFAULT_TIMEOUT'].to_i : 250
 $is_cloud_provider = ENV['PROVIDER'].include? 'aws'
 $is_gh_validation = ENV['PROVIDER'].include? 'podman'
 $is_containerized_server = %w[k3s podman].include? ENV.fetch('CONTAINER_RUNTIME', '')
+$is_rke2 = ENV.fetch('CONTAINER_RUNTIME', '').include? 'rke2'
 $is_transactional_server = transactional_system?('server', runs_in_container: false)
 $is_using_build_image = ENV.fetch('IS_USING_BUILD_IMAGE', false)
 $is_using_scc_repositories = (ENV.fetch('IS_USING_SCC_REPOSITORIES', 'False') != 'False')
@@ -689,6 +690,10 @@ end
 # do test only if we have a containerized server
 Before('@containerized_server') do
   skip_this_scenario unless $is_containerized_server
+end
+
+Before('@rke2') do
+  skip_this_scenario unless $is_rke2
 end
 
 # skip tests if the server runs on a transactional base OS
