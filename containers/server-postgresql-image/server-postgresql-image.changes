@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Fri Apr 17 11:30:19 CEST 2026 - michael.calmer@suse.com
+
+- version 5.2.5
+  * Healthcheck on disk usage based on taskomatic (bsc#1238890).
+  * Set smdba archiver executable
+  * Make sure pg_hba configuration is updated on upgrade
+    (bsc#1259705)
+  * Do not use awk in smdba-pgarchive
+
+-------------------------------------------------------------------
 Mon Mar 02 13:19:13 CET 2026 - michael.calmer@suse.com
 
 - version 5.2.4

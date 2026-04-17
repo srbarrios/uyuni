@@ -1,2 +1,0 @@
-- Make sure pg_hba configuration is updated on upgrade
-  (bsc#1259705)
